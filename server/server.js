@@ -176,7 +176,7 @@ function run() {
         app.use(express.logger('dev'));
         app.use(express.cookieParser());
         //app.use(express.session({ secret: 'jcvsnasdovhjdsfanbdwkjv' }));
-        app.use(express.session({ secret: 'jcvsnasdovhjdsfanbdwkjv', store: new MongoStore({ db: db_url }) }));
+        app.use(express.session({ secret: 'jcvsnasdovhjdsfanbdwkjv', store: new MongoStore({ db: db_url , auto_reconnect: true, safe: true}) }));
         app.use(log_url);
         app.use(static_file_handler2);
         app.use(preprocess_api_calls);
