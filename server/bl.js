@@ -1,5 +1,3 @@
-// "business logic" - all smart stuff is happening here, except scanning
-
 var async = require("async");
 var utils_hash = require("./utils_hash");
 var xutil = require('./xutil');
@@ -355,33 +353,34 @@ exports.delete_user = function (req, callback) {
 
 exports.add_node = function (req, callback) {
     db.get_max_node_id(function (err, max_id) {
-        if (err) return callback(err);
-        
-		var rec = req.data;
-		rec.id = Number(max_id) + 1;
-		db.add_node(req.data, function (err2, data2) {
-			if (err2) return callback(err2);
-			var h = {
-				node: rec.id,
-				cluster: rec.cluster,
-				user: req.session.user,
-				status: rec.status,
-				code: "node_change",
-				ts: new Date(),
-				title: "Node '" + rec.name + "' (" + rec.id + ") created",
-				description: "Node '" + rec.name + "' (" + rec.id + ") was successfully created.",
-				sys_data: rec
-			};
+        if (err) {
+            callback(err);
+        } else {
+            var rec = req.data;
+            rec.id = Number(max_id) + 1;
+            db.add_node(req.data, function (err, data2) {
+                var h = {
+                    node: rec.id,
+                    cluster: rec.cluster,
+                    user: req.session.user,
+                    status: rec.status,
+                    code: "node_change",
+                    ts: new Date(),
+                    title: "Node '" + rec.name + "' (" + rec.id + ") created",
+                    description: "Node '" + rec.name + "' (" + rec.id + ") was successfully created.",
+                    sys_data: rec
+                };
 
-			db.new_history(h, function (err) {
-				if (err) return callback(err);
-				callback(null, { id: rec.id });
-			});
-			if (notify_after_node_change) {
-				notify_after_node_change(rec.id);
-			}
-			load_node_map();
-		});
+                db.new_history(h, function (err) {
+                    if (err) return callback(err);
+                    callback(null, { id: rec.id });
+                });
+                if (notify_after_node_change) {
+                    notify_after_node_change(rec.id);
+                }
+                load_node_map();
+            });
+        }
     });
 };
 
@@ -633,8 +632,9 @@ exports.get_components2 = function (req, callback) {
     var where = [];
     if (req.data.type) query.type = req.data.type;
     //if (req.data.product_number) query.product_number = req.data.product_number;
-    create_regexp2(req.data, query, where, "product_number");
 
+    if (req.data.product_number) query.product_number=create_regexp(req.data.product_number);
+    //create_regexp(req.data, query, where, "product_number");
     if (req.data.serial_number) query.serial_number = create_regexp(req.data.serial_number);
     if (req.data.production) query.production = create_regexp(req.data.production);
     if (req.data.series) query.series = create_regexp(req.data.series);
@@ -953,7 +953,7 @@ exports.add_cluster = function (req, callback) {
 
     db.add_cluster(req.data, function (err) {
         if (err) return callback(err);
-		
+
         load_cluster_map();
 
         var h = {
