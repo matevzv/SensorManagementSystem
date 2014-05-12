@@ -631,7 +631,8 @@ exports.get_components2 = function (req, callback) {
     //console.log("#", req);
     var query = {};
     var where = [];
-       if (req.data.type) query.type = req.data.type;
+    
+    if (req.data.type) query.type = req.data.type;
     //if (req.data.product_number) query.product_number = req.data.product_number;
     //create_regexp(req.data, query, where, "product_number");
     if (req.data.product_number) query.product_number=create_regexp(req.data.product_number);
