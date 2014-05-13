@@ -631,10 +631,11 @@ exports.get_components2 = function (req, callback) {
     //console.log("#", req);
     var query = {};
     var where = [];
+    
     if (req.data.type) query.type = req.data.type;
     //if (req.data.product_number) query.product_number = req.data.product_number;
-    create_regexp2(req.data, query, where, "product_number");
-
+    //create_regexp(req.data, query, where, "product_number");
+    if (req.data.product_number) query.product_number=create_regexp(req.data.product_number);
     if (req.data.serial_number) query.serial_number = create_regexp(req.data.serial_number);
     if (req.data.production) query.production = create_regexp(req.data.production);
     if (req.data.series) query.series = create_regexp(req.data.series);
