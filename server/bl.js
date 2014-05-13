@@ -798,47 +798,49 @@ exports.add_components = function (req, callback) {
     var new_comp_count = data.sn_to - data.sn_from + 1;
 
     for (var i = data.sn_from; i <= data.sn_to; i++) {
-        var sn = xutil.pad(i, sn_len);
-        var new_id = create_component_id(data.pn, data.type, data.p, data.s, sn);
-        var new_rec = {
-            id: new_id,
-            type: data.type,
-            product_number: data.pn,
-            production: data.p,
-            series: data.s,
-            serial_number: sn,
-            status: "ok",
-            project: "",
-            comment: ""
-        };
-        db.add_component(new_rec, function (err, res) {
-            if (err) {
-                //console.log("#", err);
-                err_comps.push({ id: new_id, err: err, msg: "" + new_id + ". " + err });
-            } else {
-                //console.log("#", "ok");
-                ok_comps.push(new_id);
-                var h = {
-                    component: new_rec.id,
-                    user: req.session.user,
-                    status: new_rec.status,
-                    code: "component_change",
-                    ts: new Date(),
-                    title: "Component '" + new_rec.id + "' created",
-                    description: "Component '" + new_rec.id + "' was created.",
-                    sys_data: new_rec
-                };
-                db.new_history(h, function (err, res) { });
-            }
-            if (new_comp_count == err_comps.length + ok_comps.length) {
-                if (err_comps.length > 0) {
-                    var err_msg = "Error(s) occured while generating new components. Error count = " + err_comps.length + ". First message = " + err_comps[0].msg;
-                    callback(new Error(err_msg));
-                } else {
-                    callback(null, {});
-                }
-            }
-        });
+        (function (i){
+			var sn = xutil.pad(i, sn_len);
+			var new_id = create_component_id(data.pn, data.type, data.p, data.s, sn);
+			var new_rec = {
+				id: new_id,
+				type: data.type,
+				product_number: data.pn,
+				production: data.p,
+				series: data.s,
+				serial_number: sn,
+				status: "ok",
+				project: "",
+				comment: ""
+			};
+			db.add_component(new_rec, function (err, res) {
+				if (err) {
+					//console.log("#", err);
+					err_comps.push({ id: new_id, err: err, msg: "" + new_id + ". " + err });
+				} else {
+					//console.log("#", "ok");
+					ok_comps.push(new_id);
+					var h = {
+						component: new_rec.id,
+						user: req.session.user,
+						status: new_rec.status,
+						code: "component_change",
+						ts: new Date(),
+						title: "Component '" + new_rec.id + "' created",
+						description: "Component '" + new_rec.id + "' was created.",
+						sys_data: new_rec
+					};
+					db.new_history(h, function (err, res) { });
+				}
+				if (new_comp_count == err_comps.length + ok_comps.length) {
+					if (err_comps.length > 0) {
+						var err_msg = "Error(s) occured while generating new components. Error count = " + err_comps.length + ". First message = " + err_comps[0].msg;
+						callback(new Error(err_msg));
+					} else {
+						callback(null, {});
+					}
+				}
+			});
+		})(i);
     }
 };
 
