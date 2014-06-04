@@ -5,15 +5,15 @@ Sensor Management System
 - [Sensor Management System](#sensor-management-system)
 - [Introduction](#introduction)
 - [File structure](#file-structure)
-  - [<i class="icon-folder-open"></i> arhiv_ijs](#i-class=icon-folder-openi-arhiv_ijs)
-  - [<i class="icon-folder-open"></i> docs](#i-class=icon-folder-openi-docs)
-  - [<i class="icon-folder-open"></i> proto](#i-class=icon-folder-openi-proto)
-  - [<i class="icon-folder-open"></i> server](#i-class=icon-folder-openi-server)
+  - [arhiv_ijs](#arhiv-ijs)
+  - [docs](#docs)
+  - [proto](#proto)
+  - [server](#server)
   	- [client](#client)
   	- [docs](#docs)
-  	- [node_modules](#node_modules)
+  	- [node_modules](#node-modules)
   	- [test](#test)
-  	- [test_data](#test_data)
+  	- [test_data](#test-data)
 
 # Introduction
 
@@ -24,19 +24,19 @@ Sensor Management System web application is structured into two parts: client an
 # File structure
 
 
-## <i class="icon-folder-open"></i> arhiv_ijs
+## arhiv ijs
 This is where archive (.zip) files of previous versions are located. Functions as a backup.
 
-## <i class="icon-folder-open"></i> docs
+## docs
 This folder contains various documents ranging from .xsl(x) and .doc(x) files containing data about CREW boxes and VESNA nodes (otherwise saved in database) to images and timeline from planning and developing the SMS system. This is also the location of the file "frs.md", which describes the Sensorlab project, project goals, user groups and user scenarios.
 
-## <i class="icon-folder-open"></i> proto
+## proto
 This folder contains a prototype version of the client-side.
 
-## <i class="icon-folder-open"></i> server
+## server
 This folder contains folders and files currently used by web application. Besides the server-side, as the folder name suggests, it contains the client-side of web application. Subfolders and files are structured as follows:
 
-- ### <i class="icon-folder-open"></i> client
+- ### client
 This is the client-side of SMS. Different file types are placed into separate folders:
 	- #### <i class="icon-folder-open"></i> css
 	   - <i class="icon-file"></i> **bootstrap-responsive.css**
@@ -147,19 +147,19 @@ This is the client-side of SMS. Different file types are placed into separate fo
     - <i class="icon-file"></i> **users.html**
 *This page lists all users by listing each user's: username, full name, status, type and time of last login. There is also an option to add a new user.*
         
-- ### <i class="icon-folder-open"></i> docs
+- ### docs
 
     - <i class="icon-file"></i> **docs_admin.md**
     *This document provides administrator's manual. See user's manual for basic help.*
     - <i class="icon-file"></i> **docs.md**
     *This document provides user's and administrator's manual.*
     
-- ### <i class="icon-folder-open"></i> node_modules
+- ### node modules
 *Folder containing Node.js files.*
 
-- ### <i class="icon-folder-open"></i> test
+- ### test
 
-- ### <i class="icon-folder-open"></i> test_data
+- ###  test data
 
 - <i class="icon-file"></i> **.gitignote**
 *Git uses this file to determine which files and directories to ignore, before you make a commit.*
