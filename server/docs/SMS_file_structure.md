@@ -1,7 +1,19 @@
 Sensor Management System
 ==========================================
 
-[TOC]
+# Table of contents
+- [Sensor Management System](#sensor-management-system)
+- [Introduction](#introduction)
+- [File structure](#file-structure)
+  - [<i class="icon-folder-open"></i> arhiv_ijs](#i-class=icon-folder-openi-arhiv_ijs)
+  - [<i class="icon-folder-open"></i> docs](#i-class=icon-folder-openi-docs)
+  - [<i class="icon-folder-open"></i> proto](#i-class=icon-folder-openi-proto)
+  - [<i class="icon-folder-open"></i> server](#i-class=icon-folder-openi-server)
+  	- [client](#client)
+  	- [docs](#docs)
+  	- [node_modules](#node_modules)
+  	- [test](#test)
+  	- [test_data](#test_data)
 
 # Introduction
 
