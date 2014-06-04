@@ -10,7 +10,7 @@ Sensor Management System
   - [proto](#proto)
   - [server](#server)
   	- [client](#client)
-  	- [docs](#docs)
+  	- [docs](#server-docs)
   	- [node_modules](#node-modules)
   	- [test](#test)
   	- [test_data](#test-data)
@@ -147,7 +147,7 @@ This is the client-side of SMS. Different file types are placed into separate fo
     - <i class="icon-file"></i> **users.html**
 *This page lists all users by listing each user's: username, full name, status, type and time of last login. There is also an option to add a new user.*
         
-- ### docs
+- ### server docs
 
     - <i class="icon-file"></i> **docs_admin.md**
     *This document provides administrator's manual. See user's manual for basic help.*
