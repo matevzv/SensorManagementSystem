@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Login</title>
+        <title>Sensor Management System - Login</title>
         <meta name="keywords" content="login">
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -11,7 +11,7 @@
         <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
         <link href="css/font-awesome.css" rel="stylesheet">
         <link href="css/carvic.css" rel="stylesheet">
-
+       
         <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
 
         <script type="text/javascript" src="js/jquery.js"></script>
@@ -34,11 +34,52 @@
                     $("#divMsg").show();
                 }
             });
+            $(document).ready(function()
+            {
+                /******************
+                COOKIE NOTICE
+                ******************/
+                if(getCookie('show_cookie_message') != 'no')
+                {
+                    $('#cookie_box').show();
+                }
+
+                $('.cookie_box_close').click(function()
+                {
+                    $('#cookie_box').animate({opacity:0 }, "slow");
+                    setCookie('show_cookie_message','no');
+                    return false;
+                });
+            });
+
+            function setCookie(cookie_name, value)
+            {
+                document.cookie = cookie_name+ "=" + escape(value);
+            }
+
+            function getCookie(cookie_name)
+            {
+                if (document.cookie.length>0)
+                {
+                    cookie_start = document.cookie.indexOf(cookie_name + "=");
+                    if (cookie_start != -1)
+                    {
+                        cookie_start = cookie_start + cookie_name.length+1;
+                        cookie_end = document.cookie.indexOf(";",cookie_start);
+                        if (cookie_end == -1)
+                        {
+                            cookie_end = document.cookie.length;
+                        }
+                        return unescape(document.cookie.substring(cookie_start,cookie_end));
+                    }
+                }
+                return "";
+            }
         </script>
     </head>
     <body>
-
-        <div class="navbar navbar-inverse navbar-fixed-top">
+        <!--NAVIGATION bar is omitted in the login page-->
+        <!--<div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container-fluid">
                     <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -46,16 +87,19 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </a>
-                    <a class="brand" href="#">Sensorlab</a>
+                    <a class="brand" href="#"><img src="img/sensorlab-logo-white-32px.png" /></a>
                     <div class="nav-collapse collapse">
                         
                     </div>
                 </div>
             </div>
+        </div>-->
+        <div class="container-fluid" style="text-align: center; position: absolute; top: 45; bottom: 0; left: 40; right: 0; margin: auto;">
+            <a href="http://sensorlab.ijs.si/" target="_blank"><img src="img/sensorlab-logo.png" /></a>
+            <h2><br>Sensor Management System</h2><br>
+            <i>Login to continue</i>
         </div>
-
-        <div class="container-fluid" style="max-width: 400px">
-
+        <div class="container-fluid" style="max-width: 400px; max-width: 350; text-align: center; position:absolute; top: 230; bottom: 0; left: 0; right: 0; margin: auto;">
             <div class="row-fluid well">
                 <!--<div class="span6">
                     <h2><i class="icon-dashboard"></i> Login </h2>
@@ -63,21 +107,25 @@
                 <div class="span12">
                     <form action="/login" method="post">
                         <div>
-                            <label>Username:</label>
-                            <input type="text" name="username" /><br />
+                            <input type="text" name="username" placeholder="Username" style="height: 32px" />                               <br />
                         </div>
                         <div>
-                            <label>Password:</label>
-                            <input type="password" name="password" />
+                            <input type="password" name="password" placeholder="Password" style="height: 32px" />
                         </div>
                         <div>
-                            <input class="btn btn-primary" type="submit" value="Login" />
+                            <input class="btn btn-primary" type="submit" value="Login" style="width: 206px" />
                         </div>
                     </form>
                     <div id="divMsg" class="alert">
-
                     </div>
                 </div>
+            </div>
+        </div>
+        <div id="cookie_box" style="bottom:28">This site uses cookies to maximize your experience. If you continue to use this site we will assume that you are happy with it. <a href="#" class="cookie_box_close">Close [X]</a></div>
+        <div id="footer">
+            <div class="navbar navbar-inner  navbar-fixed-bottom" style="font-size: 11px; font-style: italic; line-height: 11px">
+            <p id="copyright" style="position: absolute; right: 39%">© 2014, SensorLab, E6 @ Institut Jožef Stefan</p>
+            <p id="tech support" style="position: absolute; margin-bottom:0">Technical support:<br>{adnan.bekan, matej.celarc}@ijs.si</p>
             </div>
         </div>
     </body>
