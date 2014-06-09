@@ -113,3 +113,24 @@ Front-page blocks
 /*---------------------------------------------------------*/
 
 
+/***************************
+COOKIE BOX
+***************************/
+#cookie_box
+{ 
+    position: fixed;
+    display: none;
+    bottom: 0px;
+    font-size: 0.8em;
+    z-index: 1000;
+    background:#393939;
+    padding:2px;
+    text-align:center;
+    width:100%;
+    color:#ffffff;
+}
+    #cookie_box a:hover
+    { 
+        color:#ffffff;
+        text-decoration: underline
+    }
