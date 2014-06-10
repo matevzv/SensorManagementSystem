@@ -5,7 +5,7 @@ Sensor Management System
 - [Sensor Management System](#sensor-management-system)
 - [Introduction](#introduction)
 - [File structure](#file-structure)
-  - [arhiv_ijs](#arhiv-ijs)
+  - [archive](#archive)
   - [docs](#docs)
   - [proto](#proto)
   - [server](#server)
@@ -24,8 +24,8 @@ Sensor Management System web application is structured into two parts: client an
 # File structure
 
 
-## arhiv ijs
-This is where archive (.zip) files of previous versions are located. Functions as a backup.
+## archive
+This is where archive (.zip) files of previous versions of the SMS code are located. Functions as a backup.
 
 ## docs
 This folder contains various documents ranging from .xsl(x) and .doc(x) files containing data about CREW boxes and VESNA nodes (otherwise saved in database) to images and timeline from planning and developing the SMS system. This is also the location of the file "frs.md", which describes the Sensorlab project, project goals, user groups and user scenarios.
@@ -34,7 +34,7 @@ This folder contains various documents ranging from .xsl(x) and .doc(x) files co
 This folder contains a prototype version of the client-side.
 
 ## server
-This folder contains folders and files currently used by web application. Besides the server-side, as the folder name suggests, it contains the client-side of web application. Subfolders and files are structured as follows:
+This folder contains folders and files currently used by the web application. Besides the server-side, as the folder name suggests, it contains the client-side of the web application. Subfolders and files are structured as follows:
 
 - ### client
 This is the client-side of SMS. Different file types are placed into separate folders:
@@ -111,15 +111,15 @@ This is the client-side of SMS. Different file types are placed into separate fo
         *http://knockoutjs.com*
 	
     - <i class="icon-file"></i> **admin.html**
-    *This page is the SensorLab Dashboard. It gives users with administrator rights an overview on number and activity of: nodes, their attached sensors, node clusters and users. It is also the page every user with administrator rights is redirected after login.*
+    *This page is the SensorLab Dashboard. It gives users with administrator rights an overview on the number and activity of: nodes, their attached sensors, node clusters and users. It is also the page every user with administrator rights is redirected to after login.*
     - <i class="icon-file"></i> **cluster.html**
-*This page gives you an overview of a single cluster by stating the following information about it: name, id, tag, type, scan option, time of last scan performed and its URL. You can edit or scan the cluster, get an insight on what nodes are a part of it (together with the nodes' names, IDs, statuses and location) and look into cluster's history.*
+*This page gives you an overview of a single cluster by stating the following information about it: name, id, tag, type, scan option, time of last scan performed and its URL. You can edit or scan the cluster, get an insight on what nodes are a part of it (together with the nodes' names, IDs, statuses and location) and look into the cluster's history.*
     - <i class="icon-file"></i> **clusters.html**
 *This page provides an overview of all clusters in the database. They are listed together with their types, IDs, tags, names and URLs. There is an option to search for a cluster by its tag, ID, name or type and an option to add a new cluster.*
     - <i class="icon-file"></i> **component.html**
-*This page provides information about a single component, by listing component's type, product number, production, series, serial number, status, project, comment and history.*
+*This page provides information about a single component, by listing the component's type, product number, production, series, serial number, status, project, comment and history.*
     - <i class="icon-file"></i> **components.html**
-*This page lists all components in the database by listing their type, product number, production, series, serial number, project and status. You have an option to add a new component or search the database for existing components.*
+*This page lists all the components in the database by listing their type, product number, production, series, serial number, project and status. You have an option to add a new component or search the database for existing components.*
     - <i class="icon-file"></i> **help.html**
 *This is the help section. It gives general information about the SMS and descriptions of concepts: component, node, sensor, cluster.*
     - <i class="icon-file"></i> **history.html**
