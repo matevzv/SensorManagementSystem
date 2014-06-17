@@ -20,11 +20,11 @@ Each individual component can be used in at most one node. The system will warn 
  
 ###Node
 
-Node is the main entity that this system cares about. Nodes contain sensors that collect data, they are parts of clusters and they communicate with the central system.
+The node is the main entity that this system cares about. Nodes contain sensors that collect data, they are parts of clusters and they communicate with the central system.
 
 ###Sensor
 
-Each nodes can have several sensors attached to it that collect data about different phenomena (temperature, humidity, pressure, etc.). These sensors are entered automatically when system scans the nodes for their data.
+Each node can have several sensors attached to it that collect data about different phenomena (temperature, humidity, pressure, etc.). These sensors are entered automatically when the system scans the nodes for their data.
 
 Data from sensors is also retrieved automatically by the system.
 
