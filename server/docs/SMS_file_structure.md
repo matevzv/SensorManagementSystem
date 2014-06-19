@@ -5,7 +5,6 @@ Sensor Management System
 - [Sensor Management System](#sensor-management-system)
 - [Introduction](#introduction)
 - [File structure](#file-structure)
-  - [archive](#archive)
   - [docs](#docs)
   - [proto](#proto)
   - [server](#server)
@@ -23,9 +22,6 @@ Sensor Management System web application is structured into two parts: client an
 
 # File structure
 
-
-## archive
-This is where archive (.zip) files of previous versions of the SMS code are located. Functions as a backup.
 
 ## docs
 This folder contains various documents ranging from .xsl(x) and .doc(x) files containing data about CREW boxes and VESNA nodes (otherwise saved in database) to images and timeline from planning and developing the SMS system. This is also the location of the file "frs.md", which describes the Sensorlab project, project goals, user groups and user scenarios.

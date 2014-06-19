@@ -27,7 +27,7 @@
                     .tooltip();
             });
         </script>
-        <title>Sensorlab - clusters</title>
+        <title>Sensor Management System - clusters</title>
     </head>
     <body>
 
@@ -40,7 +40,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </a>
-                    <a class="brand" href="admin.html">Sensorlab</a>
+                    <a class="brand" href="admin.html"><img src="img/sensorlab-only-logo-white-21px.png"> SensorLab</a>
                     <div class="nav-collapse collapse">
                         <ul id="ulNav" class="nav">
                             <li class="active"><a href="clusters.html"><i class="icon-sitemap"></i> Clusters</a></li>
@@ -116,7 +116,7 @@
             </div>
 
             <div class="well" data-bind="visible: $root.PageMode() == 'search'">
-                <h2><i class="icon-sitemap"></i> Sensorlab clusters</h2>
+                <h2><i class="icon-sitemap"></i> SMS clusters</h2>
 
                 <div class="row-fluid form-horizontal max-width-form">
                     <div class="span6">
@@ -173,6 +173,7 @@
                 <div class="span12">
                     <table class="table table-hover">
                         <tr>
+                            <th>&nbsp;</th>
                             <th>Type</th>
                             <th>Id</th>
                             <th>Tag</th>
@@ -180,13 +181,16 @@
                             <th>URL</th>
                         </tr>
                         <tbody data-bind="foreach: $root.SearchResult">
-                        <tr data-bind="click: $root.ShowDetails" style="cursor:  pointer">
-                            <td data-bind="text: TypeStr"></td>
-                            <td data-bind="text: Id"></td>
-                            <td data-bind="text: Tag"></td>
-                            <td data-bind="text: Name"></td>
-                            <td data-bind="text: Url"></td>
+                        <tr style="cursor:  pointer">
+                            <td><input type="checkbox" id="checkbox" style="cursor: default" data-bind="click: $root.ToggleChecked"></td>
+                            <td data-bind="text: TypeStr, click: $root.ShowDetails"></td>
+                            <td data-bind="text: Id, click: $root.ShowDetails"></td>
+                            <td data-bind="text: Tag, click: $root.ShowDetails"></td>
+                            <td data-bind="text: Name, click: $root.ShowDetails"></td>
+                            <td data-bind="text: Url, click: $root.ShowDetails"></td>
                         </tr>
+                        <div class="span3 text-light"><button data-bind="click: $root.DeleteClusterList"><i class="icon-trash"></i> Delete selected clusters </button>
+                        </div>
 						</tbody>
                     </table>
                 </div>
