@@ -568,6 +568,7 @@ Carvic.Model.NodesModel = function (callback) {
     var self = this;
 
     self.SearchResult = ko.observableArray();
+    self.CheckedNodes = ko.observableArray();
     self.AdvancedSearch = ko.observable(false);
     self.NodeSearchName = ko.observable("");
     self.NodeSearchId = ko.observable("");
@@ -691,6 +692,42 @@ Carvic.Model.NodesModel = function (callback) {
             }
         });
     };
+    self.ToggleChecked = function (curr_node) {
+        console.log("clicked: " + curr_node.ID);
+        if ( $.inArray(curr_node.ID, self.CheckedNodes()) > -1 ) {
+            self.CheckedNodes.remove(curr_node.ID);
+        }
+        else {
+            self.CheckedNodes.push(curr_node.ID);
+        }
+        return true;
+    }
+
+    self.DeleteNodeList = function () {
+        switch (self.CheckedNodes().length > 0) {
+                case false:
+                    alert("There are no nodes chosen to delete!");
+                    break;
+                default:
+                    if (confirm("You are about to delete:\n" + self.CheckedNodes() + "\n" + "\n" + "Are you sure you want to delete these nodes?")) {
+                        for (i in self.CheckedNodes()) {
+                            var req = {
+                                action: "delete_node",
+                                data: { id: self.CheckedNodes()[i] }
+                            };
+                            Carvic.Utils.Post(req, function (data) {
+                                /*console.log("Node successfully deleted.")*/
+                           });
+                        }
+                        while (self.CheckedNodes().length > 0) {
+                            self.CheckedNodes.pop();
+                        }
+                        self.SearchResult.removeAll();
+                        self.Search();
+                    }
+                    break;
+        }
+    }
 
     self.ShowNodeDetails = function (curr_node) {
         window.location = "node.html?id=" + encodeURI(encodeURI(curr_node.ID));
@@ -1247,6 +1284,7 @@ Carvic.Model.ComponentsModel = function () {
     var self = this;
 
     self.SearchResult = ko.observableArray();
+    self.CheckedComponents = ko.observableArray();
     self.SearchType = ko.observable();
     self.SearchProject = ko.observable("");
     self.SearchComment = ko.observable("");
@@ -1377,12 +1415,54 @@ Carvic.Model.ComponentsModel = function () {
         });
     };
 
+    self.ToggleChecked = function (curr_component) {
+        if ( $.inArray(curr_component.ID(), self.CheckedComponents()) > -1 ) {
+            self.CheckedComponents.remove(curr_component.ID());
+        }
+        else {
+            self.CheckedComponents.push(curr_component.ID());
+        }
+        return true;
+    }
+
+    self.ToggleCheckedAll = function () {
+        console.log(document.getElementById("checkAll").checked);
+        return true;
+        // put code here that puts/removes all components on the current page into CheckedComponents array
+    }
+
     self.StartAddingNewBatch = function () {
         self.PageMode("new_batch");
     }
     self.CancelAddingNewBatch = function () {
         self.PageMode("search");
     }
+
+    self.DeleteComponentList = function () {
+        switch (self.CheckedComponents().length > 0) {
+            case false:
+                alert("There are no components chosen to delete!");
+                break;
+            default:
+                if (confirm("You chose:\n" + self.CheckedComponents() + "\n" + "\n" + "Are you sure you want to delete these components?")) {
+                    for (i in self.CheckedComponents()) {
+                        var req = {
+                            action: "delete_component",
+                            data: { id: self.CheckedComponents()[i] }
+                        };
+                        Carvic.Utils.Post(req, function (data) {
+                            //console.log("Deleted component with ID: " + self.CheckedComponents()[i])
+                        });
+                    }
+                    while (self.CheckedComponents().length > 0) {
+                            self.CheckedComponents.pop();
+                        }
+                    self.SearchResult.removeAll();
+                    self.Search();
+                }
+                break;
+        }
+    };
 
     self.Search();
 }
@@ -1549,6 +1629,7 @@ Carvic.Model.ClustersModel = function () {
 
     self.PageMode = ko.observable("search"); // values: search, new
     self.SearchResult = ko.observableArray();
+    self.CheckedClusters = ko.observableArray();
     self.ResultCount = ko.computed(function () {
         return (self.SearchResult() == undefined ? 0 : self.SearchResult().length);
     }, self);
@@ -1631,6 +1712,46 @@ Carvic.Model.ClustersModel = function () {
     }
     self.CancelAddingNew = function () {
         self.PageMode("search");
+    }
+    self.ToggleChecked = function (curr_cluster) {
+        if ( $.inArray(curr_cluster.Id(), self.CheckedClusters()) > -1 ) {
+            self.CheckedClusters.remove(curr_cluster.Id());
+        }
+        else {
+            self.CheckedClusters.push(curr_cluster.Id());
+        }
+        return true;
+    }
+    self.ToggleCheckedAll = function () {
+        console.log(document.getElementById("checkAll").checked);
+        return true;
+    }
+    self.DeleteClusterList = function () {
+        switch (self.CheckedClusters().length > 0) {
+                case false:
+                    alert("There are no clusters chosen to delete!");
+                    break;
+                default:
+                    if (confirm("You are about to delete:\n" + self.CheckedClusters() + "\n" + "\n" + "Are you sure you want to delete these clusters?")) {
+                        for (i in self.CheckedClusters()) {
+                            if(confirm("This cluster might contain nodes:\n" + self.CheckedClusters()[i] + "\n" + "\n" + "Are you shure you want to delete this cluster?")) {
+                                var req = {
+                                    action: "delete_cluster",
+                                    data: { id: self.CheckedClusters()[i] }
+                                };
+                                Carvic.Utils.Post(req, function (data) {
+                                    //console.log("Cluster successfully deleted.")
+                               });
+                            }
+                        }
+                        while (self.CheckedClusters().length > 0) {
+                            self.CheckedClusters.pop();
+                        }
+                        self.SearchResult.removeAll();
+                        self.Search();
+                    }
+                    break;
+        }
     }
 }
 

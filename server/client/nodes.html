@@ -38,7 +38,7 @@
                 });
             });
         </script>
-        <title>Sensorlab - nodes</title>
+        <title>Sensor Management System - nodes</title>
     </head>
     <body>
 
@@ -51,7 +51,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </a>
-                    <a class="brand" href="admin.html">Sensorlab</a>
+                    <a class="brand" href="admin.html"><img src="img/sensorlab-only-logo-white-21px.png"> SensorLab</a>
                     <div class="nav-collapse collapse">
                         <ul id="ulNav" class="nav">
                             <li><a href="clusters.html"><i class="icon-sitemap"></i> Clusters</a></li>
@@ -72,7 +72,7 @@
         <div class="container-fluid">
 
             <div class="well">
-                <h2><i class="icon-map-marker"></i> Sensorlab nodes</h2>
+                <h2><i class="icon-map-marker"></i> SMS nodes</h2>
                 <div class="row-fluid form-horizontal max-width-form">
                     <div class="span6">
 
@@ -205,6 +205,7 @@
                 <div class="span12">
                     <table class="table table-hover">
                         <tr>
+                            <th>&nbsp;</th>
                             <th>ID</th>
                             <th>Name</th>
                             <th>Status</th>
@@ -212,16 +213,19 @@
                             <th>Sensors</th>
                         </tr>
                         <tbody data-bind="foreach: $root.SearchResult">
-                        <tr data-bind="click: $root.ShowNodeDetails" style="cursor:  pointer">
-                            <td data-bind="text: ID"></td>
-                            <td data-bind="text: Name"></td>
+                        <tr style="cursor:  pointer">
+                            <td><input type="checkbox" id="checkbox" style="cursor: default" data-bind="click: $root.ToggleChecked"></td>
+                            <td data-bind="text: ID, click: $root.ShowNodeDetails"></td>
+                            <td data-bind="text: Name, click: $root.ShowNodeDetails"></td>
                             <td>
-                                <span data-bind="css: { color_error: Status() == 'unknown', color_ok: Status() == 'active', color_warning: Status() == 'inactive' }"><i class="icon-circle"></i></span>
-                                <span data-bind="text: Status"></span>
+                                <span data-bind="css: { color_error: Status() == 'unknown', color_ok: Status() == 'active', color_warning: Status() == 'inactive' }, click: $root.ShowNodeDetails"><i class="icon-circle"></i></span>
+                                <span data-bind="text: Status, click: $root.ShowNodeDetails"></span>
                             </td>
-                            <td data-bind="text: ClusterName"></td>
-                            <td data-bind="text: Sensors"></td>
+                            <td data-bind="text: ClusterName, click: $root.ShowNodeDetails"></td>
+                            <td data-bind="text: Sensors, click: $root.ShowNodeDetails"></td>
                         </tr>
+                        <div class="span3 text-light"><button data-bind="click: $root.DeleteNodeList, visible: $root.SomethingToDelete"><i class="icon-trash"></i> Delete selected nodes </button>
+                        </div>
 						</tbody>
                     </table>
                 </div>

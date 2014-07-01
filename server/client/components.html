@@ -32,7 +32,7 @@
                 });
             });
         </script>
-        <title>Sensorlab - components</title>
+        <title>Sensor Management System - components</title>
     </head>
     <body>
 
@@ -45,7 +45,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </a>
-                    <a class="brand" href="admin.html">Sensorlab</a>
+                    <a class="brand" href="admin.html"><img src="img/sensorlab-only-logo-white-21px.png"> SensorLab</a>
                     <div class="nav-collapse collapse">
                         <ul id="ulNav" class="nav">
                             <li><a href="clusters.html"><i class="icon-sitemap"></i> Clusters</a></li>
@@ -67,7 +67,7 @@
 
             <div class="row-fluid">
                 <div class="span12 well">
-                    <h2><i class="icon-cogs"></i> Sensorlab components</h2>
+                    <h2><i class="icon-cogs"></i> SMS components</h2>
 
                     <div class="row-fluid form-horizontal max-width-form" data-bind="visible: $root.PageMode() == 'search'">
                         <div class="span6">
@@ -213,6 +213,7 @@
                 <div class="span12">
                     <table class="table table-hover">
                         <tr>
+                            <th>&nbsp;</th>
                             <th>Type</th>
                             <th>Product number</th>
                             <th>Production</th>
@@ -222,15 +223,18 @@
                             <th>Status</th>
                         </tr>
                         <tbody data-bind="foreach: $root.SearchResult">
-                        <tr data-bind="css: { error: Status() == 'error', warning: Status() == 'in_repair' }, click: $root.ShowDetails" style="cursor:  pointer">
-                            <td data-bind="text: Type"></td>
-                            <td data-bind="text: PN"></td>
-                            <td data-bind="text: P"></td>
-                            <td data-bind="text: S"></td>
-                            <td data-bind="text: SN"></td>
-                            <td data-bind="text: Project"></td>
-                            <td data-bind="text: StatusStr"></td>
+                        <tr data-bind="css: { error: Status() == 'error', warning: Status() == 'in_repair' }" style="cursor:  pointer">
+                            <td><input type="checkbox" id="checkbox" style="cursor: default" data-bind="click: $root.ToggleChecked"></td>
+                            <td data-bind="text: Type, click: $root.ShowDetails"></td>
+                            <td data-bind="text: PN, click: $root.ShowDetails"></td>
+                            <td data-bind="text: P, click: $root.ShowDetails"></td>
+                            <td data-bind="text: S, click: $root.ShowDetails"></td>
+                            <td data-bind="text: SN, click: $root.ShowDetails"></td>
+                            <td data-bind="text: Project, click: $root.ShowDetails"></td>
+                            <td data-bind="text: StatusStr, click: $root.ShowDetails"></td>
                         </tr>
+                        <div class="span3 text-light"><button data-bind="click: $root.DeleteComponentList"><i class="icon-trash"></i> Delete selected components </button>
+                        </div>
 						</tbody>
                     </table>
                 </div>
