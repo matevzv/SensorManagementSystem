@@ -96,4 +96,4 @@ To insert dummy data into your database type:
 
     $ node top.js run
 
-Now open your web browser and type http://localhost:3000 , to login use u:_vik_  p:_vik_.
+Now open your web browser and visit [http://localhost:3000](http://localhost:3000/), to login use u:_vik_  p:_vik_.
