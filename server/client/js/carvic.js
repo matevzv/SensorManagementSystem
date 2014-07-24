@@ -1770,6 +1770,7 @@ Carvic.Model.ClusterModel = function () {
     self.Tag = ko.observable();
     self.Name = ko.observable();
     self.Url = ko.observable();
+    self.ClusterMapUrl = ko.observable("");
     self.Scan = ko.observable(false);
     self.Comment = ko.observable();
     self.LastScan = ko.observable();
@@ -1802,6 +1803,7 @@ Carvic.Model.ClusterModel = function () {
             self.Id(obj.id);
             self.Tag(obj.tag);
             self.Url(obj.url);
+            self.ClusterMapUrl("map.html?type=cluster&id=" + encodeURI(obj.id));
             self.Scan(obj.scan);
             self.Comment(obj.comment);
             if (obj.last_scan) {
