@@ -144,8 +144,7 @@
                                 <textarea class="input input-xlarge" id="inComment" data-bind="value: Comment, visible: $root.Editing() == true" rows="5" title="Optional comment for this cluster."></textarea>
                             </div>
                         </div>
-
-
+                        <!---->
                         <div class="control-group" data-bind="visible: $root.Editing() == true">
                             <label class="control-label" for="btnSaveCluster"></label>
                             <div class="controls">
@@ -154,8 +153,10 @@
                             </div>
                         </div>
                     </div>
+                    <div style="padding: 10px">
+                            <a class="btn" data-bind="attr: { href: $root.ClusterMapUrl() } " target="_blank">Show on map</a>
+                    </div>
                 </div>
-
                 <div class="span6">
 
                     <ul class="nav nav-tabs">
