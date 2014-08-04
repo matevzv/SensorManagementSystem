@@ -3,7 +3,7 @@ SensorManagementSystem
 
 
 ## Installation in Linux
-Installation was performed on Ubuntu 12.04
+Installation was performed on Ubuntu 12.04 & Ubuntu 14.04 .
 
 ### Prerequisites  
 
@@ -31,9 +31,8 @@ Second method is to add PPA maintained by Chris Lea. This will give you more rec
     
     $ sudo add-apt-repository ppa:chris-lea/node.js
     $ sudo apt-get update
-    $ sudo install nodejs
-    $ sudo install npm
-
+    $ sudo apt-get install nodejs
+    
 ##### Test node.js
 
     $ echo -e '// Call the console.log function.\nconsole.log("Hello World");' |  tee test_node.js
@@ -84,12 +83,12 @@ For the further steps we assume that your cursor is pointing to the _server_ dir
 #### 2. Install SMS dependencies
 To install SMS dependencies using _npm_ package manager type:
 
-    $ sudo npm install
+    $ npm install
 
 #### 3. Fill a database with the dummy data
 To insert dummy data into your database type:
     
-    $ sudo node top.js fill_dummy_data
+    $ node top.js fill_dummy_data
 
 #### 4. Run the SMS
  To run SMS type:
