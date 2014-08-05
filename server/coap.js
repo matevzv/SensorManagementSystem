@@ -33,16 +33,26 @@ var CoapHtmlCommunicator = function () {
                 callback(new Error("CoapHtml communicator initialization - missing node list with IPs"));
                 return;
             }
+            
             cluster_data = cdata;
 
             tmpl_url = tmpl_url.replace("{bridge}", cdata.url);
             tmpl_list = tmpl_url + tmpl_list.replace(/\//g, "\\");
             tmpl_data = tmpl_url + tmpl_data.replace(/\//g, "\\");
             tmpl_metadata = tmpl_url + tmpl_metadata.replace(/\//g, "\\");
+            
+            //check CoapHttp bridge(proxy) status   
+            http_client.get_data(cdata.url,function(err){
+				 if (err) {
+					console.log("CoapHttp bridge is not working!");
+					return callback(err);
+				}
+					 
+				 initialized = true;
+                 console.log("CoapHtml communicator initialized.");
+			});
 
-
-            initialized = true;
-            console.log("CoapHtml communicator initialized.");
+          
         }
         callback(null);
     };
