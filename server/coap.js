@@ -48,8 +48,8 @@ var CoapHtmlCommunicator = function () {
 					return callback(err);
 				}
 					 
-				 initialized = true;
-                 console.log("CoapHtml communicator initialized.");
+				initialized = true;
+				console.log("CoapHtml communicator initialized.");
 			});
 
           
