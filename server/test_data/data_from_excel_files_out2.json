@@ -5335,7 +5335,7 @@
     }
   ],
   "sensor_history": [],
-"users": [
+  "users": [
     {
       "username": "ado",
       "full_name": "ado",
@@ -5438,3 +5438,4 @@
     }
   ],
   "logins": []
+}
