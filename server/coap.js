@@ -50,11 +50,9 @@ var CoapHtmlCommunicator = function () {
 					 
 				initialized = true;
 				console.log("CoapHtml communicator initialized.");
+				callback(null);
 			});
-
-          
         }
-        callback(null);
     };
 
     self.find_node = function (network_address) {
