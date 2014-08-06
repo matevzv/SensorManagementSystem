@@ -42,7 +42,7 @@ var CoapHtmlCommunicator = function () {
             tmpl_metadata = tmpl_url + tmpl_metadata.replace(/\//g, "\\");
             
             //check CoapHttp bridge(proxy) status   
-            http_client.get_data(cdata.url,function(err){
+            http_client.get_data("http://"+cdata.url,function(err){
 				 if (err) {
 					console.log("CoapHttp bridge is not working!");
 					return callback(err);
