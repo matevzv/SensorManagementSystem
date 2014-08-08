@@ -32,6 +32,12 @@ Carvic.Utils = {
             errors.push(err_msg);
         }
     },
+    
+    CheckCondition: function(obj, err_msg, errors) {
+        if (obj) {
+            errors.push(err_msg);
+        }
+    },
 
     AddUsersLink: function () {
         if ($("#liUsers").length == 0)
@@ -279,8 +285,8 @@ Carvic.Model.UsersModel = function () {
 
     self.NewUserUsername = ko.observable("new1");
     self.NewUserFullName = ko.observable("New user");
-    self.NewUserPwd1 = ko.observable();
-    self.NewUserPwd2 = ko.observable();
+    self.NewUserPwd1 = ko.observable("");
+    self.NewUserPwd2 = ko.observable("");
     self.NewUserType = ko.observable();
 
     self.UserTypesArray = Carvic.Consts.UserTypesArray;
@@ -334,7 +340,8 @@ Carvic.Model.UsersModel = function () {
         var errors = [];
         Carvic.Utils.CheckIfEmpty(self.NewUserFullName(), "Full name cannot be empty", errors);
         Carvic.Utils.CheckIfEmpty(self.NewUserUsername(), "Username cannot be empty", errors);
-        Carvic.Utils.CheckIfEmpty(self.NewUserPwd1() !== self.NewUserPwd1(), "Entered password don't match", errors);
+        Carvic.Utils.CheckCondition(self.NewUserPwd1().length < 6, "Password must be long at least 6 characters", errors);
+        Carvic.Utils.CheckCondition(self.NewUserPwd1() !== self.NewUserPwd2(), "Entered password don't match", errors);
         if (errors.length > 0) {
             var s = "Cannot save user:";
             errors.forEach(function (item) { s += "\n- " + item });
@@ -381,8 +388,8 @@ Carvic.Model.UserModel = function () {
     });
     self.CurrentUserBackup = {};
 
-    self.EditUserPwd1 = ko.observable();
-    self.EditUserPwd2 = ko.observable();
+    self.EditUserPwd1 = ko.observable("");
+    self.EditUserPwd2 = ko.observable("");
 
     self.UserTypesArray = Carvic.Consts.UserTypesArray;
     self.UserTypes = ko.observableArray(self.UserTypesArray);
@@ -409,8 +416,11 @@ Carvic.Model.UserModel = function () {
     self.CurrentUserStartEditingPwd = function () {
         self.CurrentUserEditingPwd(true);
     }
+    
     self.CurrentUserChangePwd = function () {
-        if (self.EditUserPwd1() !== self.EditUserPwd2()) {
+        if (self.EditUserPwd1().length < 6) {
+            alert("Password must be long at least 6 characters");       
+        } else if (self.EditUserPwd1() !== self.EditUserPwd2()) {
             alert("Passwords don't match");
         } else {
             var query = {
@@ -418,10 +428,12 @@ Carvic.Model.UserModel = function () {
                 pwd: self.EditUserPwd1()
             };
             Carvic.Utils.Post({ action: "change_pwd", data: query }, function (data) {
+                alert("Password changed successfully");
                 self.CurrentUserEditingPwd(false);
             });
         }
     }
+    
     self.CurrentUserSave = function () {
 
         var errors = [];
@@ -2028,22 +2040,31 @@ Carvic.Model.SettingsModel = function () {
     var self = this;
 
     self.CurrentFullName = ko.observable();
-    self.NewPwd1 = ko.observable();
-    self.NewPwd2 = ko.observable();
+    self.NewPwd1 = ko.observable("");
+    self.NewPwd2 = ko.observable("");
     self.Msg = ko.observable("");
     self.MsgType = ko.observable("");
 
     self.SaveNewFullName = function () {
-        var query = {
-            full_name: self.CurrentFullName()
-        };
-        Carvic.Utils.Post({ action: "change_my_full_name", data: query }, function (data) {
-            self.Msg("Full name changed successfully");
-        });
+        if (self.CurrentFullName() === "") {
+            self.Msg("Full name cannot be empty");
+            self.MsgType("error");
+        } else {
+            var query = {
+                full_name: self.CurrentFullName()
+            };
+            Carvic.Utils.Post({ action: "change_my_full_name", data: query }, function (data) {
+                self.Msg("Full name changed successfully");
+            });
+        }
     };
 
     self.ChangePassword = function () {
-        if (self.NewPwd1() !== self.NewPwd2()) {
+        
+        if (self.NewPwd1().length < 6) {
+            self.Msg("Password must be long at least 6 characters");
+            self.MsgType("error");       
+        } else if (self.NewPwd1() !== self.NewPwd2()) {
             self.Msg("Passwords don't match");
             self.MsgType("error");
         } else {
