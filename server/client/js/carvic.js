@@ -639,6 +639,7 @@ Carvic.Model.NodesModel = function (callback) {
             self.UpdatePageButtons();
         }
         self.SearchResult.removeAll();
+        self.CheckedNodes.removeAll();
 
         var query = { page: self.CurrPage() };
         if (self.NodeSearchId() != "") { query.id = self.NodeSearchId(); }
@@ -692,16 +693,6 @@ Carvic.Model.NodesModel = function (callback) {
             }
         });
     };
-    self.ToggleChecked = function (curr_node) {
-        console.log("clicked: " + curr_node.ID);
-        if ( $.inArray(curr_node.ID, self.CheckedNodes()) > -1 ) {
-            self.CheckedNodes.remove(curr_node.ID);
-        }
-        else {
-            self.CheckedNodes.push(curr_node.ID);
-        }
-        return true;
-    }
 
     self.DeleteNodeList = function () {
         switch (self.CheckedNodes().length > 0) {
@@ -719,16 +710,32 @@ Carvic.Model.NodesModel = function (callback) {
                                 /*console.log("Node successfully deleted.")*/
                            });
                         }
-                        while (self.CheckedNodes().length > 0) {
-                            self.CheckedNodes.pop();
-                        }
+                        self.CheckedNodes.removeAll();
                         self.SearchResult.removeAll();
                         self.Search();
                     }
                     break;
         }
-    }
+    };
+    
+    self.ToggleAll = function () {
+        self.CheckedNodes.removeAll();
+            for(i = 0; i < self.SearchResult().length; i++) {
+                self.CheckedNodes().push((typeof self.SearchResult()[i]().ID != 'string') ? JSON.stringify(self.SearchResult()[i]().ID) : self.SearchResult()[i]().ID);
+            }
+        return self.CheckedNodes();
+    };
 
+    self.SelectAll = ko.dependentObservable({
+        read: function() {
+            return self.CheckedNodes().length === self.SearchResult().length;
+        },
+        write: function() {
+            self.CheckedNodes(self.CheckedNodes().length === self.SearchResult().length ? [] : self.ToggleAll());
+        },
+        owner: self
+    });
+    
     self.ShowNodeDetails = function (curr_node) {
         window.location = "node.html?id=" + encodeURI(encodeURI(curr_node.ID));
     };
@@ -810,7 +817,7 @@ Carvic.Model.SingleNodeModel = function () {
         self.NodeClusterUrl("cluster.html?id=" + encodeURI(data.cluster));
         self.NodeLON(data.loc_lon);
         self.NodeLAT(data.loc_lat);
-        self.NodeMapUrl("map.html?lat=" + encodeURI(data.loc_lat) + "&lon=" + encodeURI(data.loc_lon) + "&title=" + encodeURI("'" + data.name + "' from cluster " + data.cluster_name));
+        self.NodeMapUrl("map.html?type=node&lat=" + encodeURI(data.loc_lat) + "&lon=" + encodeURI(data.loc_lon) + "&id=" + encodeURI(data.id) + "&status=" + encodeURI(data.status));
         self.NodeSN(data.sn);
         self.NodeMAC(data.mac);
         self.NodeNetworkAddress(data.network_addr);
@@ -1350,6 +1357,7 @@ Carvic.Model.ComponentsModel = function () {
             self.UpdatePageButtons();
         }
         self.SearchResult.removeAll();
+        self.CheckedComponents.removeAll();
 
         var query = { page: self.CurrPage() };
         if (self.SearchType() != undefined) { query.type = self.SearchType(); }
@@ -1414,22 +1422,24 @@ Carvic.Model.ComponentsModel = function () {
             self.PageMode("search");
         });
     };
+    
+    self.ToggleAll = function () {
+        self.CheckedComponents.removeAll();
+            for(i = 0; i < self.SearchResult().length; i++) {
+                self.CheckedComponents().push((typeof self.SearchResult()[i]().ID() != 'string') ? JSON.stringify(self.SearchResult()[i]().ID()) : self.SearchResult()[i]().ID());
+            }
+        return self.CheckedComponents();
+    };
 
-    self.ToggleChecked = function (curr_component) {
-        if ( $.inArray(curr_component.ID(), self.CheckedComponents()) > -1 ) {
-            self.CheckedComponents.remove(curr_component.ID());
-        }
-        else {
-            self.CheckedComponents.push(curr_component.ID());
-        }
-        return true;
-    }
-
-    self.ToggleCheckedAll = function () {
-        console.log(document.getElementById("checkAll").checked);
-        return true;
-        // put code here that puts/removes all components on the current page into CheckedComponents array
-    }
+    self.SelectAll = ko.dependentObservable({
+        read: function() {
+            return self.CheckedComponents().length === self.SearchResult().length;
+        },
+        write: function() {
+            self.CheckedComponents(self.CheckedComponents().length === self.SearchResult().length ? [] : self.ToggleAll());
+        },
+        owner: self
+    });    
 
     self.StartAddingNewBatch = function () {
         self.PageMode("new_batch");
@@ -1454,9 +1464,7 @@ Carvic.Model.ComponentsModel = function () {
                             //console.log("Deleted component with ID: " + self.CheckedComponents()[i])
                         });
                     }
-                    while (self.CheckedComponents().length > 0) {
-                            self.CheckedComponents.pop();
-                        }
+                    self.CheckedComponents.removeAll();
                     self.SearchResult.removeAll();
                     self.Search();
                 }
@@ -1651,6 +1659,7 @@ Carvic.Model.ClustersModel = function () {
 
     self.Search = function () {
         self.SearchResult.removeAll();
+        self.CheckedClusters.removeAll();
 
         var query = {};
         if (self.SearchTag() != "") query.tag = self.SearchTag();
@@ -1713,19 +1722,25 @@ Carvic.Model.ClustersModel = function () {
     self.CancelAddingNew = function () {
         self.PageMode("search");
     }
-    self.ToggleChecked = function (curr_cluster) {
-        if ( $.inArray(curr_cluster.Id(), self.CheckedClusters()) > -1 ) {
-            self.CheckedClusters.remove(curr_cluster.Id());
-        }
-        else {
-            self.CheckedClusters.push(curr_cluster.Id());
-        }
-        return true;
+    
+    self.ToggleAll = function () {
+        self.CheckedClusters.removeAll();
+            for(i = 0; i < self.SearchResult().length; i++) {
+                self.CheckedClusters().push((typeof self.SearchResult()[i]().Id() != 'string') ? JSON.stringify(self.SearchResult()[i]().Id()) : self.SearchResult()[i]().Id());
+            }
+        return self.CheckedClusters();
     }
-    self.ToggleCheckedAll = function () {
-        console.log(document.getElementById("checkAll").checked);
-        return true;
-    }
+
+    self.SelectAll = ko.dependentObservable({
+        read: function() {
+            return self.CheckedClusters().length === self.SearchResult().length;
+        },
+        write: function() {
+            self.CheckedClusters(self.CheckedClusters().length === self.SearchResult().length ? [] : self.ToggleAll());
+        },
+        owner: self
+    })
+    
     self.DeleteClusterList = function () {
         switch (self.CheckedClusters().length > 0) {
                 case false:
@@ -1744,9 +1759,7 @@ Carvic.Model.ClustersModel = function () {
                                });
                             }
                         }
-                        while (self.CheckedClusters().length > 0) {
-                            self.CheckedClusters.pop();
-                        }
+                        self.CheckedClusters.removeAll();
                         self.SearchResult.removeAll();
                         self.Search();
                     }
