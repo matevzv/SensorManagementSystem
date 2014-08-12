@@ -233,6 +233,8 @@ exports.change_pwd = function (req, callback) {
             return callback(new Error("Current user (" + req.session.user + ") is not admin and cannot change other user's password."));
         username = req.data.username;
     }
+    if (req.data.pwd.length < 6)
+        	return callback(new Error("Minimal password length is 6 characters"));
     var rec = {
         pwd_hash: utils_hash.create_pwd_hash(req.data.pwd)
     };
@@ -243,6 +245,9 @@ exports.change_pwd = function (req, callback) {
 
 exports.change_my_full_name = function (req, callback) {
     //console.log(req);
+    if (/^\s*$/.test(req.data.full_name)) {
+      return callback(new Error("Full name cannot be empty"));
+    }
     var rec = {
         full_name: req.data.full_name
     };
@@ -274,6 +279,8 @@ exports.get_current_user = function (req, callback) {
 
 exports.new_user = function (req, callback) {
     var rec = req.data;
+    if (rec.pwd.length < 6)
+        return callback(new Error("Minimal password length is 6 characters"));
     var rec2 = {
         username: rec.username,
         full_name: rec.full_name,
