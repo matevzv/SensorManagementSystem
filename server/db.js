@@ -501,6 +501,18 @@ function delete_user(username, callback) {
     db[collection_users].remove({ username: username }, callback);
 };
 
+function user_exists(username, callback) {
+    var query = { username: username };
+    db[collection_users].find(query, function (err, docs) {
+        if (err) {
+            return true;
+        } else if (!docs || docs.length === 0) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+};
 ////////////////////////////////////////////////
 
 function get_logins(username, callback) {
@@ -786,6 +798,7 @@ exports.get_username_map = get_username_map;
 exports.get_user_pwd = get_user_pwd;
 exports.get_user_history = get_user_history;
 exports.get_users = get_users;
+exports.user_exists = user_exists;
 
 exports.new_login = new_login;
 exports.get_logins = get_logins;

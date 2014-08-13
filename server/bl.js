@@ -233,10 +233,12 @@ exports.change_pwd = function (req, callback) {
             return callback(new Error("Current user (" + req.session.user + ") is not admin and cannot change other user's password."));
         username = req.data.username;
     }
-    if (req.data.pwd.length < 6)
-        	return callback(new Error("Minimal password length is 6 characters"));
+    if (req.data.pwd1 !== req.data.pwd2)
+        return callback(new Error("Entered password don't match"));
+    if (req.data.pwd1.length < 6)
+        return callback(new Error("Minimal password length is 6 characters"));
     var rec = {
-        pwd_hash: utils_hash.create_pwd_hash(req.data.pwd)
+        pwd_hash: utils_hash.create_pwd_hash(req.data.pwd1)
     };
     db.update_user(username, rec, function (err, data2) {
         callback(err, {});
@@ -279,19 +281,27 @@ exports.get_current_user = function (req, callback) {
 
 exports.new_user = function (req, callback) {
     var rec = req.data;
-    if (rec.pwd.length < 6)
+    if (!rec.username || rec.username === "")
+        return callback(new Error("Username cannot be empty"));
+    if (!rec.full_name || rec.full_name === "")
+        return callback(new Error("Full name cannot be empty"));
+    if (rec.pwd1 !== rec.pwd2)
+        return callback(new Error("Entered password don't match"));
+    if (rec.pwd1.length < 6)
         return callback(new Error("Minimal password length is 6 characters"));
+    if (db.user_exists(rec.username))
+        return callback(new Error("User exists"));
     var rec2 = {
         username: rec.username,
         full_name: rec.full_name,
-        pwd_hash: utils_hash.create_pwd_hash(rec.pwd),
+        pwd_hash: utils_hash.create_pwd_hash(rec.pwd1),
         status: "active",
         last_login: new Date(),
         last_bad_login: new Date(),
         bad_login_cnt: 0,
         type: rec.type
     };
-    rec.pwd = null;
+    rec.pwd1 = null;
     db.new_user(rec2, function (err, data) {
         var h = {
             node: null,
