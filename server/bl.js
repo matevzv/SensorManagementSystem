@@ -289,10 +289,10 @@ exports.new_user = function (req, callback) {
         return callback(new Error("Entered password don't match"));
     if (rec.pwd1.length < 6)
         return callback(new Error("Minimal password length is 6 characters"));
-    db.get_user(rec.username, function (err, data) {
+    db.get_user(rec.username.toLowerCase(), function (err, data) {
         if (err) {
             var rec2 = {
-                username: rec.username,
+                username: rec.username.toLowerCase(),
                 full_name: rec.full_name,
                 pwd_hash: utils_hash.create_pwd_hash(rec.pwd1),
                 status: "active",
