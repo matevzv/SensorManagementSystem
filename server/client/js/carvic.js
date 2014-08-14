@@ -278,9 +278,9 @@ Carvic.Model.UsersModel = function () {
     }, self);
 
     self.NewUserUsername = ko.observable("new1");
-    self.NewUserFullName = ko.observable("New user");
-    self.NewUserPwd1 = ko.observable();
-    self.NewUserPwd2 = ko.observable();
+    self.NewUserFullName = ko.observable("new user");
+    self.NewUserPwd1 = ko.observable("");
+    self.NewUserPwd2 = ko.observable("");
     self.NewUserType = ko.observable();
 
     self.UserTypesArray = Carvic.Consts.UserTypesArray;
@@ -304,6 +304,10 @@ Carvic.Model.UsersModel = function () {
         self.NewUserEditing(true);
     }
     self.NewUserCancelEditing = function () {
+        document.form.NewUserPwd1.value = "";
+        document.form.NewUserPwd2.value = "";
+        document.form.NewUserFullName.value = "new user";
+        document.form.NewUserUsername.value = "New1"; 
         self.NewUserEditing(false);
     }
 
@@ -331,24 +335,14 @@ Carvic.Model.UsersModel = function () {
     };
 
     self.SaveNewUser = function () {
-        var errors = [];
-        Carvic.Utils.CheckIfEmpty(self.NewUserFullName(), "Full name cannot be empty", errors);
-        Carvic.Utils.CheckIfEmpty(self.NewUserUsername(), "Username cannot be empty", errors);
-        Carvic.Utils.CheckIfEmpty(self.NewUserPwd1() !== self.NewUserPwd1(), "Entered password don't match", errors);
-        if (errors.length > 0) {
-            var s = "Cannot save user:";
-            errors.forEach(function (item) { s += "\n- " + item });
-            alert(s);
-            return;
-        }
-
         var req = {
             action: "new_user",
             data: {
                 username: self.NewUserUsername(),
                 full_name: self.NewUserFullName(),
                 type: self.NewUserType().code,
-                pwd: self.NewUserPwd1()
+                pwd1: self.NewUserPwd1(),
+                pwd2: self.NewUserPwd2()
             }
         };
         Carvic.Utils.Post(req, function (data) {
@@ -381,8 +375,8 @@ Carvic.Model.UserModel = function () {
     });
     self.CurrentUserBackup = {};
 
-    self.EditUserPwd1 = ko.observable();
-    self.EditUserPwd2 = ko.observable();
+    self.EditUserPwd1 = ko.observable("");
+    self.EditUserPwd2 = ko.observable("");
 
     self.UserTypesArray = Carvic.Consts.UserTypesArray;
     self.UserTypes = ko.observableArray(self.UserTypesArray);
@@ -409,19 +403,21 @@ Carvic.Model.UserModel = function () {
     self.CurrentUserStartEditingPwd = function () {
         self.CurrentUserEditingPwd(true);
     }
+    
     self.CurrentUserChangePwd = function () {
-        if (self.EditUserPwd1() !== self.EditUserPwd2()) {
-            alert("Passwords don't match");
-        } else {
-            var query = {
-                username: self.CurrentUser().Username(),
-                pwd: self.EditUserPwd1()
-            };
-            Carvic.Utils.Post({ action: "change_pwd", data: query }, function (data) {
-                self.CurrentUserEditingPwd(false);
-            });
-        }
-    }
+        var query = {
+            username: self.CurrentUser().Username(),
+            pwd1: self.EditUserPwd1(),
+            pwd2: self.EditUserPwd2()
+        };
+        Carvic.Utils.Post({ action: "change_pwd", data: query }, function (data) {
+            alert("Password changed successfully");
+            document.form.EditPwd1.value = "";
+            document.form.EditPwd2.value = "";
+            self.CurrentUserEditingPwd(false);
+        });
+    } 
+    
     self.CurrentUserSave = function () {
 
         var errors = [];
@@ -452,6 +448,8 @@ Carvic.Model.UserModel = function () {
         self.CurrentUserEditing(false);
     }
     self.CurrentUserCancelEditingPwd = function () {
+        document.form.EditPwd1.value = "";
+        document.form.EditPwd2.value = "";
         self.CurrentUserEditingPwd(false);
     }
 
@@ -2027,9 +2025,9 @@ Carvic.Model.SettingsModel = function () {
 
     var self = this;
 
-    self.CurrentFullName = ko.observable();
-    self.NewPwd1 = ko.observable();
-    self.NewPwd2 = ko.observable();
+    self.CurrentFullName = ko.observable("");
+    self.NewPwd1 = ko.observable("");
+    self.NewPwd2 = ko.observable("");
     self.Msg = ko.observable("");
     self.MsgType = ko.observable("");
 
@@ -2038,22 +2036,21 @@ Carvic.Model.SettingsModel = function () {
             full_name: self.CurrentFullName()
         };
         Carvic.Utils.Post({ action: "change_my_full_name", data: query }, function (data) {
-            self.Msg("Full name changed successfully");
+            alert("Full name changed successfully");
         });
     };
 
     self.ChangePassword = function () {
-        if (self.NewPwd1() !== self.NewPwd2()) {
-            self.Msg("Passwords don't match");
-            self.MsgType("error");
-        } else {
-            var query = {
-                pwd: self.NewPwd1()
-            };
-            Carvic.Utils.Post({ action: "change_pwd", data: query }, function (data) {
-                self.Msg("Password changed successfully");
-            });
-        }
+        var query = {
+            pwd1: self.NewPwd1(),
+            pwd2: self.NewPwd2()
+        };
+        Carvic.Utils.Post({ action: "change_pwd", data: query }, function (data) {
+            alert("Password changed successfully");
+            document.form.pwd1.value = "";
+            document.form.pwd2.value = "";
+        });
+        
     };
 }
 
