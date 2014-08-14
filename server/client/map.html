@@ -82,7 +82,6 @@
             };
 
             var map = new google.maps.Map(document.getElementById('map'), {
-              mapTypeId: google.maps.MapTypeId.HYBRID,
               mapTypeControl: true,
               streetViewControl: true,
               panControl: true
@@ -166,7 +165,7 @@
             } else {
                 var title = getParameterByName("title") || "Target node";
                 var myLatlng = new google.maps.LatLng(lat, lon);
-                var mapOptions = { zoom: 16, center: myLatlng, mapTypeId: google.maps.MapTypeId.HYBRID };
+                var mapOptions = { zoom: 16, center: myLatlng };
                 var map = new google.maps.Map(document.getElementById('map'), mapOptions);
                 var marker = new google.maps.Marker({ position: myLatlng, map: map, title: title, icon: "http://maps.google.com/mapfiles/ms/icons/" + (getParameterByName("status") == "active" ? "green-dot.png" : "red-dot.png")});
                 var infowindow = new google.maps.InfoWindow({
@@ -185,7 +184,7 @@
             var lon = 14.487761;
             var title = getParameterByName("title") || "Target node";
             var myLatlng = new google.maps.LatLng(lat, lon);
-            var mapOptions = { zoom: 9, center: myLatlng, mapTypeId: google.maps.MapTypeId.HYBRID };
+            var mapOptions = { zoom: 9, center: myLatlng };
             var map = new google.maps.Map(document.getElementById('map'), mapOptions);
             var marker = new google.maps.Marker({ position: myLatlng, map: map, title: title });
             var infowindow = new google.maps.InfoWindow({
