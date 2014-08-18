@@ -70,50 +70,50 @@
 
             <div class="row-fluid" style="padding-bottom:  10px;" data-bind="visible: NewUserEditing() == true">
                 <div class="form-horizontal">
-
-                    <div class="control-group">
-                        <label class="control-label" for="inUsername">Username </label>
-                        <div class="controls">
-                            <input id="inUsername" type="text" class="input input-medium" data-bind="value: NewUserUsername" title="Username the will be used in the system - it cannot be changed later!" />
+                    <form name="form">
+                        <div class="control-group">
+                            <label class="control-label" for="inUsername">Username </label>
+                            <div class="controls">
+                                <input id="inUsername" type="text" class="input input-medium" data-bind="value: NewUserUsername" title="Username the will be used in the system - it cannot be changed later!" name="NewUserUsername"/>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="control-group">
-                        <label class="control-label" for="inFullName">Full name </label>
-                        <div class="controls">
-                            <input id="inFullName" type="text" class="input input-medium" data-bind="value: NewUserFullName" title="User's full name" />
+                        <div class="control-group">
+                            <label class="control-label" for="inFullName">Full name </label>
+                            <div class="controls">
+                                <input id="inFullName" type="text" class="input input-medium" data-bind="value: NewUserFullName" title="User's full name" name="NewUserFullName" />
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="control-group">
-                        <label class="control-label" for="inType">Type </label>
-                        <div class="controls">
-                            <select id="inType" class="input input-medium" data-bind="options: UserTypes, optionsText: 'title', value: NewUserType" title="User's type"></select>
+                        <div class="control-group">
+                            <label class="control-label" for="inType">Type </label>
+                            <div class="controls">
+                                <select id="inType" class="input input-medium" data-bind="options: UserTypes, optionsText: 'title', value: NewUserType" title="User's type" value="" ></select>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="control-group">
-                        <label class="control-label" for="inPwd1">Password </label>
-                        <div class="controls">
-                            <input id="inPwd1" type="password" class="input input-medium" data-bind="value: NewUserPwd1" />
+                        <div class="control-group">
+                            <label class="control-label" for="inPwd1">Password </label>
+                            <div class="controls">
+                                <input id="inPwd1" type="password" class="input input-medium" data-bind="value: NewUserPwd1" name="NewUserPwd1" />
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="control-group">
-                        <label class="control-label" for="inPwd2">Password again </label>
-                        <div class="controls">
-                            <input id="inPwd2" type="password" class="input input-medium" data-bind="value: NewUserPwd2" />
+                        <div class="control-group">
+                            <label class="control-label" for="inPwd2">Password again </label>
+                            <div class="controls">
+                                <input id="inPwd2" type="password" class="input input-medium" data-bind="value: NewUserPwd2" name="NewUserPwd2" />
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="control-group">
-                        <label class="control-label" for="btnSaveNewUser"></label>
-                        <div class="controls">
-                            <button id="btnSaveNewUser" class="btn btn-primary" type="button" data-bind="click: $root.SaveNewUser"><i class="icon-save"></i> Save </button>
-                            <button id="btnCancelSaveNewUser" class="btn" type="button" data-bind="click: $root.NewUserCancelEditing">Cancel </button>
+                        <div class="control-group">
+                            <label class="control-label" for="btnSaveNewUser"></label>
+                            <div class="controls">
+                                <button id="btnSaveNewUser" class="btn btn-primary" type="button" data-bind="click: $root.SaveNewUser"><i class="icon-save"></i> Save </button>
+                                <button id="btnCancelSaveNewUser" class="btn" type="button" data-bind="click: $root.NewUserCancelEditing">Cancel </button>
+                            </div>
                         </div>
-                    </div>
-
+                    </form>
                 </div>
             </div>
 

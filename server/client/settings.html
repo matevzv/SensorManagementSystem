@@ -63,12 +63,6 @@
                 </div>
             </div>
 
-            <div class="row-fluid">
-                <div class="span12 alert" data-bind="visible: Msg().length > 0 ">
-                    <span data-bind="text: Msg"></span>
-                </div>
-            </div>
-
             <div class="row-fluid ">
                 <div class="span12">
                     <ul class="nav nav-tabs">
@@ -97,26 +91,28 @@
                     <li class="active"><a href="#">Change your password</a></li>
                 </ul>
                 <div class="span8">
-                    <div class="form-horizontal">
-                        <div class="control-group">
-                            <label class="control-label" for="inP1">New password</label>
-                            <div class="controls">
-                                <input type="password" id="inP1" placeholder="Enter new password" data-bind="value: NewPwd1" />
+                    <form name="form">
+                        <div class="form-horizontal">
+                            <div class="control-group">
+                                <label class="control-label" for="inP1">New password</label>
+                                <div class="controls">
+                                    <input type="password" id="inP1" placeholder="Enter new password" data-bind="value: NewPwd1" name="pwd1" />
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="inP2">New password again</label>
+                                <div class="controls">
+                                    <input type="password" id="inP2" placeholder="Repeat the new password" data-bind="value: NewPwd2" name="pwd2" />
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label" for="inBtn2"></label>
+                                <div class="controls">
+                                    <button id="inBtn2" class="btn" type="button" data-bind="click: ChangePassword"><i class="icon-save"></i> Change password </button>
+                                </div>
                             </div>
                         </div>
-                        <div class="control-group">
-                            <label class="control-label" for="inP2">New password again</label>
-                            <div class="controls">
-                                <input type="password" id="inP2" placeholder="Repeat the new password" data-bind="value: NewPwd2" />
-                            </div>
-                        </div>
-                        <div class="control-group">
-                            <label class="control-label" for="inBtn2"></label>
-                            <div class="controls">
-                                <button id="inBtn2" class="btn" type="button" data-bind="click: ChangePassword"><i class="icon-save"></i> Change password </button>
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

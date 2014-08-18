@@ -132,31 +132,32 @@
                         </div>
 
                         <div data-bind="visible: $root.CurrentUserEditingPwd() == true">
+                            <form name="form">
+                                <div class="form-horizontal">
 
-                            <div class="form-horizontal">
+                                    <div class="control-group">
+                                        <label class="control-label" for="inPwd1">New password </label>
+                                        <div class="controls">
+                                            <input id="inPwd1" type="password" class="input-medium" data-bind="value: $root.EditUserPwd1" name="EditPwd1" />
+                                        </div>
+                                    </div>
 
-                                <div class="control-group">
-                                    <label class="control-label" for="inPwd1">New password </label>
-                                    <div class="controls">
-                                        <input id="inPwd1" type="password" class="input-medium" data-bind="value: $root.EditUserPwd1" />
+                                    <div class="control-group">
+                                        <label class="control-label" for="inPwd2">New password again </label>
+                                        <div class="controls">
+                                            <input id="inPwd2" type="password" class="input-medium" data-bind="value: $root.EditUserPwd2" name="EditPwd2" />
+                                        </div>
+                                    </div>
+
+                                    <div class="control-group">
+                                        <label class="control-label" for="btnSaveNewUserPwd"></label>
+                                        <div class="controls">
+                                            <button id="btnSaveNewUserPwd" class="btn btn-primary" type="button" data-bind="click: $root.CurrentUserChangePwd"><i class="icon-save"></i> Change password </button>
+                                            <button id="btnCancelEditPwd" class="btn" type="button" data-bind="click: $root.CurrentUserCancelEditingPwd">Cancel </button>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div class="control-group">
-                                    <label class="control-label" for="inPwd2">New password again </label>
-                                    <div class="controls">
-                                        <input id="inPwd2" type="password" class="input-medium" data-bind="value: $root.EditUserPwd2" />
-                                    </div>
-                                </div>
-
-                                <div class="control-group">
-                                    <label class="control-label" for="btnSaveNewUserPwd"></label>
-                                    <div class="controls">
-                                        <button id="btnSaveNewUserPwd" class="btn btn-primary" type="button" data-bind="click: $root.CurrentUserChangePwd"><i class="icon-save"></i> Change password </button>
-                                        <button id="btnCancelEditPwd" class="btn" type="button" data-bind="click: $root.CurrentUserCancelEditingPwd">Cancel </button>
-                                    </div>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
