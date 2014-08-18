@@ -278,9 +278,9 @@ Carvic.Model.UsersModel = function () {
     }, self);
 
     self.NewUserUsername = ko.observable("new1");
-    self.NewUserFullName = ko.observable("New user");
-    self.NewUserPwd1 = ko.observable();
-    self.NewUserPwd2 = ko.observable();
+    self.NewUserFullName = ko.observable("new user");
+    self.NewUserPwd1 = ko.observable("");
+    self.NewUserPwd2 = ko.observable("");
     self.NewUserType = ko.observable();
 
     self.UserTypesArray = Carvic.Consts.UserTypesArray;
@@ -304,6 +304,10 @@ Carvic.Model.UsersModel = function () {
         self.NewUserEditing(true);
     }
     self.NewUserCancelEditing = function () {
+        document.form.NewUserPwd1.value = "";
+        document.form.NewUserPwd2.value = "";
+        document.form.NewUserFullName.value = "new user";
+        document.form.NewUserUsername.value = "New1"; 
         self.NewUserEditing(false);
     }
 
@@ -331,24 +335,14 @@ Carvic.Model.UsersModel = function () {
     };
 
     self.SaveNewUser = function () {
-        var errors = [];
-        Carvic.Utils.CheckIfEmpty(self.NewUserFullName(), "Full name cannot be empty", errors);
-        Carvic.Utils.CheckIfEmpty(self.NewUserUsername(), "Username cannot be empty", errors);
-        Carvic.Utils.CheckIfEmpty(self.NewUserPwd1() !== self.NewUserPwd1(), "Entered password don't match", errors);
-        if (errors.length > 0) {
-            var s = "Cannot save user:";
-            errors.forEach(function (item) { s += "\n- " + item });
-            alert(s);
-            return;
-        }
-
         var req = {
             action: "new_user",
             data: {
                 username: self.NewUserUsername(),
                 full_name: self.NewUserFullName(),
                 type: self.NewUserType().code,
-                pwd: self.NewUserPwd1()
+                pwd1: self.NewUserPwd1(),
+                pwd2: self.NewUserPwd2()
             }
         };
         Carvic.Utils.Post(req, function (data) {
@@ -381,8 +375,8 @@ Carvic.Model.UserModel = function () {
     });
     self.CurrentUserBackup = {};
 
-    self.EditUserPwd1 = ko.observable();
-    self.EditUserPwd2 = ko.observable();
+    self.EditUserPwd1 = ko.observable("");
+    self.EditUserPwd2 = ko.observable("");
 
     self.UserTypesArray = Carvic.Consts.UserTypesArray;
     self.UserTypes = ko.observableArray(self.UserTypesArray);
@@ -409,19 +403,21 @@ Carvic.Model.UserModel = function () {
     self.CurrentUserStartEditingPwd = function () {
         self.CurrentUserEditingPwd(true);
     }
+    
     self.CurrentUserChangePwd = function () {
-        if (self.EditUserPwd1() !== self.EditUserPwd2()) {
-            alert("Passwords don't match");
-        } else {
-            var query = {
-                username: self.CurrentUser().Username(),
-                pwd: self.EditUserPwd1()
-            };
-            Carvic.Utils.Post({ action: "change_pwd", data: query }, function (data) {
-                self.CurrentUserEditingPwd(false);
-            });
-        }
-    }
+        var query = {
+            username: self.CurrentUser().Username(),
+            pwd1: self.EditUserPwd1(),
+            pwd2: self.EditUserPwd2()
+        };
+        Carvic.Utils.Post({ action: "change_pwd", data: query }, function (data) {
+            alert("Password changed successfully");
+            document.form.EditPwd1.value = "";
+            document.form.EditPwd2.value = "";
+            self.CurrentUserEditingPwd(false);
+        });
+    } 
+    
     self.CurrentUserSave = function () {
 
         var errors = [];
@@ -452,6 +448,8 @@ Carvic.Model.UserModel = function () {
         self.CurrentUserEditing(false);
     }
     self.CurrentUserCancelEditingPwd = function () {
+        document.form.EditPwd1.value = "";
+        document.form.EditPwd2.value = "";
         self.CurrentUserEditingPwd(false);
     }
 
@@ -639,6 +637,7 @@ Carvic.Model.NodesModel = function (callback) {
             self.UpdatePageButtons();
         }
         self.SearchResult.removeAll();
+        self.CheckedNodes.removeAll();
 
         var query = { page: self.CurrPage() };
         if (self.NodeSearchId() != "") { query.id = self.NodeSearchId(); }
@@ -692,16 +691,6 @@ Carvic.Model.NodesModel = function (callback) {
             }
         });
     };
-    self.ToggleChecked = function (curr_node) {
-        console.log("clicked: " + curr_node.ID);
-        if ( $.inArray(curr_node.ID, self.CheckedNodes()) > -1 ) {
-            self.CheckedNodes.remove(curr_node.ID);
-        }
-        else {
-            self.CheckedNodes.push(curr_node.ID);
-        }
-        return true;
-    }
 
     self.DeleteNodeList = function () {
         switch (self.CheckedNodes().length > 0) {
@@ -719,16 +708,32 @@ Carvic.Model.NodesModel = function (callback) {
                                 /*console.log("Node successfully deleted.")*/
                            });
                         }
-                        while (self.CheckedNodes().length > 0) {
-                            self.CheckedNodes.pop();
-                        }
+                        self.CheckedNodes.removeAll();
                         self.SearchResult.removeAll();
                         self.Search();
                     }
                     break;
         }
-    }
+    };
+    
+    self.ToggleAll = function () {
+        self.CheckedNodes.removeAll();
+            for(i = 0; i < self.SearchResult().length; i++) {
+                self.CheckedNodes().push((typeof self.SearchResult()[i]().ID != 'string') ? JSON.stringify(self.SearchResult()[i]().ID) : self.SearchResult()[i]().ID);
+            }
+        return self.CheckedNodes();
+    };
 
+    self.SelectAll = ko.dependentObservable({
+        read: function() {
+            return self.CheckedNodes().length === self.SearchResult().length;
+        },
+        write: function() {
+            self.CheckedNodes(self.CheckedNodes().length === self.SearchResult().length ? [] : self.ToggleAll());
+        },
+        owner: self
+    });
+    
     self.ShowNodeDetails = function (curr_node) {
         window.location = "node.html?id=" + encodeURI(encodeURI(curr_node.ID));
     };
@@ -810,7 +815,7 @@ Carvic.Model.SingleNodeModel = function () {
         self.NodeClusterUrl("cluster.html?id=" + encodeURI(data.cluster));
         self.NodeLON(data.loc_lon);
         self.NodeLAT(data.loc_lat);
-        self.NodeMapUrl("map.html?lat=" + encodeURI(data.loc_lat) + "&lon=" + encodeURI(data.loc_lon) + "&title=" + encodeURI("'" + data.name + "' from cluster " + data.cluster_name));
+        self.NodeMapUrl("map.html?type=node&lat=" + encodeURI(data.loc_lat) + "&lon=" + encodeURI(data.loc_lon) + "&id=" + encodeURI(data.id) + "&status=" + encodeURI(data.status));
         self.NodeSN(data.sn);
         self.NodeMAC(data.mac);
         self.NodeNetworkAddress(data.network_addr);
@@ -1350,6 +1355,7 @@ Carvic.Model.ComponentsModel = function () {
             self.UpdatePageButtons();
         }
         self.SearchResult.removeAll();
+        self.CheckedComponents.removeAll();
 
         var query = { page: self.CurrPage() };
         if (self.SearchType() != undefined) { query.type = self.SearchType(); }
@@ -1414,22 +1420,24 @@ Carvic.Model.ComponentsModel = function () {
             self.PageMode("search");
         });
     };
+    
+    self.ToggleAll = function () {
+        self.CheckedComponents.removeAll();
+            for(i = 0; i < self.SearchResult().length; i++) {
+                self.CheckedComponents().push((typeof self.SearchResult()[i]().ID() != 'string') ? JSON.stringify(self.SearchResult()[i]().ID()) : self.SearchResult()[i]().ID());
+            }
+        return self.CheckedComponents();
+    };
 
-    self.ToggleChecked = function (curr_component) {
-        if ( $.inArray(curr_component.ID(), self.CheckedComponents()) > -1 ) {
-            self.CheckedComponents.remove(curr_component.ID());
-        }
-        else {
-            self.CheckedComponents.push(curr_component.ID());
-        }
-        return true;
-    }
-
-    self.ToggleCheckedAll = function () {
-        console.log(document.getElementById("checkAll").checked);
-        return true;
-        // put code here that puts/removes all components on the current page into CheckedComponents array
-    }
+    self.SelectAll = ko.dependentObservable({
+        read: function() {
+            return self.CheckedComponents().length === self.SearchResult().length;
+        },
+        write: function() {
+            self.CheckedComponents(self.CheckedComponents().length === self.SearchResult().length ? [] : self.ToggleAll());
+        },
+        owner: self
+    });    
 
     self.StartAddingNewBatch = function () {
         self.PageMode("new_batch");
@@ -1454,9 +1462,7 @@ Carvic.Model.ComponentsModel = function () {
                             //console.log("Deleted component with ID: " + self.CheckedComponents()[i])
                         });
                     }
-                    while (self.CheckedComponents().length > 0) {
-                            self.CheckedComponents.pop();
-                        }
+                    self.CheckedComponents.removeAll();
                     self.SearchResult.removeAll();
                     self.Search();
                 }
@@ -1651,6 +1657,7 @@ Carvic.Model.ClustersModel = function () {
 
     self.Search = function () {
         self.SearchResult.removeAll();
+        self.CheckedClusters.removeAll();
 
         var query = {};
         if (self.SearchTag() != "") query.tag = self.SearchTag();
@@ -1713,19 +1720,25 @@ Carvic.Model.ClustersModel = function () {
     self.CancelAddingNew = function () {
         self.PageMode("search");
     }
-    self.ToggleChecked = function (curr_cluster) {
-        if ( $.inArray(curr_cluster.Id(), self.CheckedClusters()) > -1 ) {
-            self.CheckedClusters.remove(curr_cluster.Id());
-        }
-        else {
-            self.CheckedClusters.push(curr_cluster.Id());
-        }
-        return true;
+    
+    self.ToggleAll = function () {
+        self.CheckedClusters.removeAll();
+            for(i = 0; i < self.SearchResult().length; i++) {
+                self.CheckedClusters().push((typeof self.SearchResult()[i]().Id() != 'string') ? JSON.stringify(self.SearchResult()[i]().Id()) : self.SearchResult()[i]().Id());
+            }
+        return self.CheckedClusters();
     }
-    self.ToggleCheckedAll = function () {
-        console.log(document.getElementById("checkAll").checked);
-        return true;
-    }
+
+    self.SelectAll = ko.dependentObservable({
+        read: function() {
+            return self.CheckedClusters().length === self.SearchResult().length;
+        },
+        write: function() {
+            self.CheckedClusters(self.CheckedClusters().length === self.SearchResult().length ? [] : self.ToggleAll());
+        },
+        owner: self
+    })
+    
     self.DeleteClusterList = function () {
         switch (self.CheckedClusters().length > 0) {
                 case false:
@@ -1744,9 +1757,7 @@ Carvic.Model.ClustersModel = function () {
                                });
                             }
                         }
-                        while (self.CheckedClusters().length > 0) {
-                            self.CheckedClusters.pop();
-                        }
+                        self.CheckedClusters.removeAll();
                         self.SearchResult.removeAll();
                         self.Search();
                     }
@@ -1770,6 +1781,7 @@ Carvic.Model.ClusterModel = function () {
     self.Tag = ko.observable();
     self.Name = ko.observable();
     self.Url = ko.observable();
+    self.ClusterMapUrl = ko.observable("");
     self.Scan = ko.observable(false);
     self.Comment = ko.observable();
     self.LastScan = ko.observable();
@@ -1802,6 +1814,7 @@ Carvic.Model.ClusterModel = function () {
             self.Id(obj.id);
             self.Tag(obj.tag);
             self.Url(obj.url);
+            self.ClusterMapUrl("map.html?type=cluster&id=" + encodeURI(obj.id));
             self.Scan(obj.scan);
             self.Comment(obj.comment);
             if (obj.last_scan) {
@@ -2027,9 +2040,9 @@ Carvic.Model.SettingsModel = function () {
 
     var self = this;
 
-    self.CurrentFullName = ko.observable();
-    self.NewPwd1 = ko.observable();
-    self.NewPwd2 = ko.observable();
+    self.CurrentFullName = ko.observable("");
+    self.NewPwd1 = ko.observable("");
+    self.NewPwd2 = ko.observable("");
     self.Msg = ko.observable("");
     self.MsgType = ko.observable("");
 
@@ -2038,22 +2051,21 @@ Carvic.Model.SettingsModel = function () {
             full_name: self.CurrentFullName()
         };
         Carvic.Utils.Post({ action: "change_my_full_name", data: query }, function (data) {
-            self.Msg("Full name changed successfully");
+            alert("Full name changed successfully");
         });
     };
 
     self.ChangePassword = function () {
-        if (self.NewPwd1() !== self.NewPwd2()) {
-            self.Msg("Passwords don't match");
-            self.MsgType("error");
-        } else {
-            var query = {
-                pwd: self.NewPwd1()
-            };
-            Carvic.Utils.Post({ action: "change_pwd", data: query }, function (data) {
-                self.Msg("Password changed successfully");
-            });
-        }
+        var query = {
+            pwd1: self.NewPwd1(),
+            pwd2: self.NewPwd2()
+        };
+        Carvic.Utils.Post({ action: "change_pwd", data: query }, function (data) {
+            alert("Password changed successfully");
+            document.form.pwd1.value = "";
+            document.form.pwd2.value = "";
+        });
+        
     };
 }
 

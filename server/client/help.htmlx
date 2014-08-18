@@ -15,6 +15,23 @@
 
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/knockout.js"></script>
+        <script type="text/javascript" src="js/carvic.js"></script>
+        <script type="text/javascript" src="consts.js"></script>
+        <script>
+            $(document).ready(function () {
+                Carvic.InitComponentList();
+                ko.applyBindings(Carvic.Model.Components);
+                $(".input")
+                    .attr("data-placement", "right")
+                    .tooltip();
+                $("input").keyup(function (event) {
+                    if (event.keyCode == 13) {
+                        $("#btnSearch").click();
+                    }
+                });
+            });
+        </script>
         <title>Sensor Management System - nodes</title>
     </head>
     <body>
@@ -34,6 +51,12 @@
                             <li><a href="clusters.html"><i class="icon-sitemap"></i> Clusters</a></li>
                             <li><a href="nodes.html"><i class="icon-map-marker"></i> Nodes</a></li>
                             <li><a href="components.html"><i class="icon-cogs"></i> Components</a></li>
+                            <!--<li><a href="users.html"><i class="icon-group"></i> Users</a></li>-->
+                        </ul>
+                        <ul class="nav pull-right">
+                            <li class: "active"><a href="help"><i class="icon-question-sign"></i> Help</a></li>
+                            <li><a href="settings.html"><i class="icon-user"></i> <span data-bind="text: $root.StdData.CurrentUserFullname, attr: { title: StdData.CurrentUserTooltip } "></span></a></li>
+                            <li><a href="logout"><i class="icon-signout"></i> Logout</a></li>
                         </ul>
                     </div>
                 </div>
