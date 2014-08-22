@@ -21,6 +21,7 @@
         <script>
             $(document).ready(function () {
                 Carvic.InitComponentList();
+                Carvic.Model.Components.getComponentTypes();
                 ko.applyBindings(Carvic.Model.Components);
                 $(".input")
                     .attr("data-placement", "right")
@@ -35,8 +36,8 @@
         <title>Sensor Management System - components</title>
     </head>
     <body>
-
-
+        
+        
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container-fluid">
@@ -105,7 +106,7 @@
                             <div class="control-group">
                                 <label class="control-label" for="inType">Type</label>
                                 <div class="controls">
-                                    <select id="inType" data-bind="options: ComponentTypes, value: SearchType, optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code'"></select>
+                                    <select id= "inType" data-bind="options: ComponentTypes, value: SearchType, optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code'"></select>
                                 </div>
                             </div>
 
@@ -144,55 +145,55 @@
             <div class="row-fluid" data-bind="visible: $root.PageMode() == 'new_batch'">
                 <div class="span12">
                     <div class="form-horizontal">
-                        <div class="well well-small">
-                            Enter new batch of components
-                        </div>
-
-                        <div class="control-group">
-                            <label class="control-label" for="inType">Type </label>
-                            <div class="controls">
-                                <select class="input" id="inType" data-bind="options: ComponentTypes, value: NewType, optionsText: 'title', optionsValue: 'code'"
-                                        title="Component type for the whole batch"></select>
+                        <form name="form">
+                            <div class="well well-small">
+                                Enter new batch of components
                             </div>
-                        </div>
-
-                        <div class="control-group">
-                            <label class="control-label" for="inPn">Product number </label>
-                            <div class="controls">
-                                <input type="text" class="input input-large" data-bind="value: NewPN" title="Product number for this new batch of components"/>
+                            <div class="control-group">
+                                <label class="control-label" for="inType">Type </label>
+                                <div  id="type", class="controls">
+                                    <select class="input" name="NewType" id="inType" data-bind="options: ComponentTypes, value: NewType, optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code'" title="Component type for the whole batch"></select>
+                                    <button id="btnSaveNewType" class="btn btn-primary" type="button" data-bind="click: $root.SaveNewComponentType"><i class="icon-save"></i> Add new type </button>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="control-group">
-                            <label class="control-label" for="inP">Production date</label>
-                            <div class="controls">
-                                <input type="text" class="input input-small" data-bind="value: NewP" title="Production date for the whole batch of components (e.g. 240413 - ddMMyy)"/>
+                            <div class="control-group">
+                                <label class="control-label" for="inPn">Product number </label>
+                                <div class="controls">
+                                    <input type="text" name="NewPN" class="input input-large" data-bind="value: NewPN" title="Product number for this new batch of components"/>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="control-group">
-                            <label class="control-label" for="inS">Series </label>
-                            <div class="controls">
-                                <input type="text" class="input input-small" data-bind="value: NewS" title="Series number for the whole batch of components"/>
+                            <div class="control-group">
+                                <label class="control-label" for="inP">Production date</label>
+                                <div class="controls">
+                                    <input type="text" name="NewP" class="input input-small" data-bind="value: NewP" title="Production date for the whole batch of components (e.g. 240413 - ddMMyy)"/>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="control-group">
-                            <label class="control-label" for="inSN">Serial number </label>
-                            <div class="controls">
-                                <input type="text" class="input input-mini" data-bind="value: NewSN1" title="Serial numbers in the batch start with this number" />
-                                -
-                                <input type="text" class="input input-mini" data-bind="value: NewSN2" title="Serial numbers in the batch end with this number (inclusive)" />
+                            <div class="control-group">
+                                <label class="control-label" for="inS">Series </label>
+                                <div class="controls">
+                                    <input type="text" name="NewS" class="input input-small" data-bind="value: NewS" title="Series number for the whole batch of components"/>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="control-group">
-                            <label class="control-label" for="btnSaveNewBatch"></label>
-                            <div class="controls">
-                                <button id="btnSaveNewBatch" class="btn btn-primary" type="button" data-bind="click: $root.SaveNewComponents"><i class="icon-save"></i> Save </button>
-                                <button id="btnCancelNewBatch" class="btn" type="button" data-bind="click: $root.CancelAddingNewBatch">Cancel </button>
+                            <div class="control-group">
+                                <label class="control-label" for="inSN">Serial number </label>
+                                <div class="controls">
+                                    <input type="text" name="NewSN1" class="input input-mini" data-bind="value: NewSN1" title="Serial numbers in the batch start with this number" />
+                                    -
+                                    <input type="text" name="NewSN2" class="input input-mini" data-bind="value: NewSN2" title="Serial numbers in the batch end with this number (inclusive)" />
+                                </div>
                             </div>
-                        </div>
+                            <div class="control-group">
+                                <label class="control-label" for="btnSaveNewBatch"></label>
+                                <div class="controls">
+                                    <button id="btnSaveNewBatch" class="btn btn-primary" type="button" data-bind="click: $root.SaveNewComponents"><i class="icon-save"></i> Save </button>
+                                    <button id="btnCancelNewBatch" class="btn" type="button" data-bind="click: $root.CancelAddingNewBatch">Cancel </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

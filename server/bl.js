@@ -689,8 +689,6 @@ exports.get_components2 = function (req, callback) {
     });
 };
 
-
-
 exports.get_component = function (req, callback) {
     db.get_component(req.data.id, function (err, data) {
         if (err) {
@@ -809,6 +807,32 @@ exports.delete_component = function (req, callback) {
 function create_component_id(pn, type, p, s, sn) {
     return [pn, type, p, s, sn].join("-");
 }
+
+exports.get_component_types = function (res, callback) {
+    db.get_all_component_type( function(err, data) {
+        if (err) return callback(err);
+        return callback(null, data)
+        
+    });
+}
+
+exports.add_new_component_type = function (res, callback) {
+    var new_type = {
+        code: res.data.type.toLowerCase(),
+        title: res.data.type.toUpperCase()
+    };
+    db.get_component_type(new_type.code, function(err, res){
+            if (err) {
+                db.add_component_type(new_type, function(err, res) {
+                    callback(err, {});
+                });
+            }
+            else {
+                callback(new Error("That type already exists"),{});
+            }
+    });
+}
+
 exports.add_components = function (req, callback) {
     var data = req.data;
     data.sn_to = Number(data.sn_to);
@@ -817,7 +841,6 @@ exports.add_components = function (req, callback) {
     var ok_comps = [];
     var err_comps = [];
     var new_comp_count = data.sn_to - data.sn_from + 1;
-
     for (var i = data.sn_from; i <= data.sn_to; i++) {
         (function (i){
 			var sn = xutil.pad(i, sn_len);

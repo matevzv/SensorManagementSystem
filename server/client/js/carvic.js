@@ -34,7 +34,7 @@ Carvic.Utils = {
     },
 
     AddUsersLink: function () {
-        if ($("#liUsers").length == 0)
+        if ($("#liUsers").length == 0) 
             $("#ulNav").append('<li><a href="users.html"><i class="icon-group"></i> Users</a></li>');
     },
 
@@ -1315,12 +1315,13 @@ Carvic.Model.ComponentsModel = function () {
     self.NewS = ko.observable("");
     self.NewSN1 = ko.observable("");
     self.NewSN2 = ko.observable("");
-    self.NewType = ko.observable();
-
-    self.ComponentTypesArray = Carvic.Consts.ComponentTypesArray;
-    self.ComponentTypes = ko.observableArray(self.ComponentTypesArray);
+    self.NewType = ko.observable("");
+    self.btnSaveNewType = ko.observable("");
+    
+    //self.ComponentTypesArray = Carvic.Consts.ComponentTypesArray;
+    self.ComponentTypes = ko.observableArray();
     self.ComponentTypesMap = Carvic.Consts.ComponentTypesMap;
-
+    
     self.ComponentStatusesArray = Carvic.Consts.ComponentStatusesArray;
     self.ComponentStatuses = ko.observableArray(self.ComponentStatusesArray);
     self.ComponentStatusesMap = Carvic.Consts.ComponentStatusesMap;
@@ -1330,6 +1331,19 @@ Carvic.Model.ComponentsModel = function () {
             self.CurrPage(self.CurrPage() + 1);
             self.SearchInner(false);
         }
+    }
+    
+    self.getComponentTypes = function () {
+        var d = {}
+        Carvic.Utils.Post({ action: "get_component_types", data: d }, function (data) {
+            for (var i = 0; i < data.length; i++) {
+                var obj = data[i];
+                self.ComponentTypes.push({
+                    title: obj.title,
+                    code: obj.code,
+                });
+            }
+        });
     }
 
     self.DecPage = function () {
@@ -1397,6 +1411,7 @@ Carvic.Model.ComponentsModel = function () {
 
     self.SaveNewComponents = function (curr_component) {
         var errors = [];
+        Carvic.Utils.CheckIfEmpty(self.NewType(), "Type cannot be empty", errors);
         Carvic.Utils.CheckIfEmpty(self.NewPN(), "Product number cannot be empty", errors);
         Carvic.Utils.CheckIfEmpty(self.NewP(), "Production date cannot be empty", errors);
         Carvic.Utils.CheckIfEmpty(self.NewS(), "Series cannot be empty", errors);
@@ -1418,8 +1433,32 @@ Carvic.Model.ComponentsModel = function () {
         };
         Carvic.Utils.Post({ action: "add_components", data: d }, function (data) {
             self.PageMode("search");
+            document.form.NewPN.value = "";
+            document.form.NewP.value = "";
+            document.form.NewS.value = "";
+            document.form.NewSN1.value = "";
+            document.form.NewSN2.value = "";
+            document.form.NewType.value = "";
         });
     };
+    
+    self.SaveNewComponentType = function (curr_component){ 
+        var type = prompt("Please enter new type", "");
+        if (type === null){
+        }
+        else if (type === "" || /^\s*$/.test(type)) {
+            alert("Type cannot be empty")
+        }
+        else {
+            var d = {
+                type: type
+            };
+            Carvic.Utils.Post({ action: "add_new_component_type", data: d }, function (data) {
+                self.ComponentTypes.removeAll();
+                self.getComponentTypes();
+            });
+        }
+    }
     
     self.ToggleAll = function () {
         self.CheckedComponents.removeAll();
@@ -1444,6 +1483,12 @@ Carvic.Model.ComponentsModel = function () {
     }
     self.CancelAddingNewBatch = function () {
         self.PageMode("search");
+        document.form.NewPN.value = "";
+        document.form.NewP.value = "";
+        document.form.NewS.value = "";
+        document.form.NewSN1.value = "";
+        document.form.NewSN2.value = "";
+        document.form.NewType.value = "";
     }
 
     self.DeleteComponentList = function () {
@@ -1471,7 +1516,7 @@ Carvic.Model.ComponentsModel = function () {
     };
 
     self.Search();
-}
+};
 
 Carvic.Model.ComponentModel = function () {
 
@@ -1535,7 +1580,7 @@ Carvic.Model.ComponentModel = function () {
             self.LoadHistory();
         });
     };
-
+    
     self.LoadHistory = function () {
         self.History.removeAll();
         var req = {
