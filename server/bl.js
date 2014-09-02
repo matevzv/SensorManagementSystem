@@ -808,19 +808,23 @@ exports.delete_component_type = function (req, callback) {
     var code = req.data.code;
     db.get_component_type(code, function (err, data) {
         if (err) return callback(err);
-        db.delete_component_type(code, function (err, data2) {
-        var user_full_name = username_map[req.session.user].full_name;
-            var h = {
-                component: code,
-                user: req.session.user,
-                status: "deleted",
-                code: "type_change",
-                ts: new Date(),
-                title: "Type '" + code + "' deleted",
-                description: "Type '" + code + "' was deleted by " + user_full_name,
-                sys_data: req
-            };
-            db.new_history(h, callback);
+        db.get_components2_count({ type: code }, function (err2, data2) {
+            if (err2) return callback(err);
+            if (data2 > 0) return callback(new Error("Cannot delete type - components are assigned to it."));
+            db.delete_component_type(code, function (err, data2) {
+            var user_full_name = username_map[req.session.user].full_name;
+                var h = {
+                    component: code,
+                    user: req.session.user,
+                    status: "deleted",
+                    code: "type_change",
+                    ts: new Date(),
+                    title: "Type '" + code + "' deleted",
+                    description: "Type '" + code + "' was deleted by " + user_full_name,
+                    sys_data: req
+                };
+                db.new_history(h, callback);
+            });
         });
     });
 };

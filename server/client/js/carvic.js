@@ -1317,7 +1317,7 @@ Carvic.Model.ComponentsModel = function () {
     self.NewSN1 = ko.observable("");
     self.NewSN2 = ko.observable("");
     self.NewType = ko.observable("");
-    
+
     //self.ComponentTypesArray = Carvic.Consts.ComponentTypesArray;
     self.ComponentTypes = ko.observableArray();
     //self.ComponentTypesMap = Carvic.Consts.ComponentTypesMap;
@@ -1568,12 +1568,14 @@ Carvic.Model.ComponentsModel = function () {
             default:
                 if (confirm("You chose:\n" + self.CheckedComponentsTypes() + "\n" + "\n" + "Are you sure you want to delete these components types?")) {
                     for (i in self.CheckedComponentsTypes()) {
-                        var req = {
-                            action: "delete_component_type",
-                            data: { code: self.CheckedComponentsTypes()[i] }
-                        };
-                        Carvic.Utils.Post(req, function (data) {
-                        });
+                        if(confirm("Some components can use that type:\n" + self.CheckedComponentsTypes()[i] + "\n" + "\n" + "Are you sure you want to delete this type?")) {
+                            var req = {
+                                action: "delete_component_type",
+                                data: { code: self.CheckedComponentsTypes()[i] }
+                            };
+                            Carvic.Utils.Post(req, function (data) {
+                            });
+                        }
                     }
                     self.CheckedComponentsTypes.removeAll();
                     self.ComponentTypes.removeAll();
