@@ -34,7 +34,7 @@ Carvic.Utils = {
     },
 
     AddUsersLink: function () {
-        if ($("#liUsers").length == 0) 
+        if ($("#liUsers").length == 0)
             $("#ulNav").append('<li><a href="users.html"><i class="icon-group"></i> Users</a></li>');
     },
 
@@ -1317,11 +1317,10 @@ Carvic.Model.ComponentsModel = function () {
     self.NewSN1 = ko.observable("");
     self.NewSN2 = ko.observable("");
     self.NewType = ko.observable("");
-    self.btnSaveNewType = ko.observable("");
     
     //self.ComponentTypesArray = Carvic.Consts.ComponentTypesArray;
     self.ComponentTypes = ko.observableArray();
-    self.ComponentTypesMap = Carvic.Consts.ComponentTypesMap;
+    //self.ComponentTypesMap = Carvic.Consts.ComponentTypesMap;
     
     self.ComponentStatusesArray = Carvic.Consts.ComponentStatusesArray;
     self.ComponentStatuses = ko.observableArray(self.ComponentStatusesArray);
@@ -1524,6 +1523,7 @@ Carvic.Model.ComponentsModel = function () {
     
     self.CancelManageTypes = function () {
         self.PageMode("new_batch");
+        self.CheckedComponentsTypes.removeAll();
     }
     
     self.CancelAddingNewBatch = function () {
@@ -1607,9 +1607,9 @@ Carvic.Model.ComponentModel = function () {
     self.Nodes = ko.observableArray();
     self.LastData = {};
 
-    self.ComponentTypesArray = Carvic.Consts.ComponentTypesArray;
-    self.ComponentTypes = ko.observableArray(self.ComponentTypesArray);
-    self.ComponentTypesMap = Carvic.Consts.ComponentTypesMap;
+    //self.ComponentTypesArray = Carvic.Consts.ComponentTypesArray;
+    self.ComponentTypes = ko.observableArray();
+    //self.ComponentTypesMap = Carvic.Consts.ComponentTypesMap;
 
     self.ComponentStatusesArray = Carvic.Consts.ComponentStatusesArray;
     self.ComponentStatuses = ko.observableArray(self.ComponentStatusesArray);
@@ -1668,6 +1668,19 @@ Carvic.Model.ComponentModel = function () {
                     UserFullName: obj.user_full_name,
                     Css: (obj.code === "component_change" ? "icon-edit" : "icon-check")
                 }));
+            }
+        });
+    }
+    
+    self.getComponentTypes = function () {
+        var d = {}
+        Carvic.Utils.Post({ action: "get_component_types", data: d }, function (data) {
+            for (var i = 0; i < data.length; i++) {
+                var obj = data[i];
+                self.ComponentTypes.push({
+                    title: obj.title,
+                    code: obj.code
+                });
             }
         });
     }
@@ -2246,6 +2259,7 @@ Carvic.InitSingleUser = function () {
 Carvic.InitComponentList = function () {
     Carvic.Model.Components = new Carvic.Model.ComponentsModel();
     //Carvic.Model.Components.Search(); // this is too expensive
+    Carvic.Model.Components.getComponentTypes();
     Carvic.Utils.SetCurrentUser(Carvic.Model.Components);
 }
 Carvic.InitHistoryList = function () {
@@ -2257,6 +2271,7 @@ Carvic.InitHistoryList = function () {
 Carvic.InitSingleComponentList = function () {
     var id = Carvic.Utils.GetUrlParam("id");
     Carvic.Model.Component = new Carvic.Model.ComponentModel();
+    Carvic.Model.Component.getComponentTypes();
     Carvic.Model.Component.Load(id);
     Carvic.Utils.SetCurrentUser(Carvic.Model.Component);
 }
