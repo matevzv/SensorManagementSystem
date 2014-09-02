@@ -258,6 +258,10 @@ function delete_component(id, callback) {
     db[collection_components].remove({ id: id }, callback);
 };
 
+function delete_component_type(code, callback) {
+    db[collection_components_type].remove({ code: code }, callback);
+};
+
 function get_component_type(code, callback) {
     var query = { code: code };
     db[collection_components_type].find(query, function (err, docs) {
@@ -779,6 +783,7 @@ exports.add_component = add_component;
 exports.add_component_type = add_component_type;
 exports.update_component = update_component;
 exports.delete_component = delete_component;
+exports.delete_component_type = delete_component_type;
 exports.get_component = get_component;
 exports.get_component_history = get_component_history;
 exports.get_components = get_components;

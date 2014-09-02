@@ -1290,6 +1290,7 @@ Carvic.Model.ComponentsModel = function () {
 
     self.SearchResult = ko.observableArray();
     self.CheckedComponents = ko.observableArray();
+    self.CheckedComponentsTypes = ko.observableArray();
     self.SearchType = ko.observable();
     self.SearchProject = ko.observable("");
     self.SearchComment = ko.observable("");
@@ -1325,6 +1326,9 @@ Carvic.Model.ComponentsModel = function () {
     self.ComponentStatusesArray = Carvic.Consts.ComponentStatusesArray;
     self.ComponentStatuses = ko.observableArray(self.ComponentStatusesArray);
     self.ComponentStatusesMap = Carvic.Consts.ComponentStatusesMap;
+    
+    self.NewCode = ko.observable("");
+    self.NewTitle = ko.observable("");
 
     self.IncPage = function () {
         if (self.CurrPage() < self.PageCount()) {
@@ -1340,7 +1344,7 @@ Carvic.Model.ComponentsModel = function () {
                 var obj = data[i];
                 self.ComponentTypes.push({
                     title: obj.title,
-                    code: obj.code,
+                    code: obj.code
                 });
             }
         });
@@ -1443,19 +1447,23 @@ Carvic.Model.ComponentsModel = function () {
     };
     
     self.SaveNewComponentType = function (curr_component){ 
-        var type = prompt("Please enter new type", "");
-        if (type === null){
+        if (self.NewCode() === "" || /^\s*$/.test(self.NewCode())) {
+            alert("Code cannot be empty")
         }
-        else if (type === "" || /^\s*$/.test(type)) {
-            alert("Type cannot be empty")
+        else if (self.NewTitle() === "" || /^\s*$/.test(self.NewTitle())) {
+            alert("Title cannot be empty")
         }
         else {
             var d = {
-                type: type
+                code: self.NewCode(),
+                title: self.NewTitle()
             };
             Carvic.Utils.Post({ action: "add_new_component_type", data: d }, function (data) {
                 self.ComponentTypes.removeAll();
                 self.getComponentTypes();
+                self.PageMode("manageType");
+                document.formType.newCode.value = "";
+                document.formType.newTitle.value = "";
             });
         }
     }
@@ -1476,11 +1484,48 @@ Carvic.Model.ComponentsModel = function () {
             self.CheckedComponents(self.CheckedComponents().length === self.SearchResult().length ? [] : self.ToggleAll());
         },
         owner: self
-    });    
+    });
+    
+    self.ToggleAllTypes = function () {
+        self.CheckedComponentsTypes.removeAll();
+            for(i = 0; i < self.ComponentTypes().length; i++) {
+                self.CheckedComponentsTypes().push(self.ComponentTypes()[i].code);
+            }
+        return self.CheckedComponentsTypes();
+    };
+    
+    self.SelectAllTypes = ko.dependentObservable({
+        read: function() {
+            return self.CheckedComponentsTypes().length === self.ComponentTypes().length;
+        },
+        write: function() {
+            self.CheckedComponentsTypes(self.CheckedComponentsTypes().length === self.ComponentTypes().length ? [] : self.ToggleAllTypes());
+        },
+        owner: self
+    }); 
 
     self.StartAddingNewBatch = function () {
         self.PageMode("new_batch");
     }
+    
+    self.StartManageTypes = function () {
+        self.PageMode("manageType");
+    }
+    
+    self.StartAddingNewType = function () {
+        self.PageMode("addType");
+    }
+    
+    self.CancelAddingNewType = function () {
+        self.PageMode("manageType");
+        document.formType.newCode.value = "";
+        document.formType.newTitle.value = "";
+    }
+    
+    self.CancelManageTypes = function () {
+        self.PageMode("new_batch");
+    }
+    
     self.CancelAddingNewBatch = function () {
         self.PageMode("search");
         document.form.NewPN.value = "";
@@ -1510,6 +1555,29 @@ Carvic.Model.ComponentsModel = function () {
                     self.CheckedComponents.removeAll();
                     self.SearchResult.removeAll();
                     self.Search();
+                }
+                break;
+        }
+    };
+    
+    self.DeleteComponentTypesList = function () {
+        switch (self.CheckedComponentsTypes().length > 0) {
+            case false:
+                alert("There are no components chosen to delete!");
+                break;
+            default:
+                if (confirm("You chose:\n" + self.CheckedComponentsTypes() + "\n" + "\n" + "Are you sure you want to delete these components types?")) {
+                    for (i in self.CheckedComponentsTypes()) {
+                        var req = {
+                            action: "delete_component_type",
+                            data: { code: self.CheckedComponentsTypes()[i] }
+                        };
+                        Carvic.Utils.Post(req, function (data) {
+                        });
+                    }
+                    self.CheckedComponentsTypes.removeAll();
+                    self.ComponentTypes.removeAll();
+                    self.getComponentTypes();
                 }
                 break;
         }
