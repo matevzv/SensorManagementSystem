@@ -1320,7 +1320,7 @@ Carvic.Model.ComponentsModel = function () {
 
     //self.ComponentTypesArray = Carvic.Consts.ComponentTypesArray;
     self.ComponentTypes = ko.observableArray();
-    //self.ComponentTypesMap = Carvic.Consts.ComponentTypesMap;
+    self.ComponentTypesMap = {};
     
     self.ComponentStatusesArray = Carvic.Consts.ComponentStatusesArray;
     self.ComponentStatuses = ko.observableArray(self.ComponentStatusesArray);
@@ -1337,6 +1337,7 @@ Carvic.Model.ComponentsModel = function () {
     }
     
     self.getComponentTypes = function () {
+        self.ComponentTypes.removeAll();
         var d = {}
         Carvic.Utils.Post({ action: "get_component_types", data: d }, function (data) {
             for (var i = 0; i < data.length; i++) {
@@ -1346,6 +1347,10 @@ Carvic.Model.ComponentsModel = function () {
                     code: obj.code
                 });
             }
+            self.ComponentTypesMap = {};
+            self.ComponentTypes().forEach(function (item) {
+                self.ComponentTypesMap[item.code] = item;
+            });
         });
     }
 
@@ -1458,7 +1463,6 @@ Carvic.Model.ComponentsModel = function () {
                 title: self.NewTitle()
             };
             Carvic.Utils.Post({ action: "add_new_component_type", data: d }, function (data) {
-                self.ComponentTypes.removeAll();
                 self.getComponentTypes();
                 self.PageMode("manageType");
                 document.formType.newCode.value = "";
@@ -1578,7 +1582,6 @@ Carvic.Model.ComponentsModel = function () {
                         }
                     }
                     self.CheckedComponentsTypes.removeAll();
-                    self.ComponentTypes.removeAll();
                     self.getComponentTypes();
                 }
                 break;
@@ -1611,7 +1614,7 @@ Carvic.Model.ComponentModel = function () {
 
     //self.ComponentTypesArray = Carvic.Consts.ComponentTypesArray;
     self.ComponentTypes = ko.observableArray();
-    //self.ComponentTypesMap = Carvic.Consts.ComponentTypesMap;
+    self.ComponentTypesMap = {};
 
     self.ComponentStatusesArray = Carvic.Consts.ComponentStatusesArray;
     self.ComponentStatuses = ko.observableArray(self.ComponentStatusesArray);
@@ -1676,6 +1679,7 @@ Carvic.Model.ComponentModel = function () {
     
     self.getComponentTypes = function () {
         var d = {}
+        self.ComponentTypes.removeAll();
         Carvic.Utils.Post({ action: "get_component_types", data: d }, function (data) {
             for (var i = 0; i < data.length; i++) {
                 var obj = data[i];
@@ -1684,6 +1688,10 @@ Carvic.Model.ComponentModel = function () {
                     code: obj.code
                 });
             }
+            self.ComponentTypesMap = {};
+            self.ComponentTypes().forEach(function (item) {
+                self.ComponentTypesMap[item.code] = item;
+            });
         });
     }
 

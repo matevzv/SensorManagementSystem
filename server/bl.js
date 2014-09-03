@@ -91,8 +91,6 @@ function upgrade(callback) {
     });
 }
 
-
-
 function load_username_map(callback) {
     db.get_users({}, function (err, data) {
         if (err) {
@@ -223,7 +221,6 @@ exports.get_cluster_stats = function (req, callback) {
         callback(err, data);
     });
 };
-
 
 exports.change_pwd = function (req, callback) {
     var username = req.session.user;
@@ -720,6 +717,14 @@ exports.get_component = function (req, callback) {
     })
 };
 
+exports.get_component_types = function (res, callback) {
+    db.get_all_component_type( function(err, data) {
+        if (err) return callback(err);
+        return callback(null, data)
+        
+    });
+}
+
 exports.get_component_history = function (req, callback) {
     db.get_component_history(req.data.id, callback)
 };
@@ -831,14 +836,6 @@ exports.delete_component_type = function (req, callback) {
 
 function create_component_id(pn, type, p, s, sn) {
     return [pn, type, p, s, sn].join("-");
-}
-
-exports.get_component_types = function (res, callback) {
-    db.get_all_component_type( function(err, data) {
-        if (err) return callback(err);
-        return callback(null, data)
-        
-    });
 }
 
 exports.add_new_component_type = function (res, callback) {
