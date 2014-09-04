@@ -24,7 +24,7 @@ var login_content = null;
 var root_content = null;
 
 // optional middleware handlers
-var body_parser = express.bodyParser();
+var body_parser = express.urlencoded();
 var json_parser = express.json();
 var basic_auth = express.basicAuth(function (user, pass, callback) {
     bl.verify_user(user, pass, callback);
@@ -75,47 +75,6 @@ function preprocess_api_calls(req, res, next) {
         body_parser(req, res, next);
     }
 };
-
-//function handle_login(req, res, next) {
-//    if (req.url !== "/login") return next();
-//    
-//    if (req.method.toLowerCase() == 'post') {
-//        //passport.authenticate('local', { failureRedirect: '/login', failureFlash: true })
-//        //function(req, res) {    res.redirect('/');  })
-//        var form = new formidable.IncomingForm();
-//        form.parse(req, function (err, fields, files) {
-//            //res.writeHead(200, { 'content-type': 'text/plain' });
-//            //res.write('received upload:\n\n');
-//            //res.end(util.inspect({ fields: fields, files: files }));
-//            console.log("1");
-//            var rr = passport.authenticate('local', { failureRedirect: '/login', failureFlash: true });
-//            console.log("2", rr.toString());
-//            res.redirect('/admin.html');
-//        });
-//    } else if (login_content) {
-//        res.setHeader("Content-Type", "text/html");
-//        res.end(login_content);
-//    } else {
-//        res.statusCode = 404;
-//        res.write('404 sorry not found');
-//        res.end();
-//    }
-//}
-
-//function handle_logout(req, res, next) {
-//    if (req.url !== "/logout") return next();
-//    req.logout();
-//    res.redirect('/');
-//}
-
-//function handle_help(req, res, next) {
-//    if (req.url == "/help" || req.url.indexOf("/help?") == 0) {
-//        res.setHeader("Content-Type", "text/html");
-//        res.end(help_content);
-//    } else {
-//        next();
-//    }
-//}
 
 function ensure_authenticated(req, res, next) {
     if (req.session.is_authenticated) { return next(); }
@@ -171,17 +130,15 @@ function run() {
 
     console.log("Running HTTP server at port " + port);
     var app = express();
-    app.configure(function () {
-        app.use(express.favicon("client/img/favicon.ico"));
-        app.use(express.logger('dev'));
-        app.use(express.cookieParser());
-        //app.use(express.session({ secret: 'jcvsnasdovhjdsfanbdwkjv' }));
-        app.use(express.session({ secret: 'jcvsnasdovhjdsfanbdwkjv', store: new MongoStore({ db: db_url , auto_reconnect: true, safe: true}) }));
-        app.use(log_url);
-        app.use(static_file_handler2);
-        app.use(preprocess_api_calls);
-        app.use(app.router);
-    });
+    
+    app.use(express.favicon("client/img/favicon.ico"));
+    app.use(express.logger('dev'));
+    app.use(express.cookieParser());    
+    app.use(express.session({ secret: 'jcvsnasdovhjdsfanbdwkjv', store: new MongoStore({ db: db_url , auto_reconnect: true, safe: true}) }));
+    app.use(log_url);
+    app.use(static_file_handler2);
+    app.use(preprocess_api_calls);
+    app.use(app.router);
 
     // routes 
 
