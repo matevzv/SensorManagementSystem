@@ -35,7 +35,7 @@ Carvic.Utils = {
 
     AddUsersLink: function () {
         if ($("#liUsers").length == 0)
-            $("#ulNav").append('<li><a href="users.html"><i class="icon-group"></i> Users</a></li>');
+            $("#navRight").append('<li><a href="users.html"><i class="glyphicon glyphicon-user"></i> Users</a></li>');
     },
 
     LoadClusterList: function (receiver, callback) {
