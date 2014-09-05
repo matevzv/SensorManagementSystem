@@ -209,14 +209,14 @@
                         <table class="table table-hover">
                             <tr>
                                 <th><input type="checkbox" id="checkAllTypes" style="cursor: default" data-bind="checked: $root.SelectAllTypes"></th>
-                                <th>Code</th>
-                                <th>Title</th>
+                                <th style="text-align:center;">Code</th>
+                                <th style="text-align:center;">Title</th>
                             </tr>
                             <tbody data-bind="foreach: $root.ComponentTypes">
                                 <tr style="cursor: pointer">
                                     <td><input type="checkbox" id="checkbox" style="cursor: default" data-bind="checked: $root.CheckedComponentsTypes, value: code"></td>
-                                    <td data-bind="text: code"></td>
-                                    <td data-bind="text: title"></td>
+                                    <td data-bind="text: code", style="text-align:center;"></td>
+                                    <td data-bind="text: title", style="text-align:center;"></td>
                                 </tr>
                                 <div class="span3 text-light"><button data-bind="click: $root.DeleteComponentTypesList, visible: $root.CheckedComponentsTypes().length > 0"><i class="icon-trash"></i> Delete selected types</button>
                                 </div>
@@ -233,13 +233,13 @@
                         <div class="control-group">
                             <label class="control-label" for="inCode">Code </label>
                             <div class="controls">
-                                <input id="inCode" type="text" data-bind="value: NewCode" class="input input-medium" name="newCode" />
+                                <input id="inCode" title="Short name, only alphanumeric characters" type="text" data-bind="value: NewCode" class="input input-medium" name="newCode" />
                             </div>
                         </div>
                         <div class="control-group">
                             <label class="control-label" for="inTitle">Title </label>
                             <div class="controls">
-                                <input id="inTitle" type="text" data-bind="value: NewTitle" class="input input-medium" name="newTitle" />
+                                <input id="inTitle" title="Type name" type="text" data-bind="value: NewTitle" class="input input-medium" name="newTitle" />
                             </div>
                         </div>
                         <div class="control-group">

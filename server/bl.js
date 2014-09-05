@@ -819,9 +819,8 @@ exports.delete_component_type = function (req, callback) {
             db.delete_component_type(code, function (err, data2) {
             var user_full_name = username_map[req.session.user].full_name;
                 var h = {
-                    component: code,
+                    type: code,
                     user: req.session.user,
-                    status: "deleted",
                     code: "type_change",
                     ts: new Date(),
                     title: "Type '" + code + "' deleted",
@@ -838,22 +837,44 @@ function create_component_id(pn, type, p, s, sn) {
     return [pn, type, p, s, sn].join("-");
 }
 
-exports.add_new_component_type = function (res, callback) {
-    var data = res.data
-    var new_type = {
-        code: data.code.toLowerCase(),
-        title: data.title.toUpperCase()
-    };
-    db.get_component_type(new_type.code, function(err, res){
-            if (err) {
-                db.add_component_type(new_type, function(err, res) {
-                    callback(err, {});
-                });
-            }
-            else {
-                callback(new Error("That type already exists"),{});
-            }
-    });
+exports.add_new_component_type = function (req, callback) {
+    var data = req.data
+    if (data.title === "" || /^\s*$/.test(data.title)) {
+            callback(new Error("Title cannot be empty"),{});
+    }
+    if (/^\w+$/.test(data.code)) {
+        var new_type = {
+            code: data.code.toLowerCase(),
+            title: data.title.toUpperCase()
+        };
+        db.get_component_type(new_type.code, function(err, res){
+                if (err) {
+                    db.add_component_type(new_type, function(err, res) {
+                        callback(err, {});
+                        if (err) {
+                            callback(err, {});
+                        } else {
+                            var h = {
+                                type: new_type.code,
+                                user: req.session.user,
+                                code: "type_change",
+                                ts: new Date(),
+                                title: "Type '" + new_type.code + "' created",
+                                description: "Type '" + new_type.code + "' was created.",
+                                sys_data: req
+                            };
+                            db.new_history(h, function (err, res) { });
+                        }
+                            });
+                    }
+                else {
+                    callback(new Error("That type already exists"),{});
+                }
+        });
+    }
+    else {
+        callback(new Error("Code cannot be empty and need to use only alphanumerical characters"),{});
+    }
 }
 
 exports.add_components = function (req, callback) {
@@ -1201,6 +1222,7 @@ exports.get_history = function (req, callback) {
     if (req.data.node) query.node = req.data.node;
     if (req.data.component) query.component = req.data.component;
     if (req.data.user) query.user = req.data.user;
+    if (req.data.type) query.type = req.data.type;
     if (req.data.cluster) query.cluster = req.data.cluster;
     if (req.data.keywords) query.description = create_regexp(req.data.keywords, true);
 

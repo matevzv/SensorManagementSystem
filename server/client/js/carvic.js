@@ -1307,6 +1307,7 @@ Carvic.Model.ComponentsModel = function () {
     self.PageCount = ko.observable(0);
     self.IncPageEnabled = ko.observable(false);
     self.DecPageEnabled = ko.observable(false);
+    self.EditType = ko.observable("editFalse");
     self.RecCount = ko.observable(0);
 
     self.PageMode = ko.observable("search"); // values: search, new_batch, edit
@@ -1416,7 +1417,8 @@ Carvic.Model.ComponentsModel = function () {
     self.ShowDetails = function (curr_component) {
         document.location = "component.html?id=" + encodeURI(curr_component.ID());
     };
-
+    
+    
     self.SaveNewComponents = function (curr_component) {
         var errors = [];
         Carvic.Utils.CheckIfEmpty(self.NewType(), "Type cannot be empty", errors);
@@ -1451,24 +1453,16 @@ Carvic.Model.ComponentsModel = function () {
     };
     
     self.SaveNewComponentType = function (curr_component){ 
-        if (self.NewCode() === "" || /^\s*$/.test(self.NewCode())) {
-            alert("Code cannot be empty")
-        }
-        else if (self.NewTitle() === "" || /^\s*$/.test(self.NewTitle())) {
-            alert("Title cannot be empty")
-        }
-        else {
-            var d = {
-                code: self.NewCode(),
-                title: self.NewTitle()
-            };
-            Carvic.Utils.Post({ action: "add_new_component_type", data: d }, function (data) {
-                self.getComponentTypes();
-                self.PageMode("manageType");
-                document.formType.newCode.value = "";
-                document.formType.newTitle.value = "";
-            });
-        }
+        var d = {
+            code: self.NewCode(),
+            title: self.NewTitle()
+        };
+        Carvic.Utils.Post({ action: "add_new_component_type", data: d }, function (data) {
+            self.getComponentTypes();
+            self.PageMode("manageType");
+            document.formType.newCode.value = "";
+            document.formType.newTitle.value = "";
+        });      
     }
     
     self.ToggleAll = function () {
@@ -1513,6 +1507,10 @@ Carvic.Model.ComponentsModel = function () {
     
     self.StartManageTypes = function () {
         self.PageMode("manageType");
+    }
+    
+    self.StartEditType = function () {
+        self.EditType("editTrue");
     }
     
     self.StartAddingNewType = function () {
@@ -2090,6 +2088,7 @@ Carvic.Model.HistoryModel = function () {
     self.UserList = ko.observableArray();
     self.Component = ko.observable("");
     self.Node = ko.observable("");
+    self.Type = ko.observable("");
     self.Cluster = ko.observable("");
     self.ClusterList = ko.observableArray();
     self.Keywords = ko.observable("");
@@ -2142,6 +2141,7 @@ Carvic.Model.HistoryModel = function () {
         if (self.Node() != "") query.node = Number(self.Node());
         if (self.Cluster() != "") query.cluster = self.Cluster();
         if (self.Keywords() != "") query.keywords = self.Keywords();
+        if (self.Type() != "") query.type = self.Type();
         var d1 = self.From();
         if (d1 && d1 != "") query.ts_from = Carvic.Utils.ParseDate(d1);
         var d2 = self.To();
@@ -2154,6 +2154,7 @@ Carvic.Model.HistoryModel = function () {
             for (var i = 0; i < data.records.length; i++) {
                 var obj = data.records[i];
                 obj.component = obj.component || "";
+                obj.type = obj.type || "";
                 obj.component_url = (obj.component ? "component.html?id=" + encodeURI(obj.component) : null);
                 obj.cluster = obj.cluster || "";
                 obj.cluster_name = obj.cluster_name || "";
