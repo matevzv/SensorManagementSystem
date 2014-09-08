@@ -1421,14 +1421,16 @@ Carvic.Model.ComponentsModel = function () {
     
     self.EditTypeTitle = function (curr_component) {
         var title = prompt("Enter new type title");
-        var code = curr_component.code;
-        var d = {
-            code: code,
-            title: title
-        };
-        Carvic.Utils.Post({ action: "update_components_type", data: d }, function (data) {
-            self.getComponentTypes();
-        });
+        if( title != null ) {
+            var code = curr_component.code;
+            var d = {
+                code: code,
+                title: title
+            };
+            Carvic.Utils.Post({ action: "update_components_type", data: d }, function (data) {
+                self.getComponentTypes();
+            });
+        }
     };
     
     self.SaveNewComponents = function (curr_component) {
