@@ -211,12 +211,14 @@
                                 <th><input type="checkbox" id="checkAllTypes" style="cursor: default" data-bind="checked: $root.SelectAllTypes"></th>
                                 <th style="text-align:center;">Code</th>
                                 <th style="text-align:center;">Title</th>
+                                 <th style="text-align:Center;">Edit</th>
                             </tr>
                             <tbody data-bind="foreach: $root.ComponentTypes">
                                 <tr style="cursor: pointer">
                                     <td><input type="checkbox" id="checkbox" style="cursor: default" data-bind="checked: $root.CheckedComponentsTypes, value: code"></td>
                                     <td data-bind="text: code", style="text-align:center;"></td>
                                     <td data-bind="text: title", style="text-align:center;"></td>
+                                    <td style="text-align:center;"><button id="btnEdit" class="btn btn-primary" data-bind="click: $root.EditTypeTitle"><i class="icon-edit"></i> Edit </button></td>
                                 </tr>
                                 <div class="span3 text-light"><button data-bind="click: $root.DeleteComponentTypesList, visible: $root.CheckedComponentsTypes().length > 0"><i class="icon-trash"></i> Delete selected types</button>
                                 </div>

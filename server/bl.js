@@ -729,6 +729,46 @@ exports.get_component_history = function (req, callback) {
     db.get_component_history(req.data.id, callback)
 };
 
+exports.update_components_type = function(req, callback) {
+    var rec = req.data;
+    db.get_component_type(rec.code, function (err, data) {
+        if (err) return callback(err);
+        var rec2 = {
+            code: rec.code.toLowerCase(),
+            title: rec.title.toUpperCase()
+        }
+        db.update_component_type(rec.code, rec2, function (err2, data2) {
+            if (err2) return callback(err2);
+            var h = {
+                type: rec2.code,
+                user: req.session.user,
+                code: "type_change",
+                ts: new Date(),
+                title: "Type '" + rec2.code + "' updated",
+                description: "Type '" + rec2.code + "' was updated",
+                sys_data: rec
+            };
+            db.new_history(h, function (err3, data3) {
+                if (err3) return callback(err3);
+
+                // create another history record for new component id
+                var h2 = {
+                    type: rec2.code,
+                    user: req.session.user,
+                    code: "type_change",
+                    ts: new Date(),
+                    title: "Type '" + rec2.code + "' updated",
+                    description: "Type '" + rec2.code + "' was updated",
+                    sys_data: rec
+                };
+                db.new_history(h2, function (err4, data4) {
+                    callback(err4,  data4);
+                });
+            });
+        });
+    });
+};
+
 exports.update_component = function (req, callback) {
     var rec = req.data;
     db.get_component(rec.id, function (err, data) {

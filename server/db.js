@@ -247,6 +247,13 @@ function add_component_type(rec, callback) {
     });
 };
 
+function update_component_type(code, rec, callback) {
+    var query = { code: code };
+    db[collection_components_type].update(query, { $set: rec }, null, function (err, res) {
+        callback(err, {});
+    });
+};
+
 function update_component(id, rec, callback) {
     var query = { id: id };
     db[collection_components].update(query, { $set: rec }, null, function (err, res) {
@@ -782,6 +789,7 @@ exports.get_cluster_history = get_cluster_history;
 exports.add_component = add_component;
 exports.add_component_type = add_component_type;
 exports.update_component = update_component;
+exports.update_component_type = update_component_type;
 exports.delete_component = delete_component;
 exports.delete_component_type = delete_component_type;
 exports.get_component = get_component;

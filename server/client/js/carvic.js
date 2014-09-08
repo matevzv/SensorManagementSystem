@@ -1419,6 +1419,18 @@ Carvic.Model.ComponentsModel = function () {
     };
     
     
+    self.EditTypeTitle = function (curr_component) {
+        var title = prompt("Enter new type title");
+        var code = curr_component.code;
+        var d = {
+            code: code,
+            title: title
+        };
+        Carvic.Utils.Post({ action: "update_components_type", data: d }, function (data) {
+            self.getComponentTypes();
+        });
+    };
+    
     self.SaveNewComponents = function (curr_component) {
         var errors = [];
         Carvic.Utils.CheckIfEmpty(self.NewType(), "Type cannot be empty", errors);
@@ -1443,12 +1455,12 @@ Carvic.Model.ComponentsModel = function () {
         };
         Carvic.Utils.Post({ action: "add_components", data: d }, function (data) {
             self.PageMode("search");
-            document.form.NewPN.value = "";
-            document.form.NewP.value = "";
-            document.form.NewS.value = "";
-            document.form.NewSN1.value = "";
-            document.form.NewSN2.value = "";
-            document.form.NewType.value = "";
+            self.NewPN("");
+            self.NewP("");
+            self.NewS("");
+            self.NewSN1("");
+            self.NewSN2("");
+            self.NewType("Choose ...");
         });
     };
     
@@ -1460,8 +1472,8 @@ Carvic.Model.ComponentsModel = function () {
         Carvic.Utils.Post({ action: "add_new_component_type", data: d }, function (data) {
             self.getComponentTypes();
             self.PageMode("manageType");
-            document.formType.newCode.value = "";
-            document.formType.newTitle.value = "";
+            self.NewCode("");
+            self.NewTitle("");
         });      
     }
     
@@ -1519,8 +1531,8 @@ Carvic.Model.ComponentsModel = function () {
     
     self.CancelAddingNewType = function () {
         self.PageMode("manageType");
-        document.formType.newCode.value = "";
-        document.formType.newTitle.value = "";
+        self.NewCode("");
+        self.NewTitle("");
     }
     
     self.CancelManageTypes = function () {
@@ -1530,12 +1542,12 @@ Carvic.Model.ComponentsModel = function () {
     
     self.CancelAddingNewBatch = function () {
         self.PageMode("search");
-        document.form.NewPN.value = "";
-        document.form.NewP.value = "";
-        document.form.NewS.value = "";
-        document.form.NewSN1.value = "";
-        document.form.NewSN2.value = "";
-        document.form.NewType.value = "";
+        self.NewPN("");
+        self.NewP("");
+        self.NewS("");
+        self.NewSN1("");
+        self.NewSN2("");
+        self.NewType("");
     }
 
     self.DeleteComponentList = function () {
