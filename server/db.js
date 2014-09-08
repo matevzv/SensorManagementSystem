@@ -110,6 +110,7 @@ function fill_dummy_data(callback) {
     loop(data.users, collection_users, true);
     loop(data.logins, collection_logins);
     loop(data.history, collection_history);
+    loop(data.types, collection_components_type);
 
     var calls = [];
     inserts.forEach(function (item) {
