@@ -15,6 +15,7 @@
         <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
         <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap3-typeahead.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
         <script type="text/javascript" src="js/carvic.js"></script>
         <script type="text/javascript" src="consts.js"></script>
@@ -27,7 +28,7 @@
                     .attr("data-placement", "right")
                     .tooltip();
             
-                /*$('.typeahead').typeahead({
+                $('.typeahead').typeahead({
                     source: Carvic.Utils.ComponentLookup,
                     minLength: 3,
                     matcher: function () { return true; }
@@ -36,8 +37,8 @@
                 $('.typeahead2').typeahead({
                     source: Carvic.Utils.ClusterLookup,
                     matcher: function () { return true; }
-                });*/
-            
+                });
+                
                 $("input").keyup(function (event) {
                     if (event.keyCode == 13) {
                         $("#btnSearch").click();
@@ -108,7 +109,7 @@
                         <div class="list-group">
                             <label class="control-label" for="inP">Component</label>
                             <div class="controls">
-                                <input class="typeahead form-control" type="text" id="inP" placeholder="Type parts of component's id" data-bind="value: Component" />
+                                <input class="form-control typeahead" type="text" id="inP" placeholder="Type parts of component's id" data-bind="value: Component" />
                             </div>
                         </div>
                     </div>
@@ -130,12 +131,12 @@
                         <div class="list-group">
                             <label class="control-label" for="inTime">Time period</label>
                             <form class="form-inline" role="form">
-                                <div class="input-group col-md-5">
+                                <div class="input-group col-md-6">
                                     <label for="inTime" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span>
                                     </label>
                                     <input class="form-control" type="text" id="inTime" placeholder="From" data-bind="value: From" />
                                 </div>
-                                <div class="input-group col-md-5">
+                                <div class="input-group col-md-6 pull-right">
                                     <label for="inTime2" class="input-group-addon btn"><span class="glyphicon glyphicon-calendar"></span>
                                     </label>
                                     <input class="form-control" type="text" id="inTime2" placeholder="To" data-bind="value: To" />
@@ -152,14 +153,13 @@
             </div>
 
             <div class="row" style="padding-bottom:  10px;">
-                <div class="col-md-12 text-light">
-                    <div class="pull-right">
-                    Record count: <span data-bind="text: RecCount"></span>
-                    </div>
-                    
+                <div class="col-md-12 text-light">                    
                     <button class="btn btn-default" data-bind="click: $root.DecPage, enable: $root.DecPageEnabled"><i class="glyphicon glyphicon-arrow-left"></i>  </button>
                     Current page: <span data-bind="text: CurrPage() + 1 "></span> of <span data-bind="text: PageCount() + 1 "></span>
                     <button class="btn btn-default" data-bind="click: $root.IncPage, enable: $root.IncPageEnabled"><i class="glyphicon glyphicon-arrow-right"></i>  </button>
+                    <div class="pull-right">
+                    Record count: <span data-bind="text: RecCount"></span>
+                    </div>
                 </div>
             </div>
             <div class="row">
