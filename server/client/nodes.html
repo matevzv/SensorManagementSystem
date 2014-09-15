@@ -72,17 +72,8 @@
 
             <div class="well">
                 <h2><i class="glyphicon glyphicon-map-marker"></i> Nodes</h2>
-                <div class="row form-horizontal max-width-form">
-                    <div class="col-md-6">
-
-
-                        <div class="list-group">
-                            <label class="control-label" for="inID"> ID </label>
-                            <div class="controls">
-                                <input class="form-control" id="inID" type="text" data-bind="value: NodeSearchId" />
-                            </div>
-                        </div>
-
+                <div class="row">
+                    <div class="col-md-4">
                         <div class="list-group">
                             <label class="control-label" for="inName"> Name </label>
                             <div class="controls">
@@ -117,26 +108,23 @@
                                 <input class="form-control" id="inBoxLabel" type="text" data-bind="value: NodeSearchBoxLabel" />
                             </div>
                         </div>
-
+                    </div>
+                    <div class="col-md-4">
+                        <div class="list-group">
+                            <label class="control-label" for="inID"> ID </label>
+                            <div class="controls">
+                                <input class="form-control" id="inID" type="text" data-bind="value: NodeSearchId" />
+                            </div>
+                        </div>
+                    
                         <div class="list-group" data-bind="visible: AdvancedSearch() == true">
                             <label class="control-label" for="inComment"> Comment </label>
                             <div class="controls">
                                 <input class="form-control" id="inComment" type="text" data-bind="value: NodeSearchComment" />
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
 
-
-                        <div class="list-group">
-                            <label class="control-label" for="inCluster"> Cluster </label>
-                            <div class="controls">
-                                <!--<input class="form-control" id="inCluster" class="input typeahead" type="text" data-bind="value: NodeSearchCluster" title="Enter part of cluster name and select from the list of matches" />-->
-                                <select class="input form-control" id="inCluster" data-bind="options: NodeSearchClusterList, optionsText: 'title', optionsValue: 'code', optionsCaption: 'No cluster selected', value: NodeSearchCluster"></select>
-                            </div>
-                        </div>
-
-                        <div class="list-group">
+                        <div class="list-group" data-bind="visible: AdvancedSearch() == true">
                             <label class="control-label" for="inStatus"> Status </label>
                             <div class="controls">
                                 <select class="form-control" id="inStatus" data-bind="options: NodeStatusesArray, value: NodeSearchStatus,  optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code'"></select>
@@ -147,6 +135,15 @@
                             <label class="control-label" for="inNetworkAddress"> Network address </label>
                             <div class="controls">
                                 <input class="form-control" id="inNetworkAddress" type="text" data-bind="value: NodeSearchNetworkAddress" />
+                            </div>
+                        </div> 
+                    </div>
+                    <div class="col-md-4">
+                        <div class="list-group">
+                            <label class="control-label" for="inCluster"> Cluster </label>
+                            <div class="controls">
+                                <!--<input class="form-control" id="inCluster" class="input typeahead" type="text" data-bind="value: NodeSearchCluster" title="Enter part of cluster name and select from the list of matches" />-->
+                                <select class="input form-control" id="inCluster" data-bind="options: NodeSearchClusterList, optionsText: 'title', optionsValue: 'code', optionsCaption: 'No cluster selected', value: NodeSearchCluster"></select>
                             </div>
                         </div>
 

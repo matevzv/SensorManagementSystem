@@ -116,34 +116,34 @@
             <div class="well">
                 <h2><i class="glyphicon glyphicon-th"></i> Clusters</h2>
 
-                <div class="row form-horizontal max-width-form">
-                    <div class="col-md-6">
-                        <div class="list-group">
-                            <label class="control-label" for="inTag"> Tag </label>
-                            <div class="controls">
-                                <input class="form-control" id="inTag" type="text" data-bind="value: SearchTag" />
-                            </div>
-                        </div>
-
+                <div class="row form-horizontal">
+                    <div class="col-md-4">
                         <div class="list-group">
                             <label class="control-label" for="inName"> Name </label>
                             <div class="controls">
                                 <input class="form-control" id="inName" type="text" data-bind="value: SearchName" />
                             </div>
                         </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inType"> Type </label>
+                            <div class="controls">
+                                <select class="form-control" id="inType" data-bind="options: ClusterTypesArray, value: SearchType,  optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code'"></select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="list-group">
                             <label class="control-label" for="inID"> ID </label>
                             <div class="controls">
                                 <input class="form-control" id="inID" type="text" data-bind="value: SearchId" />
                             </div>
                         </div>
-
+                    </div>
+                    <div class="col-md-4">
                         <div class="list-group">
-                            <label class="control-label" for="inType"> Type </label>
+                            <label class="control-label" for="inTag"> Tag </label>
                             <div class="controls">
-                                <select class="form-control" id="inType" data-bind="options: ClusterTypesArray, value: SearchType,  optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code'"></select>
+                                <input class="form-control" id="inTag" type="text" data-bind="value: SearchTag" />
                             </div>
                         </div>
                     </div>
