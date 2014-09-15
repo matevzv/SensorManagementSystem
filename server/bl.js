@@ -744,27 +744,11 @@ exports.update_components_type = function(req, callback) {
                 user: req.session.user,
                 code: "type_change",
                 ts: new Date(),
-                title: "Type '" + rec2.code + "' updated",
-                description: "Type '" + rec2.code + "' was updated",
+                title: "Type '" + rec2.code  + "' updated to '" + rec.title + "'",
+                description: "Type '" + rec2.code + "' was updated by '" + req.session.user + "'",
                 sys_data: rec
             };
-            db.new_history(h, function (err3, data3) {
-                if (err3) return callback(err3);
-
-                // create another history record for new component id
-                var h2 = {
-                    type: rec2.code,
-                    user: req.session.user,
-                    code: "type_change",
-                    ts: new Date(),
-                    title: "Type '" + rec2.code + "' updated",
-                    description: "Type '" + rec2.code + "' was updated",
-                    sys_data: rec
-                };
-                db.new_history(h2, function (err4, data4) {
-                    callback(err4,  data4);
-                });
-            });
+            exports.new_history(h, callback);
         });
     });
 };
