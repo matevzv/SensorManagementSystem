@@ -24,6 +24,7 @@ data.clusters = [];
 data.nodes = [];
 data.components = [];
 data.sensor_history = [];
+data.types = [];
 
 data.users = [];
 data.logins = [];
@@ -103,6 +104,7 @@ data.clusters.push({
 data.clusters.forEach(function (item) {
     item.tag = (item.type == "zigbee" ? item.id : "");
 });
+
 
 //////////////////////////////////////////////////
 var cluster_gateways = {};

@@ -18,6 +18,7 @@ data.components = [];
 data.sensor_history = [];
 data.users = [];
 data.logins = [];
+data.types = [];
 
 //////////////////////////////////////////////////
 // users
@@ -107,6 +108,22 @@ data.clusters.forEach(function (item) {
     item.tag = (item.type == "zigbee" ? item.id : "");
     cluster_map[item.id] = item;
     cluster_map[item.name] = item;
+});
+
+
+//////////////////////
+
+data.types.push({
+    code: "snr",
+    title: "SNR"
+});
+data.types.push({
+    code: "sne",
+    title: "SNE"
+});
+data.types.push({
+    code: "snc",
+    title: "SNC"
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////
