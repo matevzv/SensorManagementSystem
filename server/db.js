@@ -26,6 +26,7 @@ var collection_clusters = "clusters";
 var collection_nodes = "nodes";
 var collection_history = "history";
 var collection_sensor_history = "sensor_history";
+var collection_components_type = "components_type";
 
 var collections = [
     collection_users,
@@ -34,7 +35,8 @@ var collections = [
     collection_clusters,
     collection_nodes,
     collection_history,
-    collection_sensor_history
+    collection_sensor_history,
+    collection_components_type
 ];
 
 
@@ -108,6 +110,7 @@ function fill_dummy_data(callback) {
     loop(data.users, collection_users, true);
     loop(data.logins, collection_logins);
     loop(data.history, collection_history);
+    loop(data.types, collection_components_type);
 
     var calls = [];
     inserts.forEach(function (item) {
@@ -239,6 +242,19 @@ function add_component(rec, callback) {
     });
 };
 
+function add_component_type(rec, callback) {
+    db[collection_components_type].insert(rec, function (err, res) {
+        callback(err, {});
+    });
+};
+
+function update_component_type(code, rec, callback) {
+    var query = { code: code };
+    db[collection_components_type].update(query, { $set: rec }, null, function (err, res) {
+        callback(err, {});
+    });
+};
+
 function update_component(id, rec, callback) {
     var query = { id: id };
     db[collection_components].update(query, { $set: rec }, null, function (err, res) {
@@ -248,6 +264,30 @@ function update_component(id, rec, callback) {
 
 function delete_component(id, callback) {
     db[collection_components].remove({ id: id }, callback);
+};
+
+function delete_component_type(code, callback) {
+    db[collection_components_type].remove({ code: code }, callback);
+};
+
+function get_component_type(code, callback) {
+    var query = { code: code };
+    db[collection_components_type].find(query, function (err, docs) {
+        if (err) {
+            callback(err);
+        } else if (!docs || docs.length === 0) {
+            callback(new Error("Component type not found: " + code));
+        } else {
+            callback(null, docs);
+        }
+    });
+};
+
+function get_all_component_type(callback){
+    db[collection_components_type].find({}, { _id: 0 }).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
 };
 
 function get_component(id, callback) {
@@ -748,13 +788,18 @@ exports.get_clusters = get_clusters;
 exports.get_cluster_history = get_cluster_history;
 
 exports.add_component = add_component;
+exports.add_component_type = add_component_type;
 exports.update_component = update_component;
+exports.update_component_type = update_component_type;
 exports.delete_component = delete_component;
+exports.delete_component_type = delete_component_type;
 exports.get_component = get_component;
 exports.get_component_history = get_component_history;
 exports.get_components = get_components;
 exports.get_components2 = get_components2;
 exports.get_components2_count = get_components2_count;
+exports.get_component_type = get_component_type;
+exports.get_all_component_type = get_all_component_type;
 
 exports.get_node_ids = get_node_ids;
 exports.get_max_node_id = get_max_node_id;
