@@ -289,9 +289,9 @@ Carvic.Model.UsersModel = function () {
 
     self.NewUserType(self.UserTypes()[1]);
 
-    self.UserStatusesArray = Carvic.Consts.UserStatusesArray;
-    self.UserStatuses = ko.observableArray(self.UserStatusesArray);
-    self.UserStatusesMap = Carvic.Consts.UserStatusesMap;
+    //self.UserStatusesArray = Carvic.Consts.UserStatusesArray;
+    self.UserStatuses = ko.observableArray();
+    self.UserStatusesMap = {};
 
     self.NewUserEditing = ko.observable(false);
     self.NewUserEdit = ko.observable({
