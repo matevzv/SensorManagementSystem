@@ -1916,9 +1916,25 @@ Carvic.Model.ClustersModel = function () {
     self.NewType = ko.observable();
     self.NewComment = ko.observable("");
 
-    self.ClusterTypesArray = Carvic.Consts.ClusterTypesArray;
-    self.ClusterTypes = ko.observableArray(self.ClusterTypesArray);
-    self.ClusterTypesMap = Carvic.Consts.ClusterTypesMap;
+    //self.ClusterTypesArray = Carvic.Consts.ClusterTypesArray;
+    self.ClusterTypes = ko.observableArray();
+    self.ClusterTypesMap = {};
+    
+    self.getClusterTypes = function (callback) {
+        var d = {}
+        self.ClusterTypes.removeAll();
+        self.ClusterTypesMap = {};
+        Carvic.Utils.Post({ action: "get_all_cluster_types", data: d }, function (data) {
+            data.forEach( function (item){
+                self.ClusterTypes.push({
+                    title: item.title,
+                    code: item.code
+                });
+                self.ClusterTypesMap[item.code] = item;
+            });;
+            if(callback) callback();
+        });
+    }
 
     self.Search = function () {
         self.SearchResult.removeAll();
@@ -2029,6 +2045,9 @@ Carvic.Model.ClustersModel = function () {
                     break;
         }
     }
+    self.getClusterTypes( function() {
+        self.Search();
+    });
 }
 
 Carvic.Model.ClusterModel = function () {
@@ -2055,9 +2074,9 @@ Carvic.Model.ClusterModel = function () {
     self.ShowNodes = ko.observable(true);
     self.ShowHistory = ko.observable(false);
 
-    self.ClusterTypesArray = Carvic.Consts.ClusterTypesArray;
-    self.ClusterTypes = ko.observableArray(self.ClusterTypesArray);
-    self.ClusterTypesMap = Carvic.Consts.ClusterTypesMap;
+    //self.ClusterTypesArray = Carvic.Consts.ClusterTypesArray;
+    self.ClusterTypes = ko.observableArray();
+    self.ClusterTypesMap = {};
 
     self.DoShowNodes = function () {
         self.ShowHistory(false);
@@ -2066,6 +2085,22 @@ Carvic.Model.ClusterModel = function () {
     self.DoShowHistory = function () {
         self.ShowHistory(true);
         self.ShowNodes(false);
+    }
+    
+    self.getClusterTypes = function (callback) {
+        var d = {}
+        self.ClusterTypes.removeAll();
+        self.ClusterTypesMap = {};
+        Carvic.Utils.Post({ action: "get_all_cluster_types", data: d }, function (data) {
+            data.forEach( function (item){
+                self.ClusterTypes.push({
+                    title: item.title,
+                    code: item.code
+                });
+                self.ClusterTypesMap[item.code] = item;
+            });;
+            if(callback) callback();
+        });
     }
 
     self.Load = function (id) {
@@ -2091,7 +2126,6 @@ Carvic.Model.ClusterModel = function () {
             self.LoadNodes();
         });
     };
-
 
     self.LoadNodes = function () {
         // load history
@@ -2143,7 +2177,6 @@ Carvic.Model.ClusterModel = function () {
         });
     }
 
-
     self.SaveCluster = function (curr_cluster) {
         var errors = [];
         if (self.Type() == "zigbee") {
@@ -2173,7 +2206,8 @@ Carvic.Model.ClusterModel = function () {
 
         var req = { action: "update_cluster", data: d };
         Carvic.Utils.Post(req, function (data) {
-            self.LoadHistory();
+            var id = Carvic.Utils.GetUrlParam("id");
+            Carvic.Model.Cluster.Load(id);
         });
         self.Editing(false);
     };
@@ -2204,6 +2238,11 @@ Carvic.Model.ClusterModel = function () {
             window.location = "clusters.html";
         });
     };
+    
+    self.getClusterTypes( function() {
+        var id = Carvic.Utils.GetUrlParam("id");
+        self.Load(id);
+    });
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -2402,7 +2441,6 @@ Carvic.InitHistoryList = function () {
     Carvic.Utils.SetCurrentUser(Carvic.Model.History);
 }
 
-
 Carvic.InitSingleComponentList = function () {
     Carvic.Model.Component = new Carvic.Model.ComponentModel();
     Carvic.Utils.SetCurrentUser(Carvic.Model.Component);
@@ -2410,14 +2448,11 @@ Carvic.InitSingleComponentList = function () {
 
 Carvic.InitClusterList = function () {
     Carvic.Model.Clusters = new Carvic.Model.ClustersModel();
-    Carvic.Model.Clusters.Search(); // here it is ok to perform search on page load
     Carvic.Utils.SetCurrentUser(Carvic.Model.Clusters);
 }
 
 Carvic.InitSingleCluster = function () {
-    var id = Carvic.Utils.GetUrlParam("id");
     Carvic.Model.Cluster = new Carvic.Model.ClusterModel();
-    Carvic.Model.Cluster.Load(id);
     Carvic.Utils.SetCurrentUser(Carvic.Model.Cluster);
 }
 

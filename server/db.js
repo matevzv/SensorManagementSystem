@@ -223,6 +223,13 @@ function update_cluster(id, rec, callback) {
     });
 };
 
+function get_all_cluster_types(callback){
+    db[collection_cluster_types].find({}, { _id: 0 }).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
+};
+
 function delete_cluster(id, callback) {
     db[collection_clusters].remove({ id: id }, callback);
 };
@@ -826,6 +833,7 @@ exports.delete_cluster = delete_cluster;
 exports.get_cluster = get_cluster;
 exports.get_clusters = get_clusters;
 exports.get_cluster_history = get_cluster_history;
+exports.get_all_cluster_types = get_all_cluster_types;
 
 exports.add_component = add_component;
 exports.add_component_type = add_component_type;

@@ -1143,6 +1143,13 @@ exports.get_cluster_history = function (req, callback) {
     db.get_cluster_history(req.data.id, callback);
 };
 
+exports.get_all_cluster_types = function (res, callback) {
+    db.get_all_cluster_types( function(err, data) {
+        if (err) return callback(err);
+        return callback(null, data)
+        
+    });
+}
 
 exports.mark_cluster_scan = function (cluster_id, callback) {
     rec = { last_scan: new Date() };

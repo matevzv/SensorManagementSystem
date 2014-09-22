@@ -41,18 +41,18 @@ var Enums = {
     /*UserTypesArray: [
         { code: "admin", title: "Administrator" },
         { code: "normal", title: "Normal user" }
-    ],*/
+    ],
 
     UserStatusesArray: [
         { code: "active", title: "Active" },
         { code: "inactive", title: "Inactive" },
         { code: "locked", title: "Locked" }
-    ],
+    ],*/
 
-    ClusterTypesArray: [
+    /*ClusterTypesArray: [
         { code: "zigbee", title: "ZigBee", uses_gateway: true },
         { code: "ipv6", title: "IPv6", uses_gateway: false }
-    ]
+    ]*/
 };
 
 //Enums.ComponentTypesMap = xutil.create_map(Enums.ComponentTypesArray);
@@ -60,8 +60,8 @@ var Enums = {
 Enums.NodeStatusesMap = xutil.create_map(Enums.NodeStatusesArray);
 Enums.NodeRolesMap = xutil.create_map(Enums.NodeRolesArray);
 //Enums.UserTypesMap = xutil.create_map(Enums.UserTypesArray);
-Enums.UserStatusesMap = xutil.create_map(Enums.UserStatusesArray);
-Enums.ClusterTypesMap = xutil.create_map(Enums.ClusterTypesArray);
+//Enums.UserStatusesMap = xutil.create_map(Enums.UserStatusesArray);
+//Enums.ClusterTypesMap = xutil.create_map(Enums.ClusterTypesArray);
 
 /////////////////////////////////////////////////////////////////////////////////////
 
