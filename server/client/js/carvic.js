@@ -1323,9 +1323,9 @@ Carvic.Model.ComponentsModel = function () {
     self.ComponentTypes = ko.observableArray();
     self.ComponentTypesMap = {};
     
-    self.ComponentStatusesArray = Carvic.Consts.ComponentStatusesArray;
-    self.ComponentStatuses = ko.observableArray(self.ComponentStatusesArray);
-    self.ComponentStatusesMap = Carvic.Consts.ComponentStatusesMap;
+    //self.ComponentStatusesArray = Carvic.Consts.ComponentStatusesArray;
+    self.ComponentStatuses = ko.observableArray();
+    self.ComponentStatusesMap = {};
     
     self.NewCode = ko.observable("");
     self.NewTitle = ko.observable("");
@@ -1337,24 +1337,38 @@ Carvic.Model.ComponentsModel = function () {
         }
     }
     
-    self.getComponentTypes = function () {
+    self.getComponentTypes = function (callback) {
         self.ComponentTypes.removeAll();
+        self.ComponentTypesMap = {};
         var d = {}
-        Carvic.Utils.Post({ action: "get_component_types", data: d }, function (data) {
-            for (var i = 0; i < data.length; i++) {
-                var obj = data[i];
+        Carvic.Utils.Post({ action: "get_all_component_types", data: d }, function (data) {
+            data.forEach(function (item) {
                 self.ComponentTypes.push({
-                    title: obj.title,
-                    code: obj.code
+                    title: item.title,
+                    code: item.code
                 });
-            }
-            self.ComponentTypesMap = {};
-            self.ComponentTypes().forEach(function (item) {
                 self.ComponentTypesMap[item.code] = item;
             });
+            if(callback) callback();
         });
     }
-
+    
+    self.getComponentStatuses = function (callback) {
+        var d = {}
+        self.ComponentStatuses.removeAll();
+        self.ComponentStatusesMap = {};
+        Carvic.Utils.Post({ action: "get_all_component_statuses", data: d }, function (data) {
+            data.forEach( function (item){
+                self.ComponentStatuses.push({
+                    title: item.title,
+                    code: item.code
+                });
+                self.ComponentStatusesMap[item.code] = item;
+            });;
+            if(callback) callback();
+        });
+    }
+    
     self.DecPage = function () {
         var tmp = self.CurrPage() - 1;
         if (tmp >= 0) {
@@ -1599,8 +1613,12 @@ Carvic.Model.ComponentsModel = function () {
                 break;
         }
     };
-
-    self.Search();
+    
+    self.getComponentTypes( function() {
+        self.getComponentStatuses( function() {
+            self.Search();
+        });
+    });
 };
 
 Carvic.Model.ComponentModel = function () {
@@ -1628,9 +1646,9 @@ Carvic.Model.ComponentModel = function () {
     self.ComponentTypes = ko.observableArray();
     self.ComponentTypesMap = {};
 
-    self.ComponentStatusesArray = Carvic.Consts.ComponentStatusesArray;
-    self.ComponentStatuses = ko.observableArray(self.ComponentStatusesArray);
-    self.ComponentStatusesMap = Carvic.Consts.ComponentStatusesMap;
+    //self.ComponentStatusesArray = Carvic.Consts.ComponentStatusesArray;
+    self.ComponentStatuses = ko.observableArray();
+    self.ComponentStatusesMap = {};
 
     self.Load = function (id) {
         var query = { id: id };
@@ -1689,21 +1707,35 @@ Carvic.Model.ComponentModel = function () {
         });
     }
     
-    self.getComponentTypes = function () {
-        var d = {}
+    self.getComponentTypes = function (callback) {
         self.ComponentTypes.removeAll();
-        Carvic.Utils.Post({ action: "get_component_types", data: d }, function (data) {
-            for (var i = 0; i < data.length; i++) {
-                var obj = data[i];
+        self.ComponentTypesMap = {};
+        var d = {}
+        Carvic.Utils.Post({ action: "get_all_component_types", data: d }, function (data) {
+            data.forEach(function (item) {
                 self.ComponentTypes.push({
-                    title: obj.title,
-                    code: obj.code
+                    title: item.title,
+                    code: item.code
                 });
-            }
-            self.ComponentTypesMap = {};
-            self.ComponentTypes().forEach(function (item) {
                 self.ComponentTypesMap[item.code] = item;
             });
+            if(callback) callback();
+        });
+    }
+    
+    self.getComponentStatuses = function (callback) {
+        var d = {}
+        self.ComponentStatuses.removeAll();
+        self.ComponentStatusesMap = {};
+        Carvic.Utils.Post({ action: "get_all_component_statuses", data: d }, function (data) {
+            data.forEach( function (item){
+                self.ComponentStatuses.push({
+                    title: item.title,
+                    code: item.code
+                });
+                self.ComponentStatusesMap[item.code] = item;
+            });;
+            if(callback) callback();
         });
     }
 
@@ -1772,6 +1804,13 @@ Carvic.Model.ComponentModel = function () {
             });
         }
     };
+    
+    self.getComponentTypes( function() {
+        self.getComponentStatuses( function() {
+            var id = Carvic.Utils.GetUrlParam("id");
+            self.Load(id);
+        });
+    });
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -2284,7 +2323,6 @@ Carvic.InitSingleUser = function () {
 Carvic.InitComponentList = function () {
     Carvic.Model.Components = new Carvic.Model.ComponentsModel();
     //Carvic.Model.Components.Search(); // this is too expensive
-    Carvic.Model.Components.getComponentTypes();
     Carvic.Utils.SetCurrentUser(Carvic.Model.Components);
 }
 Carvic.InitHistoryList = function () {
@@ -2294,10 +2332,7 @@ Carvic.InitHistoryList = function () {
 
 
 Carvic.InitSingleComponentList = function () {
-    var id = Carvic.Utils.GetUrlParam("id");
     Carvic.Model.Component = new Carvic.Model.ComponentModel();
-    Carvic.Model.Component.getComponentTypes();
-    Carvic.Model.Component.Load(id);
     Carvic.Utils.SetCurrentUser(Carvic.Model.Component);
 }
 

@@ -24,7 +24,13 @@ data.clusters = [];
 data.nodes = [];
 data.components = [];
 data.sensor_history = [];
-data.types = [];
+data.component_types = [];
+data.cluster_types = [];
+data.component_statuses = [];
+data.node_roles = [];
+data.node_statuses = [];
+data.user_statuses = [];
+data.user_types = [];
 
 data.users = [];
 data.logins = [];
