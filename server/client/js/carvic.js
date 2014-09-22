@@ -664,15 +664,31 @@ Carvic.Model.NodesModel = function (callback) {
     self.NodeSearchFirmware = ko.observable("");
     self.NodeSearchBootloader = ko.observable("");
 
-    self.NodeStatusesArray = Carvic.Consts.NodeStatusesArray;
-    self.NodeStatuses = ko.observableArray(self.NodeStatusesArray);
-    self.NodeStatusesMap = Carvic.Consts.NodeStatusesMap;
+    //self.NodeStatusesArray = Carvic.Consts.NodeStatusesArray;
+    self.NodeStatuses = ko.observableArray();
+    self.NodeStatusesMap = {};
 
     self.CurrPage = ko.observable(0);
     self.PageCount = ko.observable(0);
     self.IncPageEnabled = ko.observable(false);
     self.DecPageEnabled = ko.observable(false);
     self.RecCount = ko.observable(0);
+
+    self.getNodeStatuses = function (callback) {
+        var d = {}
+        self.NodeStatuses.removeAll();
+        self.NodeStatusesMap = {};
+        Carvic.Utils.Post({ action: "get_all_node_statuses", data: d }, function (data) {
+            data.forEach( function (item){
+                self.NodeStatuses.push({
+                    title: item.title,
+                    code: item.code
+                });
+                self.NodeStatusesMap[item.code] = item;
+            });;
+            if(callback) callback();
+        });
+    }
 
     self.IncPage = function () {
         if (self.CurrPage() < self.PageCount()) {
@@ -819,8 +835,10 @@ Carvic.Model.NodesModel = function (callback) {
     self.OpenNewNode = function (curr_node) {
         window.location = "new_node.html";
     };
-
-    self.Search();
+    
+    self.getNodeStatuses( function() {
+        self.Search();
+    });
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -835,9 +853,9 @@ Carvic.Model.SingleNodeModel = function () {
     self.NodeClusterList = ko.observableArray();
     Carvic.Utils.LoadClusterList(self.NodeClusterList);
 
-    self.NodeStatusesArray = Carvic.Consts.NodeStatusesArray;
-    self.NodeStatuses = ko.observableArray(self.NodeStatusesArray);
-    self.NodeStatusesMap = Carvic.Consts.NodeStatusesMap;
+    //self.NodeStatusesArray = Carvic.Consts.NodeStatusesArray;
+    self.NodeStatuses = ko.observableArray();
+    self.NodeStatusesMap = {};
 
     self.NodeRolesArray = Carvic.Consts.NodeRolesArray;
     self.NodeRoles = ko.observableArray(self.NodeRolesArray);
@@ -846,7 +864,9 @@ Carvic.Model.SingleNodeModel = function () {
     self.NodeID = ko.observable("");
     self.NodeName = ko.observable("");
     self.NodeStatus = ko.observable("unknown");
-    self.NodeStatusStr = ko.computed(function () { return self.NodeStatusesMap[self.NodeStatus()].title; }, this);
+    self.NodeStatusStr = ko.computed(function () {
+        return (typeof(self.NodeStatusesMap[self.NodeStatus()]) === "undefined") ? self.NodeStatus() :  self.NodeStatusesMap[self.NodeStatus()].title;
+    }, this);
     self.NodeCluster = ko.observable();
     self.NodeClusterName = ko.observable();
     self.NodeClusterUrl = ko.observable();
@@ -883,6 +903,22 @@ Carvic.Model.SingleNodeModel = function () {
     self.ShowNodeData = ko.observable(true);
 
     self.NodeEditComponentToAdd = ko.observable();
+    
+    self.getNodeStatuses = function (callback) {
+        var d = {}
+        self.NodeStatuses.removeAll();
+        self.NodeStatusesMap = {};
+        Carvic.Utils.Post({ action: "get_all_node_statuses", data: d }, function (data) {
+            data.forEach( function (item){
+                self.NodeStatuses.push({
+                    title: item.title,
+                    code: item.code
+                });
+                self.NodeStatusesMap[item.code] = item;
+            });;
+            if(callback) callback();
+        });
+    }
 
     self.LoadDataFromObject = function (data) {
         self.NodeID(data.id);
@@ -1151,6 +1187,12 @@ Carvic.Model.SingleNodeModel = function () {
         self.ShowSensorList(false);
         self.ShowNodeData(true);
     };
+    
+    self.getNodeStatuses( function() {
+        var id = Carvic.Utils.GetUrlParam("id");
+        if (id) self.LoadNode(id);
+        else selg.LoadNode(5);
+    });
 }
 
 Carvic.Model.NewNodeModel = function () {
@@ -1185,15 +1227,31 @@ Carvic.Model.NewNodeModel = function () {
     self.NodeHistory = ko.observableArray();
     self.NodeComponentToAdd = ko.observable("");
 
-    self.NodeStatusesArray = Carvic.Consts.NodeStatusesArray;
-    self.NodeStatuses = ko.observableArray(self.NodeStatusesArray);
-    self.NodeStatusesMap = Carvic.Consts.NodeStatusesMap;
+    //self.NodeStatusesArray = Carvic.Consts.NodeStatusesArray;
+    self.NodeStatuses = ko.observableArray();
+    self.NodeStatusesMap = {};
 
     self.NodeRolesArray = Carvic.Consts.NodeRolesArray;
     self.NodeRoles = ko.observableArray(self.NodeRolesArray);
     self.NodeRolesMap = Carvic.Consts.NodeRolesMap;
 
 
+    self.getNodeStatuses = function (callback) {
+        var d = {}
+        self.NodeStatuses.removeAll();
+        self.NodeStatusesMap = {};
+        Carvic.Utils.Post({ action: "get_all_node_statuses", data: d }, function (data) {
+            data.forEach( function (item){
+                self.NodeStatuses.push({
+                    title: item.title,
+                    code: item.code
+                });
+                self.NodeStatusesMap[item.code] = item;
+            });;
+            if(callback) callback();
+        });
+    }
+    
     self.RemoveComponent = function (id) {
         self.Components.remove(function (item) {
             return item.Id() == id;
@@ -1311,6 +1369,8 @@ Carvic.Model.NewNodeModel = function () {
             window.location = "node.html?id=" + encodeURI(data.id);
         });
     };
+    
+    self.getNodeStatuses();
 }
 
 function ComponentLookup(s, callback) {
