@@ -276,6 +276,13 @@ exports.get_current_user = function (req, callback) {
     });
 };
 
+exports.get_all_user_types = function (res, callback) {
+    db.get_all_user_types( function(err, data) {
+        if (err) return callback(err);
+        return callback(null, data)
+    });
+}
+
 exports.new_user = function (req, callback) {
     var rec = req.data;
     if (!rec.username || rec.username === "")
