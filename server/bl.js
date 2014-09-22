@@ -575,6 +575,13 @@ exports.get_all_node_statuses = function (res, callback) {
     });
 }
 
+exports.get_all_node_roles = function (res, callback) {
+    db.get_all_node_roles( function(err, data) {
+        if (err) return callback(err);
+        return callback(null, data)
+    });
+}
+
 exports.update_node = function (req, callback) {
     var rec = req.data;
     db.get_node(rec.id, function (err, data) {

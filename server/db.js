@@ -420,6 +420,13 @@ function get_all_node_statuses(callback){
     });
 };
 
+function get_all_node_roles(callback){
+    db[collection_node_roles].find({}, { _id: 0 }).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
+};
+
 function get_nodes2(query, skip, limit, callback) {
     db[collection_nodes]
         .find(query)
@@ -869,6 +876,7 @@ exports.get_nodes2 = get_nodes2;
 exports.get_nodes2_count = get_nodes2_count;
 exports.get_node_clusters = get_node_clusters;
 exports.get_all_node_statuses = get_all_node_statuses;
+exports.get_all_node_roles = get_all_node_roles;
 
 exports.get_sensor = get_sensor;
 exports.get_sensors_for_node = get_sensors_for_node;
