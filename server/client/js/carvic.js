@@ -326,6 +326,22 @@ Carvic.Model.UsersModel = function () {
             if(callback) callback();
         });
     }
+    
+    self.getUserStatuses = function (callback) {
+        self.UserStatuses.removeAll();
+        self.UserStatusesMap = {};
+        var d = {}
+        Carvic.Utils.Post({ action: "get_all_user_statuses", data: d }, function (data) {
+            data.forEach( function (item) {
+                self.UserStatuses.push({
+                    title: item.title,
+                    code: item.code
+                });
+                self.UserStatusesMap[item.code] = item;
+            });
+            if(callback) callback();
+        });
+    }
 
     self.LoadUsers = function () {
         self.UserList.removeAll();
@@ -366,7 +382,9 @@ Carvic.Model.UsersModel = function () {
         });
     };
     self.getUserTypes( function() {
-        self.LoadUsers();
+        self.getUserStatuses ( function() {
+            self.LoadUsers();
+        });
     });
 };
 
@@ -401,9 +419,9 @@ Carvic.Model.UserModel = function () {
     self.UserTypes = ko.observableArray();
     self.UserTypesMap = {};
 
-    self.UserStatusesArray = Carvic.Consts.UserStatusesArray;
-    self.UserStatuses = ko.observableArray(self.UserStatusesArray);
-    self.UserStatusesMap = Carvic.Consts.UserStatusesMap;
+    //self.UserStatusesArray = Carvic.Consts.UserStatusesArray;
+    self.UserStatuses = ko.observableArray();
+    self.UserStatusesMap = {};
 
     self.CurrentUserEditing = ko.observable(false);
     self.CurrentUserEditingPwd = ko.observable(false);
@@ -428,10 +446,26 @@ Carvic.Model.UserModel = function () {
             if(callback) callback();
         });
     }
+    
+    self.getUserStatuses = function (callback) {
+        self.UserStatuses.removeAll();
+        self.UserStatusesMap = {};
+        var d = {}
+        Carvic.Utils.Post({ action: "get_all_user_statuses", data: d }, function (data) {
+            data.forEach( function (item) {
+                self.UserStatuses.push({
+                    title: item.title,
+                    code: item.code
+                });
+                self.UserStatusesMap[item.code] = item;
+            });
+            if(callback) callback();
+        });
+    }
 
     self.CurrentUserStartEditing = function () {
         self.CurrentUserEdit().FullName(self.CurrentUser().FullName());
-        self.CurrentUserEdit().Status(Carvic.Utils.GetMatches({ code: self.CurrentUser().Status() }, self.UserStatusesArray)[0]);
+        self.CurrentUserEdit().Status(Carvic.Utils.GetMatches({ code: self.CurrentUser().Status() }, self.UserStatuses())[0]);
         self.CurrentUserEdit().Type(Carvic.Utils.GetMatches({ code: self.CurrentUser().Type() }, self.UserTypes())[0]);
         self.CurrentUserEditing(true);
     }
@@ -592,11 +626,13 @@ Carvic.Model.UserModel = function () {
         self.ShowChanges(true);
     }
     self.getUserTypes( function() {
-        var id = Carvic.Utils.GetUrlParam("u");
-        if (id)
-            Carvic.Model.User.LoadUser(id);
-        else
-            Carvic.Model.User.LoadUser(5);
+        self.getUserStatuses( function() {
+            var id = Carvic.Utils.GetUrlParam("u");
+            if (id)
+                Carvic.Model.User.LoadUser(id);
+            else
+                Carvic.Model.User.LoadUser(5);
+        });
     });
 };
 

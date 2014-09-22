@@ -570,6 +570,13 @@ function get_all_user_types(callback){
     });
 };
 
+function get_all_user_statuses(callback){
+    db[collection_user_statuses].find({}, { _id: 0 }).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
+};
+
 function delete_user(username, callback) {
     db[collection_users].remove({ username: username }, callback);
 };
@@ -866,6 +873,7 @@ exports.get_user_pwd = get_user_pwd;
 exports.get_user_history = get_user_history;
 exports.get_users = get_users;
 exports.get_all_user_types = get_all_user_types;
+exports.get_all_user_statuses = get_all_user_statuses;
 
 exports.new_login = new_login;
 exports.get_logins = get_logins;
