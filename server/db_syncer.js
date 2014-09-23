@@ -2,7 +2,6 @@
 
 var async = require("async");
 var fs = require('fs');
-var enums = require('./enums').get_enums();
 var xutil = require('./xutil');
 
 ////////////////////////////////////////////////////////////////////////////////////
