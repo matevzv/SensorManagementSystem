@@ -1804,6 +1804,7 @@ Carvic.Model.ComponentModel = function () {
     self.Editing = ko.observable(false);
 
     self.Type = ko.observable("");
+    self.TypeStr = ko.observable("");
     self.PN = ko.observable("");
     self.Status = ko.observable();
     self.StatusStr = ko.observable("");
@@ -1832,6 +1833,7 @@ Carvic.Model.ComponentModel = function () {
 
             var obj = data;
             self.Type(obj.type);
+            self.TypeStr(self.ComponentTypesMap[obj.type].title);
             self.PN(obj.product_number);
             self.Status(obj.status);
             self.StatusStr(self.ComponentStatusesMap[obj.status].title);

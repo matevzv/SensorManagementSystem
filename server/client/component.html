@@ -82,7 +82,7 @@
                         <div class="control-group">
                             <label class="control-label" for="inType "> Type  </label>
                             <div class="controls">
-                                <span data-bind="text: Type , visible: $root.Editing() == false"></span>
+                                <span data-bind="text: TypeStr , visible: $root.Editing() == false"></span>
                                 <select class="input" id="inType" data-bind="options: ComponentTypes, value: Type, optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code', visible: $root.Editing() == true" title="Type fo this component"></select>
                             </div>
                         </div>
@@ -122,7 +122,7 @@
                         <div class="control-group">
                             <label class="control-label" for="inStatus "> Status  </label>
                             <div class="controls">
-                                <span data-bind="text: Status , visible: $root.Editing() == false"></span>
+                                <span data-bind="text: StatusStr , visible: $root.Editing() == false"></span>
                                 <select class="input" id="inStatus" data-bind="options: ComponentStatuses, value: Status,  optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code', visible: $root.Editing() == true" title="Status of this component"></select>
                             </div>
                         </div>
