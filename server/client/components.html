@@ -284,7 +284,7 @@
                         <tbody data-bind="foreach: $root.SearchResult">
                         <tr data-bind="css: { error: Status() == 'error', warning: Status() == 'in_repair' }" style="cursor:  pointer">
                             <td><input type="checkbox" id="checkbox" style="cursor: default" data-bind="checked: $root.CheckedComponents, value: ID"></td>
-                            <td data-bind="text: Type, click: $root.ShowDetails"></td>
+                            <td data-bind="text: TypeStr, click: $root.ShowDetails"></td>
                             <td data-bind="text: PN, click: $root.ShowDetails"></td>
                             <td data-bind="text: P, click: $root.ShowDetails"></td>
                             <td data-bind="text: S, click: $root.ShowDetails"></td>

@@ -775,6 +775,7 @@ Carvic.Model.NodesModel = function (callback) {
                     ID: obj.id,
                     Name: obj.name,
                     Status: ko.observable(obj.status),
+                    StatusStr: ko.observable(self.NodeStatusesMap[obj.status].title),
                     Cluster: obj.cluster,
                     ClusterName: obj.cluster_name,
                     LON: obj.loc_lon,
@@ -1589,6 +1590,7 @@ Carvic.Model.ComponentsModel = function () {
 
                 self.SearchResult.push(ko.observable({
                     Type: ko.observable(obj.type),
+                    TypeStr: ko.observable(self.ComponentTypesMap[obj.type].title),
                     PN: ko.observable(obj.product_number),
                     Status: ko.observable(obj.status),
                     StatusStr: ko.observable(self.ComponentStatusesMap[obj.status].title),

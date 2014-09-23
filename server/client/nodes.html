@@ -219,7 +219,7 @@
                             <td data-bind="text: Name, click: $root.ShowNodeDetails"></td>
                             <td>
                                 <span data-bind="css: { color_error: Status() == 'unknown', color_ok: Status() == 'active', color_warning: Status() == 'inactive' }, click: $root.ShowNodeDetails"><i class="icon-circle"></i></span>
-                                <span data-bind="text: Status, click: $root.ShowNodeDetails"></span>
+                                <span data-bind="text: StatusStr, click: $root.ShowNodeDetails"></span>
                             </td>
                             <td data-bind="text: ClusterName, click: $root.ShowNodeDetails"></td>
                             <td data-bind="text: Sensors, click: $root.ShowNodeDetails"></td>
