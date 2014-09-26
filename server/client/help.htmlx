@@ -63,7 +63,7 @@
                 </div>
         </div>
 
-        <div class="container-fluid" style="max-width: 600px">
+        <div class="container-fluid col-md-6" style="text-align: left, max-width: 600px">
             ${main_content}
         </div>
     </body>
