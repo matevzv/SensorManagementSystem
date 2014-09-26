@@ -88,46 +88,23 @@
         <div class="container-fluid">
 
             <div class="well">
-                <h2><i class="glyphicon glyphicon-list"></i> History</h2>
-                <div class="row form-horizontal max-width-form">
-                    <div class="col-md-6">
-
+                <h2>History</h2>
+                <div class="row">
+                    <div class="col-md-4">
                         <div class="list-group">
                             <label class="control-label" for="inCluster">Cluster</label>
                             <div class="controls">
                                 <select class="input form-control" id="inCluster" data-bind="options: ClusterList, optionsText: 'title', optionsValue: 'code', optionsCaption: 'No cluster selected', value: Cluster"></select>
                             </div>
                         </div>
-
-                        <div class="list-group">
-                            <label class="control-label" for="inS">Node</label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inS" placeholder="Node id" data-bind="value: Node" />
-                            </div>
-                        </div>
-
-                        <div class="list-group">
-                            <label class="control-label" for="inP">Component</label>
-                            <div class="controls">
-                                <input class="form-control typeahead" type="text" id="inP" placeholder="Type parts of component's id" data-bind="value: Component" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-
-                        <div class="list-group">
-                            <label class="control-label" for="inUser">User</label>
-                            <div class="controls">
-                                <select class="input form-control" id="inUser" data-bind="options: UserList, optionsText: 'title', optionsValue: 'code', optionsCaption: 'No user selected', value: User"></select>
-                            </div>
-                        </div>
+                            
                         <div class="list-group">
                             <label class="control-label" for="inKeyword">Keywords</label>
                             <div class="controls">
                                 <input class="form-control" type="text" id="inKeywords" placeholder="Type keywords" data-bind="value: Keywords" />
                             </div>
                         </div>
-
+                        
                         <div class="list-group">
                             <label class="control-label" for="inTime">Time period</label>
                             <form class="form-inline" role="form">
@@ -143,6 +120,37 @@
                                 </div>
                             </form>
                         </div>
+                                                   
+                    </div>
+                    <div class="col-md-4">
+                        <div class="list-group">
+                            <label class="control-label" for="inS">Node</label>
+                            <div class="controls">
+                                <input class="form-control" type="text" id="inS" placeholder="Node id" data-bind="value: Node" />
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inUser">User</label>
+                            <div class="controls">
+                                <select class="input form-control" id="inUser" data-bind="options: UserList, optionsText: 'title', optionsValue: 'code', optionsCaption: 'No user selected', value: User"></select>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-4">
+                        <div class="list-group">
+                            <label class="control-label" for="inP">Component</label>
+                            <div class="controls">
+                                <input class="form-control typeahead" type="text" id="inP" placeholder="Type parts of component's id" data-bind="value: Component" />
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inType">Type</label>
+                            <div class="controls">
+                                <input class="form-control" type="text" id="inType" placeholder="Type Code" data-bind="value: Type" />
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
                 <div class="row form-horizontal max-width-form">
@@ -171,6 +179,7 @@
                             <th>Description</th>
                             <th>Node</th>
                             <th>Component</th>
+                            <th>Type</th>
                             <th>Cluster</th>
                         </tr>
                         <tbody data-bind="foreach: $root.SearchResult">
@@ -180,6 +189,7 @@
                             <td data-bind="text: description"></td>
                             <td><a data-bind="attr: { href: node_url }"> <span data-bind="text: node"></span> </a></td>
                             <td><a data-bind="attr: { href: component_url }"> <span data-bind="text: component"></span> </a></td>
+                            <td> <span data-bind="text: type"></span> </td>
                             <td><a data-bind="attr: { href: cluster_url }"> <span data-bind="text: cluster_name"></span> </a></td>
                         </tr>
 						</tbody>
