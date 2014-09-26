@@ -407,7 +407,7 @@
                                 </div>
                                 <div>
                                     <button class="btn btn-default btn-primary" data-bind="click: $root.EndEditNode, visible: $root.CurrentNodeEditing() == true"><i class="glyphicon glyphicon-floppy-disk"></i> Save changes</button>
-                                    <button class="btn btn-default btn-danger" data-bind="click: $root.DeleteNode, visible: $root.CurrentNodeEditing() == true && $root.StdData.CurrentUserIsAdmin() == true"><i class="glyphicon glyphicon-trash"></i> Delete node</button>
+                                    <button class="btn btn-danger" data-bind="click: $root.DeleteNode, visible: $root.CurrentNodeEditing() == true && $root.StdData.CurrentUserIsAdmin() == true"><i class="glyphicon glyphicon-trash"></i> Delete node</button>
                                 </div>
                             </div>
                         </div>

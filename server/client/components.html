@@ -259,7 +259,7 @@
                     <button class="btn btn-default" data-bind="click: $root.IncPage, enable: $root.IncPageEnabled"><i class="glyphicon glyphicon-arrow-right"></i>  </button>
                     Record count: <span data-bind="text: RecCount"></span>
                     <div class="pull-right">
-                        <button class="btn btn-default" data-bind="click: $root.DeleteComponentList, visible: $root.CheckedComponents().length > 0"><i class="glyphicon glyphicon-trash"></i> Delete selected components </button>
+                        <button class="btn btn-danger" data-bind="click: $root.DeleteComponentList, visible: $root.CheckedComponents().length > 0"><i class="glyphicon glyphicon-trash"></i> Delete selected components </button>
                         <button class="btn btn-default" type="button" data-bind="click: $root.StartAddingNewBatch"><i class="glyphicon glyphicon-plus"></i> Add new components </button>
                     </div>
                 </div>

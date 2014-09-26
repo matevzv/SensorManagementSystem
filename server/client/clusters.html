@@ -160,7 +160,7 @@
                 <div class="col-md-12 text-light">
                     Record count: <span data-bind="text: ResultCount"></span>
                     <div class="pull-right">
-                        <button class="btn btn-default" type="button" data-bind="click: $root.DeleteClusterList, visible: $root.CheckedClusters().length > 0"><i class="glyphicon glyphicon-trash"></i> Delete selected clusters </button>
+                        <button class="btn btn-danger" type="button" data-bind="click: $root.DeleteClusterList, visible: $root.CheckedClusters().length > 0"><i class="glyphicon glyphicon-trash"></i> Delete selected clusters </button>
                         <button class="btn btn-default" type="button" data-bind="click: $root.ScanClusters, visible: $root.StdData.CurrentUserIsAdmin() == true"><i class="glyphicon glyphicon-search"></i> Scan clusters </button>
                         <button class="btn btn-default" type="button" data-bind="click: $root.StartAddingNew"><i class="glyphicon glyphicon-plus"></i> Add new cluster </button>
                     </div>

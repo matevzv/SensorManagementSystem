@@ -127,7 +127,7 @@
                             <div data-bind="visible: $root.CurrentUserEditing()==false && $root.CurrentUserEditingPwd() == false">
                                 <button class="btn btn-default" data-bind="click: $root.CurrentUserStartEditing"><i class="glyphicon glyphicon-edit"></i> Edit user data </button>
                                 <button class="btn btn-default" data-bind="click: $root.CurrentUserStartEditingPwd"><i class="glyphicon glyphicon-lock"></i> Change password </button>
-                                <button class="btn btn-default btn-danger" data-bind="click: $root.DeleteUser, visible: $root.StdData.CurrentUserIsAdmin() == true"><i class="glyphicon glyphicon-trash"></i> Delete user</button>
+                                <button class="btn btn-danger" data-bind="click: $root.DeleteUser, visible: $root.StdData.CurrentUserIsAdmin() == true"><i class="glyphicon glyphicon-trash"></i> Delete user</button>
                             </div>
                         </div>
 

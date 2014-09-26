@@ -185,7 +185,7 @@
                     <button class="btn btn-default" data-bind="click: $root.IncPage, enable: $root.IncPageEnabled"><i class="glyphicon glyphicon-arrow-right"></i>  </button>
                     Record count: <span data-bind="text: RecCount"></span>
                     <div class="pull-right">
-                        <button class="btn btn-default" data-bind="click: $root.DeleteNodeList, visible: $root.CheckedNodes().length > 0"><i class="glyphicon glyphicon-trash"></i> Delete selected nodes </button>
+                        <button class="btn btn-danger" data-bind="click: $root.DeleteNodeList, visible: $root.CheckedNodes().length > 0"><i class="glyphicon glyphicon-trash"></i> Delete selected nodes </button>
                         <button class="btn btn-default" data-bind="click: $root.OpenNewNode"><i class="glyphicon glyphicon-plus"></i> Add new node </button>
                     </div>
                 </div>
