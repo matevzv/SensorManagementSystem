@@ -3,7 +3,6 @@
 
 var utils_hash = require("./utils_hash");
 var xutil = require("./xutil");
-var enums = require('./enums').get_enums();
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -72,17 +71,6 @@ for (var j = 0; j < data.users.length; j++) {
 
 //////////////////////////////////////////////////
 
-for (var i = 0; i < cluster_cnt; i++) {
-    var cl_type = enums.ClusterTypesArray[i % enums.ClusterTypesArray.length];
-    data.clusters.push({
-        id: "1100" + i,
-        name: "Cluster " + i,
-        type: cl_type.code,
-        scan: false,
-        comment: "",
-        url: (cl_type.uses_gateway ? "http://192:168:1:" + i + "/communicator" : "")
-    });
-}
 data.clusters.push({
     id: "10005",
     name: "Polica",

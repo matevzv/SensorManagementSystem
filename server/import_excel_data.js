@@ -3,7 +3,6 @@
 
 var utils_hash = require("./utils_hash");
 var xutil = require("./xutil");
-var enums = require('./enums').get_enums();
 var fs = require("fs");
 
 ////////////////////////////////////////////////////////////////////////////////////////
