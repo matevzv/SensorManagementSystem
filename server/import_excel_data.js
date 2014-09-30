@@ -18,7 +18,13 @@ data.components = [];
 data.sensor_history = [];
 data.users = [];
 data.logins = [];
-data.types = [];
+data.component_types = [];
+data.cluster_types = [];
+data.component_statuses = [];
+data.node_roles = [];
+data.node_statuses = [];
+data.user_statuses = [];
+data.user_types = [];
 
 //////////////////////////////////////////////////
 // users
@@ -111,21 +117,97 @@ data.clusters.forEach(function (item) {
 });
 
 
-//////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
 
-data.types.push({
+data.component_types.push({
     code: "snr",
     title: "SNR"
 });
-data.types.push({
+data.component_types.push({
     code: "sne",
     title: "SNE"
 });
-data.types.push({
+data.component_types.push({
     code: "snc",
     title: "SNC"
 });
 
+/////////////////////////////////////////////////////////////////////////////////////////
+data.cluster_types.push({
+    code: "zigbee",
+    title: "ZigBee",
+    uses_gateway: true
+});
+data.cluster_types.push({
+    code: "ipv6",
+    title: "IPv6",
+    uses_gateway: false
+});
+/////////////////////////////////////////////////////////////////////////////////////////
+data.component_statuses.push({
+    code: "ok",
+    title: "OK"
+});
+data.component_statuses.push({
+    code: "error",
+    title: "Error"
+});
+data.component_statuses.push({
+    code: "in_reapir",
+    title: "In repair"
+});
+/////////////////////////////////////////////////////////////////////////////////////////
+data.node_statuses.push({
+    code: "active",
+    title: "Active"
+});
+data.node_statuses.push({
+    code: "inactive",
+    title: "Inactive"
+});
+data.node_statuses.push({
+    code: "unreachable",
+    title: "Unreachable"
+});
+data.node_statuses.push({
+    code: "unknown",
+    title: "Unknown"
+});
+data.node_statuses.push({
+    code: "in_repair",
+    title: "In repair"
+});
+/////////////////////////////////////////////////////////////////////////////////////////
+data.user_statuses.push({
+    code: "active",
+    title: "Active"
+});
+data.user_statuses.push({
+    code: "inactive",
+    title: "Inactive"
+});
+data.user_statuses.push({
+    code: "locked",
+    title: "Locked"
+});
+/////////////////////////////////////////////////////////////////////////////////////////
+data.user_types.push({
+    code: "admin",
+    title: "Administrator"
+});
+data.user_types.push({
+    code: "normal",
+    title: "Normal user"
+});
+//////////////////////////////////////////////////////////////////////////////////////////
+data.node_roles.push({
+    code: "device",
+    title: "Device"
+});
+data.node_roles.push({
+    code: "gateway",
+    title: "Gateway"
+});
 //////////////////////////////////////////////////////////////////////////////////////////
 // import excel data
 

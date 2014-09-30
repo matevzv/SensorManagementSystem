@@ -276,6 +276,20 @@ exports.get_current_user = function (req, callback) {
     });
 };
 
+exports.get_all_user_types = function (res, callback) {
+    db.get_all_user_types( function(err, data) {
+        if (err) return callback(err);
+        return callback(null, data)
+    });
+}
+
+exports.get_all_user_statuses = function (res, callback) {
+    db.get_all_user_statuses( function(err, data) {
+        if (err) return callback(err);
+        return callback(null, data)
+    });
+}
+
 exports.new_user = function (req, callback) {
     var rec = req.data;
     if (!rec.username || rec.username === "")
@@ -554,6 +568,20 @@ exports.get_node_history = function (req, callback) {
     });
 };
 
+exports.get_all_node_statuses = function (res, callback) {
+    db.get_all_node_statuses( function(err, data) {
+        if (err) return callback(err);
+        return callback(null, data)
+    });
+}
+
+exports.get_all_node_roles = function (res, callback) {
+    db.get_all_node_roles( function(err, data) {
+        if (err) return callback(err);
+        return callback(null, data)
+    });
+}
+
 exports.update_node = function (req, callback) {
     var rec = req.data;
     db.get_node(rec.id, function (err, data) {
@@ -717,8 +745,15 @@ exports.get_component = function (req, callback) {
     })
 };
 
-exports.get_component_types = function (res, callback) {
-    db.get_all_component_type( function(err, data) {
+exports.get_all_component_statuses = function (res, callback) {
+    db.get_all_component_statuses( function(err, data) {
+        if (err) return callback(err);
+        return callback(null, data)
+    });
+}
+
+exports.get_all_component_types = function (res, callback) {
+    db.get_all_component_types( function(err, data) {
         if (err) return callback(err);
         return callback(null, data)
         
@@ -731,6 +766,9 @@ exports.get_component_history = function (req, callback) {
 
 exports.update_components_type = function(req, callback) {
     var rec = req.data;
+    if (rec.title === "" || /^\s*$/.test(rec.title)) {
+        return callback(new Error("Title cannot be empty"),{});
+    }
     db.get_component_type(rec.code, function (err, data) {
         if (err) return callback(err);
         var rec2 = {
@@ -1119,6 +1157,13 @@ exports.get_cluster_history = function (req, callback) {
     db.get_cluster_history(req.data.id, callback);
 };
 
+exports.get_all_cluster_types = function (res, callback) {
+    db.get_all_cluster_types( function(err, data) {
+        if (err) return callback(err);
+        return callback(null, data)
+        
+    });
+}
 
 exports.mark_cluster_scan = function (cluster_id, callback) {
     rec = { last_scan: new Date() };

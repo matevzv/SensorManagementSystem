@@ -17,7 +17,6 @@
         <script type="text/javascript" src="js/bootstrap.min.js"></script>
         <script type="text/javascript" src="js/knockout.js"></script>
         <script type="text/javascript" src="js/carvic.js"></script>
-        <script type="text/javascript" src="consts.js"></script>
         <script>
             $(document).ready(function () {
                 Carvic.InitNodeList(function(){
@@ -140,7 +139,7 @@
                         <div class="control-group">
                             <label class="control-label" for="inStatus"> Status </label>
                             <div class="controls">
-                                <select id="inStatus" data-bind="options: NodeStatusesArray, value: NodeSearchStatus,  optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code'"></select>
+                                <select id="inStatus" data-bind="options: NodeStatuses, value: NodeSearchStatus,  optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code'"></select>
                             </div>
                         </div>
 
@@ -219,7 +218,7 @@
                             <td data-bind="text: Name, click: $root.ShowNodeDetails"></td>
                             <td>
                                 <span data-bind="css: { color_error: Status() == 'unknown', color_ok: Status() == 'active', color_warning: Status() == 'inactive' }, click: $root.ShowNodeDetails"><i class="icon-circle"></i></span>
-                                <span data-bind="text: Status, click: $root.ShowNodeDetails"></span>
+                                <span data-bind="text: StatusStr, click: $root.ShowNodeDetails"></span>
                             </td>
                             <td data-bind="text: ClusterName, click: $root.ShowNodeDetails"></td>
                             <td data-bind="text: Sensors, click: $root.ShowNodeDetails"></td>

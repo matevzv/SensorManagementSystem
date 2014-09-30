@@ -3,7 +3,6 @@
 var express = require('express');
 var util = require('util');
 var xutil = require('./xutil');
-var consts_str = "Carvic.Consts = " + JSON.stringify(require('./enums').get_enums()); // "pre-compiled" constants
 var fs = require('fs');
 var path = require('path');
 var MongoStore = require('connect-mongo')(express);
@@ -145,11 +144,6 @@ function run() {
     app.get('/', function (req, res) {
         res.setHeader("Content-Type", "text/html");
         res.end(root_content);
-    });
-
-    app.get('/consts.js', function (req, res) {
-        res.setHeader("Content-Type", "application/javascript");
-        res.end(consts_str);
     });
 
     app.get('/login', function (req, res) {
