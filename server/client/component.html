@@ -16,7 +16,6 @@
         <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
         <script type="text/javascript" src="js/carvic.js"></script>
-        <script type="text/javascript" src="consts.js"></script>
         <script>
             $(document).ready(function () {
                 $(".control-label")
@@ -81,7 +80,7 @@
                         <div class="list-group">
                             <label class="control-label" for="inType "> TYPE  </label>
                             <div class="controls">
-                                <span data-bind="text: Type , visible: $root.Editing() == false"></span>
+                                <span data-bind="text: TypeStr , visible: $root.Editing() == false"></span>
                                 <select class="input form-control" id="inType" data-bind="options: ComponentTypes, value: Type, optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code', visible: $root.Editing() == true" title="Type fo this component"></select>
                             </div>
                         </div>
@@ -121,7 +120,7 @@
                         <div class="list-group">
                             <label class="control-label" for="inStatus "> STATUS  </label>
                             <div class="controls">
-                                <span data-bind="text: Status , visible: $root.Editing() == false"></span>
+                                <span data-bind="text: StatusStr , visible: $root.Editing() == false"></span>
                                 <select class="input form-control" id="inStatus" data-bind="options: ComponentStatuses, value: Status,  optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code', visible: $root.Editing() == true" title="Status of this component"></select>
                             </div>
                         </div>

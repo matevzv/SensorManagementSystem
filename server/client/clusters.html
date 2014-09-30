@@ -16,7 +16,6 @@
         <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
         <script type="text/javascript" src="js/carvic.js"></script>
-        <script type="text/javascript" src="consts.js"></script>
         <script>
             $(document).ready(function () {
                 Carvic.InitClusterList();
@@ -127,7 +126,7 @@
                         <div class="list-group">
                             <label class="control-label" for="inType"> Type </label>
                             <div class="controls">
-                                <select class="form-control" id="inType" data-bind="options: ClusterTypesArray, value: SearchType,  optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code'"></select>
+                                <select class="form-control" id="inType" data-bind="options: ClusterTypes, value: SearchType,  optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code'"></select>
                             </div>
                         </div>
                     </div>

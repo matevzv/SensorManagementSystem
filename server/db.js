@@ -26,7 +26,13 @@ var collection_clusters = "clusters";
 var collection_nodes = "nodes";
 var collection_history = "history";
 var collection_sensor_history = "sensor_history";
-var collection_components_type = "components_type";
+var collection_component_types = "component_types";
+var collection_cluster_types = "cluster_types";
+var collection_component_statuses = "component_statuses";
+var collection_node_roles = "node_roles";
+var collection_node_statuses = "node_statuses";
+var collection_user_statuses = "user_statuses";
+var collection_user_types = "user_types";
 
 var collections = [
     collection_users,
@@ -36,7 +42,13 @@ var collections = [
     collection_nodes,
     collection_history,
     collection_sensor_history,
-    collection_components_type
+    collection_component_types,
+    collection_cluster_types,
+    collection_component_statuses,
+    collection_node_roles,
+    collection_node_statuses,
+    collection_user_statuses,
+    collection_user_types
 ];
 
 
@@ -110,7 +122,14 @@ function fill_dummy_data(callback) {
     loop(data.users, collection_users, true);
     loop(data.logins, collection_logins);
     loop(data.history, collection_history);
-    loop(data.types, collection_components_type);
+    loop(data.component_types, collection_component_types);
+    loop(data.component_statuses, collection_component_statuses);
+    loop(data.cluster_types, collection_cluster_types);
+    loop(data.node_roles, collection_node_roles);
+    loop(data.node_statuses, collection_node_statuses);
+    loop(data.user_statuses, collection_user_statuses);
+    loop(data.user_types, collection_user_types);
+    
 
     var calls = [];
     inserts.forEach(function (item) {
@@ -204,6 +223,13 @@ function update_cluster(id, rec, callback) {
     });
 };
 
+function get_all_cluster_types(callback){
+    db[collection_cluster_types].find({}, { _id: 0 }).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
+};
+
 function delete_cluster(id, callback) {
     db[collection_clusters].remove({ id: id }, callback);
 };
@@ -243,14 +269,14 @@ function add_component(rec, callback) {
 };
 
 function add_component_type(rec, callback) {
-    db[collection_components_type].insert(rec, function (err, res) {
+    db[collection_component_types].insert(rec, function (err, res) {
         callback(err, {});
     });
 };
 
 function update_component_type(code, rec, callback) {
     var query = { code: code };
-    db[collection_components_type].update(query, { $set: rec }, null, function (err, res) {
+    db[collection_component_types].update(query, { $set: rec }, null, function (err, res) {
         callback(err, {});
     });
 };
@@ -267,12 +293,12 @@ function delete_component(id, callback) {
 };
 
 function delete_component_type(code, callback) {
-    db[collection_components_type].remove({ code: code }, callback);
+    db[collection_component_types].remove({ code: code }, callback);
 };
 
 function get_component_type(code, callback) {
     var query = { code: code };
-    db[collection_components_type].find(query, function (err, docs) {
+    db[collection_component_types].find(query, function (err, docs) {
         if (err) {
             callback(err);
         } else if (!docs || docs.length === 0) {
@@ -283,8 +309,15 @@ function get_component_type(code, callback) {
     });
 };
 
-function get_all_component_type(callback){
-    db[collection_components_type].find({}, { _id: 0 }).toArray(function (err, docs) {
+function get_all_component_types(callback){
+    db[collection_component_types].find({}, { _id: 0 }).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
+};
+
+function get_all_component_statuses(callback){
+    db[collection_component_statuses].find({}, { _id: 0 }).toArray(function (err, docs) {
         if (err) return callback(err);
         callback(null, docs);
     });
@@ -378,6 +411,20 @@ function get_node(id, callback) {
 function get_node_history(id, callback) {
     var query = { node: id };
     get_history(query, 0, 30, callback);
+};
+
+function get_all_node_statuses(callback){
+    db[collection_node_statuses].find({}, { _id: 0 }).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
+};
+
+function get_all_node_roles(callback){
+    db[collection_node_roles].find({}, { _id: 0 }).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
 };
 
 function get_nodes2(query, skip, limit, callback) {
@@ -533,6 +580,20 @@ function get_users(query, callback) {
     db[collection_users].find(query).sort({ username: 1 }, function (err, docs) {
         if (err) return callback(err);
         docs.forEach(function (item) { item.pwd_hash = null; }); // remove password hash from result
+        callback(null, docs);
+    });
+};
+
+function get_all_user_types(callback){
+    db[collection_user_types].find({}, { _id: 0 }).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
+};
+
+function get_all_user_statuses(callback){
+    db[collection_user_statuses].find({}, { _id: 0 }).toArray(function (err, docs) {
+        if (err) return callback(err);
         callback(null, docs);
     });
 };
@@ -786,6 +847,7 @@ exports.delete_cluster = delete_cluster;
 exports.get_cluster = get_cluster;
 exports.get_clusters = get_clusters;
 exports.get_cluster_history = get_cluster_history;
+exports.get_all_cluster_types = get_all_cluster_types;
 
 exports.add_component = add_component;
 exports.add_component_type = add_component_type;
@@ -799,7 +861,8 @@ exports.get_components = get_components;
 exports.get_components2 = get_components2;
 exports.get_components2_count = get_components2_count;
 exports.get_component_type = get_component_type;
-exports.get_all_component_type = get_all_component_type;
+exports.get_all_component_types = get_all_component_types;
+exports.get_all_component_statuses = get_all_component_statuses;
 
 exports.get_node_ids = get_node_ids;
 exports.get_max_node_id = get_max_node_id;
@@ -812,6 +875,8 @@ exports.get_nodes = get_nodes;
 exports.get_nodes2 = get_nodes2;
 exports.get_nodes2_count = get_nodes2_count;
 exports.get_node_clusters = get_node_clusters;
+exports.get_all_node_statuses = get_all_node_statuses;
+exports.get_all_node_roles = get_all_node_roles;
 
 exports.get_sensor = get_sensor;
 exports.get_sensors_for_node = get_sensors_for_node;
@@ -831,6 +896,8 @@ exports.get_username_map = get_username_map;
 exports.get_user_pwd = get_user_pwd;
 exports.get_user_history = get_user_history;
 exports.get_users = get_users;
+exports.get_all_user_types = get_all_user_types;
+exports.get_all_user_statuses = get_all_user_statuses;
 
 exports.new_login = new_login;
 exports.get_logins = get_logins;

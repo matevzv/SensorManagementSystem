@@ -16,7 +16,6 @@
         <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
         <script type="text/javascript" src="js/carvic.js"></script>
-        <script type="text/javascript" src="consts.js"></script>
         <script>
             $(document).ready(function () {
                 Carvic.InitNodeList(function(){
@@ -127,7 +126,7 @@
                         <div class="list-group" data-bind="visible: AdvancedSearch() == true">
                             <label class="control-label" for="inStatus"> Status </label>
                             <div class="controls">
-                                <select class="form-control" id="inStatus" data-bind="options: NodeStatusesArray, value: NodeSearchStatus,  optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code'"></select>
+                                <select class="form-control" id="inStatus" data-bind="options: NodeStatuses, value: NodeSearchStatus,  optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code'"></select>
                             </div>
                         </div>
 
@@ -209,7 +208,7 @@
                             <td data-bind="text: Name, click: $root.ShowNodeDetails"></td>
                             <td>
                                 <span data-bind="css: { color_error: Status() == 'unknown', color_ok: Status() == 'active', color_warning: Status() == 'inactive' }, click: $root.ShowNodeDetails"><i class="glyphicon glyphicon-map-marker"></i></span>
-                                <span data-bind="text: Status, click: $root.ShowNodeDetails"></span>
+                                <span data-bind="text: StatusStr, click: $root.ShowNodeDetails"></span>
                             </td>
                             <td data-bind="text: ClusterName, click: $root.ShowNodeDetails"></td>
                             <td data-bind="text: Sensors, click: $root.ShowNodeDetails"></td>
