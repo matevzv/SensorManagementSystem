@@ -117,6 +117,35 @@
                             </div>
                         </div>
 
+                        <div class="list-group" data-bind="visible: $root.Scan() == true">
+                            <label class="control-label" for="inScheduling"> SCHEDULING </label>
+                            <div>
+                                <input type="radio" id="inScheduling" name="inScheduling" value="recur_scheduling" data-bind="checked: Scheduling, enable: $root.Editing() == true" title="Interval scaning"> Recur scheduling
+                                <input type="radio" id="inScheduling" name="inScheduling" value="time_scheduling" data-bind="checked: Scheduling, enable: $root.Editing() == true" title="Scan once per day"> Time scheduling
+                            </div>
+                        </div>
+
+                        <div class="list-group" data-bind="visible: $root.Scheduling() == 'recur_scheduling' && $root.Scan() == true">
+                            <label class="control-label" for="inScheduling"> INTERVAL UNIT </label>
+                            <div>
+                                <input type="radio" id="inIntervalUnit" name="inIntervalUnit" value="second" data-bind="checked: IntervalUnit, enable: $root.Editing() == true"> Second
+                                <input type="radio" id="inIntervalUnit" name="inIntervalUnit" value="minute" data-bind="checked: IntervalUnit, enable: $root.Editing() == true" > Minute
+                                <input type="radio" id="inIntervalUnit" name="inIntervalUnit" value="hour" data-bind="checked: IntervalUnit, enable: $root.Editing() == true"> Hour
+                                <input type="radio" id="inIntervalUnit" name="inIntervalUnit" value="day" data-bind="checked: IntervalUnit, enable: $root.Editing() == true" > Day
+                            </div>
+                        </div>
+                        <div class="list-group" data-bind="visible: $root.Scheduling() == 'recur_scheduling' && $root.Scan() == true">
+                            <label class="control-label" for="inScheduling"> INTERVAL </label>
+                            <span data-bind="text: Interval, visible: $root.Editing() == false"></span>
+                            <input class="form-control" type="text" id="inInterval" data-bind="value: Interval, visible: $root.Editing() == true" title="Type interval in minutes">
+                        </div>
+
+                        <div class="list-group" data-bind="visible: $root.Scheduling() == 'time_scheduling'">
+                            <label class="control-label" for="inScheduling"> EXACT TIME </label>
+                            <span data-bind="text: Time, visible: $root.Editing() == false"></span>
+                            <input class="form-control" type="text" id="inTime" data-bind="value: Time, visible: $root.Editing() == true" title="Insert time when cluster need to be scaned">
+                        </div>
+
                         <div class="list-group">
                             <label class="control-label" for="inLastScan"> LAST SCAN </label>
                             <div class="controls">
