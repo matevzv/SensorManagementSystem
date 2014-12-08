@@ -3,6 +3,7 @@
 var async = require("async");
 var utils_hash = require("./utils_hash");
 var xutil = require('./xutil');
+var crypto = require("crypto");
 var db = null;
 
 ///////////////////////////////////////////////////////////////////////
@@ -231,7 +232,7 @@ exports.change_pwd = function (req, callback) {
         username = req.data.username;
     }
     if (req.data.pwd1 !== req.data.pwd2)
-        return callback(new Error("Entered password don't match"));
+        return callback(new Error("Entered passwords don't match"));
     if (req.data.pwd1.length < 6)
         return callback(new Error("Minimal password length is 6 characters"));
     var rec = {
@@ -266,12 +267,19 @@ exports.change_my_full_name = function (req, callback) {
     });
 };
 
+exports.get_users_token = function (req, callback) {
+    db.get_users_token(req, function (err, data) {
+        if (err) return callback(err);
+        return callback(data);
+    });
+};
+
 exports.get_current_user = function (req, callback) {
     db.get_user(req.session.user, function (err, data) {
         if (err) {
             callback(err);
         } else {
-            callback(null, { username: data.username, full_name: data.full_name, type: data.type });
+            callback(null, { username: data.username, full_name: data.full_name, type: data.type, token: data.token });
         }
     });
 };
@@ -307,6 +315,7 @@ exports.new_user = function (req, callback) {
                 full_name: rec.full_name,
                 pwd_hash: utils_hash.create_pwd_hash(rec.pwd1),
                 status: "active",
+                token: crypto.randomBytes(24).toString('base64'),
                 last_login: new Date(),
                 last_bad_login: new Date(),
                 bad_login_cnt: 0,
@@ -653,7 +662,7 @@ exports.delete_node = function (req, callback) {
             code: "node_change",
             ts: new Date(),
             title: "Node '" + node_name + "' (" + node_id + ") deleted",
-            description: "Node '" + node_name + "' (" + node_id + ") was successfuly deleted by " + user_full_name,
+            description: "Node '" + node_name + "' (" + node_id + ") was successfully deleted by " + user_full_name,
             sys_data: req
         };
 
@@ -935,7 +944,7 @@ exports.add_new_component_type = function (req, callback) {
         });
     }
     else {
-        callback(new Error("Code cannot be empty and need to use only alphanumerical characters"),{});
+        callback(new Error("Code cannot be empty and needs to use only alphanumerical characters"),{});
     }
 }
 
@@ -1216,7 +1225,19 @@ exports.get_sensors_for_node = function (req, callback) {
     db.get_sensors_for_node(req.data.node, callback)
 };
 exports.get_sensor_history = function (req, callback) {
-    db.get_sensor_history(req.data.node, req.data.id, callback)
+    db.get_sensor_history(req.data.node, req.data.sensor, callback)
+};
+exports.get_all_sensor_history = function (callback) {
+    db.get_all_sensor_history(callback)
+};
+exports.get_sensor_measurement = function (req, callback) {
+    db.get_sensor_measurement(req, callback)
+};
+exports.update_sensor_measurement = function (req, callback) {
+    db.update_sensor_measurement(req, callback)
+};
+exports.delete_sensor_measurement = function (req, callback) {
+    db.delete_sensor_measurement(req, callback)
 };
 
 exports.update_sensors_for_node = function (req, callback) {
