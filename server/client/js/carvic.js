@@ -21,6 +21,7 @@ Carvic.Model.StdData = function () {
     }, self);
     self.CurrentUserType = ko.observable("normal");
     self.CurrentUserIsAdmin = ko.observable(false);
+    self.CurrentUserToken = ko.observable("");
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -121,6 +122,7 @@ Carvic.Utils = {
             if (data.type == "admin") {
                 Carvic.Utils.AddUsersLink();
             }
+            parent.StdData.CurrentUserToken(data.token);
             if (callback)
                 callback();
         });
@@ -1442,7 +1444,7 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
         var req = {
             action: "get_sensor_history",
             data: {
-                id: self.ID,
+                sensor: self.ID,
                 node: parent.NodeID()
             }
         };
@@ -2454,6 +2456,7 @@ Carvic.Model.SettingsModel = function () {
     self.NewPwd2 = ko.observable("");
     self.Msg = ko.observable("");
     self.MsgType = ko.observable("");
+    self.APIToken = ko.observable("");
 
     self.SaveNewFullName = function () {
         var query = {
@@ -2474,8 +2477,15 @@ Carvic.Model.SettingsModel = function () {
             document.form.pwd1.value = "";
             document.form.pwd2.value = "";
         });
-        
     };
+    
+    /*self.GetToken = function (username) {
+        var query = { username: username };
+        Carvic.Utils.Post({ action: "get_users_token", data: query}, function(data) {
+            self.APIToken = data;
+            return self.APIToken;
+        });
+    }*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2605,5 +2615,6 @@ Carvic.InitSettings = function () {
     Carvic.Model.Settings = new Carvic.Model.SettingsModel();
     Carvic.Utils.SetCurrentUser(Carvic.Model.Settings, function () {
         Carvic.Model.Settings.CurrentFullName(Carvic.Model.Settings.StdData.CurrentUserFullname());
+        Carvic.Model.Settings.APIToken(Carvic.Model.Settings.StdData.CurrentUserToken());
     });
 }
