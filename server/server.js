@@ -68,14 +68,18 @@ function preprocess_api_calls(req, res, next) {
         req.body.action = "rest";
 
         //check token
-        bl.get_users_token(req.headers.authorization, function(data) {
-            if (data[0] == null) return next(data);
-            else {
-                req.session.is_authenticated = true;
-                req.session.user = data[0].username;
-                next();
-            }
-        });
+        if(req.headers.authorization != null) {
+            bl.get_users_token(req.headers.authorization, function(data) {
+                if (data[0] == null) res.json('Error: Specified token is not valid');
+                else {
+                    req.session.is_authenticated = true;
+                    req.session.user = data[0].username;
+                    next();
+                }
+            });
+        } else {
+            res.json("Error: Missing authentication token");
+        }
     } else if ((req.url.indexOf("/api/") == 0))  {
         // rest-like url parser
         var tmp_url = req.url.substr(4);
