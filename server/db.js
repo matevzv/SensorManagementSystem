@@ -519,7 +519,7 @@ function update_sensors_for_node(node_id, sensors, callback) {
 function add_sensor_measurement(rec, callback) {
     db[collection_sensor_history].insert(rec, function (err, res) {
         if (err) return callback(err);
-        callback(res);
+        else callback({ message: 'Measurement successfully added!' });
     });
 }
 
@@ -550,7 +550,7 @@ function delete_sensor_measurement(rec, callback) {
     else db[collection_sensor_history].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
         if (err) return callback(err);
         else if (res.n)
-				callback({ message: 'Successfully deleted!' });
+				callback({ message: 'Measurement successfully deleted!' });
 			else
 				callback({ message: 'Measurement not found!' });
     });
