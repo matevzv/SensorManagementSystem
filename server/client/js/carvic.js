@@ -2087,6 +2087,7 @@ Carvic.Model.ClustersModel = function () {
             comment: self.NewComment(),
             scan: false,
             scheduling: "",
+            intervalUnit: "",
             interval: "",
             time: ""
         };
@@ -2311,13 +2312,20 @@ Carvic.Model.ClusterModel = function () {
             return alert("Interval cannot be empty");
         if (self.Scan() == true && self.Scheduling() === "time_scheduling" && self.Time() === "")
             return alert("Exact time cannot be empty");
-        if (self.Scan() == true && self.Scheduling() === "recur_scheduling" && self.IntervalUnit() !== ""){
-            var x = parseInt(self.Interval());
-            if (x < 1)
+        if (self.Scan() == true && self.Scheduling() === "recur_scheduling"){
+            if (parseInt(self.Interval()) < 1)
                 return alert("Interval must be higher then 0");
+            var reg = new RegExp('^\\d+$');
+            if (!reg.test(self.Interval()))
+                return alert("Insert numbers only");
         }
 
         var d = { orig_id: self.LastData.id };
+        var agendaChange = false;
+        if(self.LastData.scan != self.Scan() || self.LastData.scheduling != self.Scheduling() || self.LastData.interval != self.Interval()
+        || self.LastData.time != self.Time() || self.LastData.intervalUnit != self.IntervalUnit())
+            agendaChange = true;
+
         if (self.LastData.type != self.Type())
             d.type = self.Type();
         if (self.LastData.tag != self.Tag())
@@ -2338,12 +2346,21 @@ Carvic.Model.ClusterModel = function () {
             d.time = self.Time();
         if (self.LastData.intervalUnit != self.IntervalUnit())
             d.intervalUnit = self.IntervalUnit();
-
         var req = { action: "update_cluster", data: d };
         Carvic.Utils.Post(req, function (data) {
-            var id = Carvic.Utils.GetUrlParam("id");
-            Carvic.Model.Cluster.Load(id);
-            self.Editing(false);
+            if(agendaChange){
+                var req1 = { action: "update_agenda", data: d };
+                Carvic.Utils.Post(req1, function (data) {
+                    var id = Carvic.Utils.GetUrlParam("id");
+                    Carvic.Model.Cluster.Load(id);
+                    self.Editing(false);
+                });
+            }
+            else {
+                var id = Carvic.Utils.GetUrlParam("id");
+                Carvic.Model.Cluster.Load(id);
+                self.Editing(false);
+            }
         });
     };
     self.CancelEditing = function () {

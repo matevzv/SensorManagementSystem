@@ -1,6 +1,7 @@
 // "business logic" - all smart stuff is happening here, except scanning
 
 var async = require("async");
+var Agenda = require("./agenda_server");
 var utils_hash = require("./utils_hash");
 var xutil = require('./xutil');
 var db = null;
@@ -1055,6 +1056,15 @@ exports.update_cluster = function (req, callback) {
     });
 };
 
+exports.update_agenda = function(req, callback) {
+    var rec = req.data;
+    db.get_cluster(rec.orig_id, function (err, data) {
+        if(err) return callback(err);
+        Agenda.update_job(data);
+    });
+    if(callback) callback();
+}
+
 exports.delete_cluster = function (req, callback) {
     var id = req.data.id;
     db.get_cluster(id, function (err, data) {
@@ -1064,6 +1074,7 @@ exports.delete_cluster = function (req, callback) {
             if (data2.length > 0) return callback(new Error("Cannot delete cluster - nodes are assigned to it."));
             db.delete_cluster(id, function (xerr) {
                 if (xerr) return callback(xerr);
+                Agenda.delete_job(data);
                 var user_full_name = username_map[req.session.user].full_name;
                 var cluster_name = data.name;
                 var h = {

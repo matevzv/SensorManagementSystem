@@ -9,6 +9,7 @@
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
         <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
         <link href="css/carvic.css" rel="stylesheet">
+        <link href="css/jquery-clockpicker.min.css" rel="stylesheet">
 
         <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
 
@@ -16,6 +17,7 @@
         <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
         <script type="text/javascript" src="js/carvic.js"></script>
+        <script type="text/javascript" src="js/jquery-clockpicker.min.js"></script>
         <script>
             $(document).ready(function () {
                 $(".control-label")
@@ -25,13 +27,16 @@
                 $(".input")
                     .attr("data-placement", "right")
                     .tooltip();
+                $('#inTime')
+                    .clockpicker({
+                        align: 'left',
+                        donetext: 'Done'
+                    });
             });
         </script>
         <title>Sensor Management System - cluster</title>
     </head>
     <body>
-
-
         <div class="navbar navbar-inverse navbar-fixed-top">
                 <div class="container-fluid">
                     <div class="navbar-header">
@@ -128,22 +133,25 @@
                         <div class="list-group" data-bind="visible: $root.Scheduling() == 'recur_scheduling' && $root.Scan() == true">
                             <label class="control-label" for="inScheduling"> INTERVAL UNIT </label>
                             <div>
-                                <input type="radio" id="inIntervalUnit" name="inIntervalUnit" value="second" data-bind="checked: IntervalUnit, enable: $root.Editing() == true"> Second
-                                <input type="radio" id="inIntervalUnit" name="inIntervalUnit" value="minute" data-bind="checked: IntervalUnit, enable: $root.Editing() == true" > Minute
-                                <input type="radio" id="inIntervalUnit" name="inIntervalUnit" value="hour" data-bind="checked: IntervalUnit, enable: $root.Editing() == true"> Hour
-                                <input type="radio" id="inIntervalUnit" name="inIntervalUnit" value="day" data-bind="checked: IntervalUnit, enable: $root.Editing() == true" > Day
+                                <input type="radio" id="inIntervalUnit" name="inIntervalUnit" value="seconds" data-bind="checked: IntervalUnit, enable: $root.Editing() == true"> Second
+                                <input type="radio" id="inIntervalUnit" name="inIntervalUnit" value="minutes" data-bind="checked: IntervalUnit, enable: $root.Editing() == true" > Minute
+                                <input type="radio" id="inIntervalUnit" name="inIntervalUnit" value="hours" data-bind="checked: IntervalUnit, enable: $root.Editing() == true"> Hour
+                                <input type="radio" id="inIntervalUnit" name="inIntervalUnit" value="days" data-bind="checked: IntervalUnit, enable: $root.Editing() == true" > Day
+                                <input type="radio" id="inIntervalUnit" name="inIntervalUnit" value="weeks" data-bind="checked: IntervalUnit, enable: $root.Editing() == true" > Week
+                                <input type="radio" id="inIntervalUnit" name="inIntervalUnit" value="months" data-bind="checked: IntervalUnit, enable: $root.Editing() == true" > Month
                             </div>
                         </div>
+
                         <div class="list-group" data-bind="visible: $root.Scheduling() == 'recur_scheduling' && $root.Scan() == true">
                             <label class="control-label" for="inScheduling"> INTERVAL </label>
                             <span data-bind="text: Interval, visible: $root.Editing() == false"></span>
-                            <input class="form-control" type="text" id="inInterval" data-bind="value: Interval, visible: $root.Editing() == true" title="Type interval in minutes">
+                            <input class="form-control" type="text" id="inInterval" data-bind="value: Interval, visible: $root.Editing() == true" title="Type interval">
                         </div>
 
-                        <div class="list-group" data-bind="visible: $root.Scheduling() == 'time_scheduling'">
+                        <div class="list-group" data-bind="visible: $root.Scheduling() == 'time_scheduling' && $root.Scan() == true">
                             <label class="control-label" for="inScheduling"> EXACT TIME </label>
                             <span data-bind="text: Time, visible: $root.Editing() == false"></span>
-                            <input class="form-control" type="text" id="inTime" data-bind="value: Time, visible: $root.Editing() == true" title="Insert time when cluster need to be scaned">
+                            <input class="form-control" id="inTime" data-bind="value: Time, visible: $root.Editing() == true" title="Insert time when cluster need to be scaned">
                         </div>
 
                         <div class="list-group">
