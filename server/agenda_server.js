@@ -2,7 +2,7 @@
 var db = null;
 var db_syncer = null;
 var Agenda = require('agenda');
-var agenda = new Agenda({db: {address: 'localhost:27017/agenda-example'}});
+var agenda = new Agenda({db: {address: 'localhost:27017/agenda'}});
 var scan = require("./scan_coordinator");
 
 function init(options, callback) {
