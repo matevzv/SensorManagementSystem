@@ -224,12 +224,10 @@ exports.get_cluster_stats = function (req, callback) {
 };
 
 exports.change_pwd = function (req, callback) {
-    var username = req.session.user;
-
+    var username = req.data.username;
     if (req.data.username) {
         if (!is_user_admin(req.session.user))
             return callback(new Error("Current user (" + req.session.user + ") is not admin and cannot change other user's password."));
-        username = req.data.username;
     }
     if (req.data.pwd1 !== req.data.pwd2)
         return callback(new Error("Entered passwords don't match"));
@@ -238,8 +236,8 @@ exports.change_pwd = function (req, callback) {
     var rec = {
         pwd_hash: utils_hash.create_pwd_hash(req.data.pwd1)
     };
-    db.update_user(username, rec, function (err, data2) {
-        callback(err, {});
+    db.update_user(username, rec, function (err) {
+        callback(err);
     });
 };
 
@@ -251,7 +249,7 @@ exports.change_my_full_name = function (req, callback) {
     var rec = {
         full_name: req.data.full_name
     };
-    db.update_user(req.session.user, rec, function (err, data2) {
+    db.update_user(req.session.user, rec, function (res) {
         var h = {
             node: null,
             user: req.session.user,
@@ -353,10 +351,40 @@ exports.update_user = function (req, callback) {
         for (var i in rec2) {
             changes.push("" + i + " [" + data[i] + " -> " + rec2[i] + "]");
         }
-        db.update_user(rec.username, rec2, function (err, data2) {
+        db.update_user(rec.username, rec2, function (res) {
             var h = {
                 node: null,
                 user: rec.username,
+                status: rec2.status,
+                code: "user_change",
+                ts: new Date(),
+                title: "User '" + data.full_name + "' updated",
+                description: "User '" + data.full_name + "' (" + rec.username + ") was updated - " + changes.join(", "),
+                sys_data: rec
+            };
+            db.new_history(h, callback);
+            load_username_map();
+        });
+    });
+};
+
+exports.regenerate_token = function (req, callback) {
+    var rec = req.data;
+    rec.token = crypto.randomBytes(24).toString('base64');
+    var rec2 = { token: "" };
+    xutil.override_members(rec, rec2, false);
+    xutil.remove_empty_members(rec2);
+    db.get_user(rec.username, function (err, data) {
+        if (err) return callback(err);
+        var changes = [];
+        for (var i in rec2) {
+            changes.push("" + i + " [" + data[i] + " -> " + rec2[i] + "]");
+        }
+        db.update_user(rec.username, rec2, function (res) {
+            var h = {
+                node: null,
+                user: rec.username,
+                token: rec2.token,
                 status: rec2.status,
                 code: "user_change",
                 ts: new Date(),
@@ -397,32 +425,64 @@ exports.delete_user = function (req, callback) {
 exports.add_node = function (req, callback) {
     db.get_max_node_id(function (err, max_id) {
         if (err) return callback(err);
-        
-		var rec = req.data;
-		rec.id = Number(max_id) + 1;
-		db.add_node(req.data, function (err2, data2) {
-			if (err2) return callback(err2);
-			var h = {
-				node: rec.id,
-				cluster: rec.cluster,
-				user: req.session.user,
-				status: rec.status,
-				code: "node_change",
-				ts: new Date(),
-				title: "Node '" + rec.name + "' (" + rec.id + ") created",
-				description: "Node '" + rec.name + "' (" + rec.id + ") was successfully created.",
-				sys_data: rec
-			};
+        var rec = req.data;
+        rec.id = Number(max_id) + 1;
+        console.log("this is the new maxId:", rec.id);
+        db.add_node(req.data, function (err2, data2) {
+            if (err2) return callback(err2);
+            var h = {
+                node: rec.id,
+                cluster: rec.cluster,
+                user: req.session.user,
+                status: rec.status,
+                code: "node_change",
+                ts: new Date(),
+                title: "Node '" + rec.name + "' (" + rec.id + ") created",
+                description: "Node '" + rec.name + "' (" + rec.id + ") was successfully created.",
+                sys_data: rec
+            };
 
-			db.new_history(h, function (err) {
-				if (err) return callback(err);
-				callback(null, { id: rec.id });
-			});
-			if (notify_after_node_change) {
-				notify_after_node_change(rec.id);
-			}
-			load_node_map();
-		});
+            db.new_history(h, function (err) {
+                if (err) return callback(err);
+                callback(null, { id: rec.id });
+            });
+            if (notify_after_node_change) {
+                notify_after_node_change(rec.id);
+            }
+            load_node_map();
+        });
+    });
+};
+
+exports.api_add_node = function (req, callback) {
+    db.get_max_node_id(function (err, max_id) {
+        if (err) return callback(err);
+        var rec = req;
+        rec.id = Number(max_id) + 1;
+        console.log("this is the new maxId:", rec.id);
+        db.add_node(req, function (err2, data2) {
+            if (err2) return callback(err2);
+            /*var h = {
+                node: rec.id,
+                cluster: rec.cluster,
+                //user: req.session.user,
+                status: rec.status,
+                code: "node_change",
+                ts: new Date(),
+                title: "Node '" + rec.name + "' (" + rec.id + ") created",
+                description: "Node '" + rec.name + "' (" + rec.id + ") was successfully created.",
+                sys_data: rec
+            };
+
+            db.new_history(h, function (err) {
+                if (err) return callback(err);
+                callback(null, { id: rec.id });
+            });*/
+            if (notify_after_node_change) {
+                notify_after_node_change(rec.id);
+            }
+            load_node_map();
+        });
     });
 };
 
@@ -509,6 +569,14 @@ exports.get_node = function (req, callback) {
         callback(err, data);
     });
 };
+
+exports.get_node_ids = function (callback) {
+    db.get_node_ids(function (err, data) {
+            if (err) return callback(err);
+            var res = { ids: data };
+            callback(null, res);
+        });
+}
 
 exports.check_component_for_multiple_nodes = function (req, callback) {
     var comp = req.data.component;
@@ -1028,7 +1096,7 @@ exports.get_cluster = function (req, callback) {
 
 exports.update_cluster = function (req, callback) {
     var rec = req.data;
-    db.get_cluster(rec.orig_id, function (err, data) {
+    db.get_cluster(rec.id, function (err, data) {
         if (err) return callback(err);
         //console.log("#", rec, data);
 
@@ -1041,20 +1109,58 @@ exports.update_cluster = function (req, callback) {
             }
         }
         //console.log("##", rec2);
-        db.update_cluster(rec.orig_id, rec2, function (xerr) {
+        db.update_cluster(rec.id, rec2, function (xerr) {
             //console.log("###", xerr);
             if (xerr) return callback(xerr);
 
             load_cluster_map();
             var cluster_name = rec2.name || data.name;
             var h = {
-                cluster: rec.orig_id,
+                cluster: rec.id,
                 user: req.session.user,
                 status: "",
                 code: "cluster_update",
                 ts: new Date(),
-                title: "Cluster '" + cluster_name + "' (" + rec.orig_id + ") was updated",
-                description: "Cluster '" + cluster_name + "' (" + rec.orig_id + ") was updated - " + changes.join(", "),
+                title: "Cluster '" + cluster_name + "' (" + rec.id + ") was updated",
+                description: "Cluster '" + cluster_name + "' (" + rec.id + ") was updated - " + changes.join(", "),
+                sys_data: {}
+            };
+            exports.new_history(h, callback);
+            load_cluster_map();
+        });
+
+    });
+};
+
+exports.update_cluster_rest = function (req, callback) {
+    var rec = req.body;
+    if (typeof rec.id == "undefined") {
+        rec.id = req.params.cluster_id;
+    }
+    db.get_cluster(rec.id, function (err, data) {
+        if (err) return callback(err);
+
+        var rec2 = xutil.get_diff_fields(rec, data);
+        var changes = [];
+        for (var i in rec2) {
+            if (rec2[i] !== undefined && rec2[i] !== null || data[i] !== undefined && data[i] !== null) {
+                changes.push("" + i + " [" + data[i] + " -> " + rec2[i] + "]");
+            }
+        }
+        db.update_cluster(rec.id, rec2, function (xerr) {
+            //console.log("###", xerr);
+            if (xerr) return callback(xerr);
+
+            load_cluster_map();
+            var cluster_name = rec2.name || data.name;
+            var h = {
+                cluster: rec.id,
+                user: req.session.user,
+                status: "",
+                code: "cluster_update",
+                ts: new Date(),
+                title: "Cluster '" + cluster_name + "' (" + rec.id + ") was updated",
+                description: "Cluster '" + cluster_name + "' (" + rec.id + ") was updated - " + changes.join(", "),
                 sys_data: {}
             };
             exports.new_history(h, callback);
@@ -1069,7 +1175,7 @@ exports.delete_cluster = function (req, callback) {
     db.get_cluster(id, function (err, data) {
         if (err) return callback(err);
         db.get_nodes({ cluster: id }, function (err2, data2) {
-            if (err2) return callback(err);
+            if (err2) return callback(err2);
             if (data2.length > 0) return callback(new Error("Cannot delete cluster - nodes are assigned to it."));
             db.delete_cluster(id, function (xerr) {
                 if (xerr) return callback(xerr);
@@ -1348,46 +1454,13 @@ exports.get_history = function (req, callback) {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-exports.rest_nodeInfo = function (node_id, callback) {
-    db.get_node(node_id, function (err, data) {
-        if (err) return callback(err);
-        var res = {
-            id: data.id,
-            name: data.name,
-            cluster: data.cluster,
-            status: data.status,
-            long: data.loc_lon,
-            lat: data.loc_lat
-        };
-        callback(null, res);
-    });
-}
 
-exports.rest_nodeData = function (node_id, callback) {
-    db.get_node(node_id, function (err, data) {
-        if (err) return callback(err);
-        var res = {
-            id: data.id,
-            name: data.name,
-            cluster: data.cluster,
-            status: data.status,
-            long: data.loc_lon,
-            lat: data.loc_lat,
-            role: data.role,
-            scope: data.scope,
-            project: data.project,
-            user_comment: data.user_comment,
-            network_address: data.network_address,
-            network_address2: data.network_address2,
-            mac: data.mac,
-            serial_number: data.serial_number,
-            firmware: data.firmware,
-            bootloader: data.bootloader,
-            setup: data.setup,
-            box_label: data.box_label,
-            components: data.components
-        };
-        callback(null, res);
+exports.node_data = function(req, callback) {
+    db.get_node(Number(req), function (err, data) {
+        if (err) {
+            return callback(err);
+        }
+        callback(data);
     });
 }
 
