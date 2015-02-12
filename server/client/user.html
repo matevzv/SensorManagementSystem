@@ -115,7 +115,6 @@
                             </div>
 
                             <div class="list-group" data-bind="visible: $root.CurrentUserEditing()==true">
-                                <label class="control-label" for="btnSaveNewUser"></label>
                                 <div class="controls">
                                     <button id="btnSaveNewUser" class="btn btn-default btn-primary" type="button" data-bind="click: $root.CurrentUserSave"><i class="glyphicon glyphicon-floppy-disk"></i> Save changes </button>
                                     <button id="btnCancelSaveNewUser" class="btn btn-default" type="button" data-bind="click: $root.CurrentUserCancelEditing"><i class="glyphicon glyphicon-remove"></i> Cancel </button>
@@ -126,6 +125,7 @@
                             <div data-bind="visible: $root.CurrentUserEditing()==false && $root.CurrentUserEditingPwd() == false">
                                 <button class="btn btn-default" data-bind="click: $root.CurrentUserStartEditing"><i class="glyphicon glyphicon-edit"></i> Edit user data </button>
                                 <button class="btn btn-default" data-bind="click: $root.CurrentUserStartEditingPwd"><i class="glyphicon glyphicon-lock"></i> Change password </button>
+                                <button class="btn btn-default" data-bind="click: $root.RegenerateToken, visible: $root.StdData.CurrentUserIsAdmin() == true"><i class="glyphicon glyphicon-refresh"></i> Regenerate token</button>
                                 <button class="btn btn-danger" data-bind="click: $root.DeleteUser, visible: $root.StdData.CurrentUserIsAdmin() == true"><i class="glyphicon glyphicon-trash"></i> Delete user</button>
                             </div>
                         </div>
