@@ -25,6 +25,11 @@
                 $(".input")
                     .attr("data-placement", "right")
                     .tooltip();
+                $("input").keyup(function (event) {
+                    if (event.keyCode == 13) {
+                        $("#btnSaveNewUser").click();
+                    }
+                });
             });
         </script>
         <title>Sensor Management System - users</title>
