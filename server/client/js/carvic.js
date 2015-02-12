@@ -616,6 +616,20 @@ Carvic.Model.UserModel = function () {
         }
     };
 
+    self.RegenerateToken = function () {
+        if (confirm("This user's token might be hard coded into an application. Regenerating it will block the application's access to SMS API. \nAre you sure you want to regenerate token for this user?")) {
+            var req = {
+                action: "regenerate_token",
+                data: { username: self.CurrentUser().Username() }
+            };
+
+            Carvic.Utils.Post(req, function (data) {
+                alert("Token successfully regenerated.");
+                self.LoadUser(self.CurrentUser().Username());
+            });
+        }
+    };
+
     self.DoShowLogins = function () {
         self.LoadLoginHistory();
         self.ShowLogins(true);
@@ -766,7 +780,6 @@ Carvic.Model.NodesModel = function (callback) {
             self.RecCount(data.count);
             self.PageCount(Math.floor(data.count / data.page_size));
             self.UpdatePageButtons();
-
             for (var i = 0; i < data.records.length; i++) {
                 var obj = data.records[i];
                 var sensors = [];
@@ -2294,7 +2307,7 @@ Carvic.Model.ClusterModel = function () {
             return;
         }
 
-        var d = { orig_id: self.LastData.id };
+        var d = { id: self.LastData.id };
         if (self.LastData.type != self.Type())
             d.type = self.Type();
         if (self.LastData.tag != self.Tag())
