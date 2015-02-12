@@ -25,7 +25,7 @@ var collection_components = "components";
 var collection_clusters = "clusters";
 var collection_nodes = "nodes";
 var collection_history = "history";
-var collection_sensor_history = "sensor_history";
+var collection_measurements = "measurements";
 var collection_component_types = "component_types";
 var collection_cluster_types = "cluster_types";
 var collection_component_statuses = "component_statuses";
@@ -33,6 +33,7 @@ var collection_node_roles = "node_roles";
 var collection_node_statuses = "node_statuses";
 var collection_user_statuses = "user_statuses";
 var collection_user_types = "user_types";
+var collection_sensors = "sensors";
 
 var collections = [
     collection_users,
@@ -41,14 +42,15 @@ var collections = [
     collection_clusters,
     collection_nodes,
     collection_history,
-    collection_sensor_history,
+    collection_measurements,
     collection_component_types,
     collection_cluster_types,
     collection_component_statuses,
     collection_node_roles,
     collection_node_statuses,
     collection_user_statuses,
-    collection_user_types
+    collection_user_types,
+    collection_sensors
 ];
 
 
@@ -118,7 +120,7 @@ function fill_dummy_data(callback) {
     loop(data.components, collection_components);
     loop(data.clusters, collection_clusters);
     loop(data.nodes, collection_nodes);
-    loop(data.sensor_history, collection_sensor_history);
+    loop(data.measurements, collection_measurements);
     loop(data.users, collection_users, true);
     loop(data.logins, collection_logins);
     loop(data.history, collection_history);
@@ -129,6 +131,7 @@ function fill_dummy_data(callback) {
     loop(data.node_statuses, collection_node_statuses);
     loop(data.user_statuses, collection_user_statuses);
     loop(data.user_types, collection_user_types);
+    loop(data.sensors, collection_sensors);
     
 
     var calls = [];
@@ -163,7 +166,7 @@ function init(options, callback) {
     db[collection_history].ensureIndex({ user: 1, ts: -1 });
     db[collection_history].ensureIndex({ node: 1, ts: -1 });
     db[collection_history].ensureIndex({ ts: -1 });
-    db[collection_sensor_history].ensureIndex({ sensor: 1, ts: -1 });
+    db[collection_measurements].ensureIndex({ sensor: 1, ts: -1 });
 
     // make correction of corrupted data
     db[collection_users].update({ type: null }, { $set: { type: "normal"} });
@@ -217,10 +220,18 @@ function add_cluster(rec, callback) {
 };
 
 function update_cluster(id, rec, callback) {
-    var query = { id: id };
-    db[collection_clusters].update(query, { $set: rec }, null, function (err, res) {
-        callback(err);
-    });
+    var query = { id: id };    
+    if(Object.keys(rec).length > 0) {
+        db[collection_clusters].update(query, { $set: rec }, null, function (err, res) {
+            if (err) return callback(err);
+            else if (res.n)
+                callback({ message: 'Cluster successfully updated!' });
+            else    
+                callback({ message: 'Cluster not found!' });
+        });
+    } else {
+        callback({ message: 'No changes to the cluster were made!' });
+    }
 };
 
 function get_all_cluster_types(callback){
@@ -391,7 +402,7 @@ function update_node(id, rec, callback) {
 function delete_node(id, callback) {
     db[collection_nodes].remove({ id: id }, function (err) {
         if (err) return callback(err);
-        db[collection_sensor_history].remove({ node: id }, callback);
+        db[collection_measurements].remove({ node: id }, callback);
     });
 };
 
@@ -401,7 +412,7 @@ function get_node(id, callback) {
         if (err) {
             callback(err);
         } else if (!docs || docs.length === 0) {
-            callback(new Error("Node with specified id not found: " + id));
+            callback( { error: "Node with specified id not found!" } );
         } else {
             callback(null, docs[0]);
         }
@@ -428,6 +439,7 @@ function get_all_node_roles(callback){
 };
 
 function get_nodes2(query, skip, limit, callback) {
+    console.log("query:", query);
     db[collection_nodes]
         .find(query)
         .sort({ ts: -1 })
@@ -488,22 +500,27 @@ function get_sensor(node_id, id, callback) {
 };
 
 function get_sensors_for_node(node_id, callback) {
-    get_node(node_id, function (err, node) {
+    /*get_node(node_id, function (err, node) {
         if (err) return callback(err);
         callback(null, node.sensors);
+    });*/
+    var query = { node: node_id };
+    db[collection_sensors].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
     });
 };
 
 function get_sensor_history(node_id, id, callback) {
     var query = { sensor: id, node: node_id };
-    db[collection_sensor_history].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
+    db[collection_measurements].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
         if (err) return callback(err);
         callback(null, docs);
     });
 };
 
 function get_all_sensor_history(callback) {
-    db[collection_sensor_history].find().sort({ ts: -1 }).toArray(function (err, docs) {
+    db[collection_measurements].find().sort({ ts: -1 }).toArray(function (err, docs) {
         if (err) return callback(err);
         callback(docs);
     });
@@ -517,15 +534,15 @@ function update_sensors_for_node(node_id, sensors, callback) {
 };
 
 function add_sensor_measurement(rec, callback) {
-    db[collection_sensor_history].insert(rec, function (err, res) {
+    db[collection_measurements].insert(rec, function (err, res) {
         if (err) return callback(err);
         else callback({ message: 'Measurement successfully added!' });
     });
 }
 
 function get_sensor_measurement(rec, callback) {
-    if (rec.length != 24) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters" });
-    else db[collection_sensor_history].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+    if (rec.length != 24) callback( { error: "Measurement ID passed in must be a single string of 12 bytes or a string of 24 hex characters" });
+    else db[collection_measurements].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
         if (err) return callback(err);
 		else if (res.length == 0)
             callback({ message: 'Measurement not found!' });
@@ -535,8 +552,8 @@ function get_sensor_measurement(rec, callback) {
 }
 
 function update_sensor_measurement(rec, callback) {
-    if (rec.params.measurement_id.length != 24) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters" });
-    else db[collection_sensor_history].update( { _id: mongojs.ObjectId(rec.params.measurement_id) }, { $set: rec.body }, function (err, res) {
+    if (rec.params.measurement_id.length != 24) callback( { error: "Measurement ID passed in must be a single string of 12 bytes or a string of 24 hex characters" });
+    else db[collection_measurements].update( { _id: mongojs.ObjectId(rec.params.measurement_id) }, { $set: rec.body }, function (err, res) {
         if (err) return callback(err);
 		else if (res.n)
             callback({ message: 'Measurement successfully updated!' });
@@ -547,7 +564,7 @@ function update_sensor_measurement(rec, callback) {
 
 function delete_sensor_measurement(rec, callback) {
     if (rec.length != 24) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters" });
-    else db[collection_sensor_history].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+    else db[collection_measurements].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
         if (err) return callback(err);
         else if (res.n)
 				callback({ message: 'Measurement successfully deleted!' });
@@ -574,8 +591,8 @@ function new_user(rec, callback) {
 
 function update_user(username, rec, callback) {
     var query = { username: username };
-    db[collection_users].update(query, { $set: rec }, null, function (err, res) {
-        callback(err, {});
+    db[collection_users].update(query, { $set: rec }, null, function (err) {
+        callback(err);
     });
 };
 
@@ -829,7 +846,7 @@ function archive_single_tab(col_name, query, fname, callback) {
 
 function archive_sensors(file_name, callback) {
     if (archive_dt_measurement != null) {
-        archive_single_tab(collection_sensor_history, { ts: { $lt: archive_dt_measurement} }, file_name + "_sensor_history", callback);
+        archive_single_tab(collection_measurements, { ts: { $lt: archive_dt_measurement} }, file_name + "_measurements", callback);
     } else {
         callback();
     }
@@ -852,7 +869,7 @@ function archive_scans(file_name, callback) {
         archive_single_tab(
             collection_history,
             { ts: { $lt: archive_dt_scan }, code: { $in: scan_codes} },
-            file_name + "_sensor_history",
+            file_name + "_measurements",
             callback);
     } else {
         callback();
