@@ -22,7 +22,8 @@
         "async": "^0.9.0",
         "mongojs": "^0.13.1",
         "connect-mongo": "^0.4.1",
-        "marked": "^0.3.2"
+        "marked": "^0.3.2",
+        "agenda": "^0.6.27"
     },
     "license": "GPL",
     "engines": {
