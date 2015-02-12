@@ -13,7 +13,8 @@ var favicon = require('serve-favicon');
 var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var redis = require("redis");
-var crypto = require("crypto");
+//var crypto = require("crypto");
+//var db = require("./db");
 
 ///////////////////////////////////////////////////////////////////////////
 // Module variables
@@ -61,9 +62,9 @@ function log_url(req, res, next) {
 };
 
 function preprocess_api_calls(req, res, next) {
-    if (req.url.indexOf("/api/measurements/") == 0) {
+    if (req.url.indexOf("/api/measurements") == 0 || req.url.indexOf("/api/nodes") == 0 || req.url.indexOf("/api/clusters") == 0) {
         // rest-like url parser
-        var tmp_url = req.url.substr(17);
+        var tmp_url = req.url;
         req.body = xutil.parse_rest_request(tmp_url);
         req.body.action = "rest";
 
@@ -80,7 +81,7 @@ function preprocess_api_calls(req, res, next) {
         } else {
             res.json("Error: Missing authentication token");
         }
-    } else if ((req.url.indexOf("/api/") == 0))  {
+    } /*else if ((req.url.indexOf("/api/") == 0))  {
         // rest-like url parser
         var tmp_url = req.url.substr(4);
         req.body = xutil.parse_rest_request(tmp_url);
@@ -95,7 +96,7 @@ function preprocess_api_calls(req, res, next) {
             req.session.user = req.remoteUser;
             next();
         });
-    } else if (req.url === "/handler" || req.url.indexOf("/handler?") === 0) {
+    }*/ else if (req.url === "/handler" || req.url.indexOf("/handler?") === 0) {
         json_parser(req, res, next);
     } else {
         body_parser(req, res, next);
@@ -168,8 +169,7 @@ function run() {
     app.use(json_parser);
     app.use(body_parser);
 
-    // routes 
-
+    // routes
     app.get('/', function (req, res) {
         res.setHeader("Content-Type", "text/html");
         res.end(root_content);
@@ -209,7 +209,25 @@ function run() {
         res.setHeader("Content-Type", "text/html");
         res.end(help_content);
     });
-    app.post('/handler', ensure_authenticated, main_handler);    
+    app.post('/handler', ensure_authenticated, main_handler);
+
+    app.route('/api/measurements')
+        .get(function(req, res) {
+            bl.get_all_sensor_history(function(err, measurements) {
+                if(err)
+                    res.send(err);
+                res.json(measurements);
+            });
+        })
+        .post(function(req, res) {
+            if (!req.body.ts) {
+                req.body.ts = new Date();
+            }
+            bl.add_sensor_measurement(req.body, function(err) {
+                if(err) res.sendStatus(err);
+                else res.json( 'Successfully added the following measurement.' + 'Sensor: ' + req.body.sensor + ', node: ' + req.body.node + ', timestamp: ' + req.body.ts + ', sys_data: ' + req.body.sys_data + ", value: " + req.body.value );
+            });
+        });
     app.route('/api/measurements/:measurement_id')
         .get(function(req, res) {
             bl.get_sensor_measurement(req.params.measurement_id, function(callback) {
@@ -226,24 +244,64 @@ function run() {
                 res.json(callback);
             })
         });
-    app.route('/api/measurements')
+    app.route('/api/nodes')
+        .get(function(req, res) {
+            bl.get_node_ids(function (err, callback) {
+                if(err)
+                    res.sendStatus(err);
+                res.json(callback);
+            })
+        })
         .post(function(req, res) {
-            if (!req.body.ts) {
-                req.body.ts = new Date();
-            }
-            bl.add_sensor_measurement(req.body, function(err) {
-                if(err) res.send(err);
-                else res.json( 'Successfully added the following measurement.' + 'Sensor: ' + req.body.sensor + ', node: ' + req.body.node + ', timestamp: ' + req.body.ts + ', sys_data: ' + req.body.sys_data + ", value: " + req.body.value );
+            bl.api_add_node(req.body, function(err, callback) {
+                if(err)
+                    res.sendStatus(err);
+                res.json(callback);
+            })
+        });
+    app.route('/api/nodes/:node_id')
+        .get(function(req, res) {
+            bl.node_data(req.params.node_id, function (callback) {
+                res.json(callback);
+            })
+        })
+        .put(function(req, res) {
+            
+        })
+        .delete(function(req, res) {
+            
+        });
+    app.route('/api/clusters')
+        .get(function(req, res) {
+            bl.get_clusters({ data: {} }, function (err, clusters) {
+                if (err) return res.json(err);
+                res.json(clusters);
             });
         })
-        .get(function(req, res) {
-            bl.get_all_sensor_history(function(err, measurements) {
+        .post(function(req, res) {
+            /*bl.api_add_node(req.body, function(err, callback) {
                 if(err)
-                    res.send(err);
-                res.json(measurements);
-            });
+                    res.sendStatus(err);
+                res.json(callback);
+            });*/
         });
-
+    app.route('/api/clusters/:cluster_id')
+        .get(function(req, res) {
+            var query = { id: req.params.cluster_id };
+            bl.get_cluster({ data: query }, function (err, cluster) {
+                if (err) return res.json(err);
+                res.json(cluster);
+            });
+        })
+        .put(function(req, res) {
+            bl.update_cluster_rest(req, function (err, callback) {
+                if (err) return res.json(err);
+                res.json(callback);
+            })
+        })
+        .delete(function(req, res) {
+            
+        });
     app.get('/api/*', main_handler);
     app.post('/api/*', main_handler);
     // ok, start the server
