@@ -71,7 +71,7 @@ function preprocess_api_calls(req, res, next) {
         //check token
         if(req.headers.authorization != null) {
             bl.get_users_token(req.headers.authorization, function(data) {
-                if (data[0] == null) res.json('Error: Specified token is not valid');
+                if (data[0] == null) res.status(401).json({ error: 'Specified token is not valid' });
                 else {
                     req.session.is_authenticated = true;
                     req.session.user = data[0].username;
@@ -79,7 +79,7 @@ function preprocess_api_calls(req, res, next) {
                 }
             });
         } else {
-            res.json("Error: Missing authentication token");
+            res.status(401).json("Error: Missing authentication token");
         }
     } /*else if ((req.url.indexOf("/api/") == 0))  {
         // rest-like url parser
@@ -213,7 +213,7 @@ function run() {
 
     app.route('/api/measurements')
         .get(function(req, res) {
-            bl.get_all_sensor_history(function(err, measurements) {
+            bl.get_all_measurements(function(err, measurements) {
                 if(err)
                     res.send(err);
                 res.json(measurements);
@@ -225,8 +225,11 @@ function run() {
             }
             bl.add_sensor_measurement(req.body, function(err) {
                 if(err) res.sendStatus(err);
-                else res.json( 'Successfully added the following measurement.' + 'Sensor: ' + req.body.sensor + ', node: ' + req.body.node + ', timestamp: ' + req.body.ts + ', sys_data: ' + req.body.sys_data + ", value: " + req.body.value );
+                else res.status(201).json( 'Successfully added the measurement.' );
             });
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,POST').json( req.method + ' method is not supported.' );
         });
     app.route('/api/measurements/:measurement_id')
         .get(function(req, res) {
@@ -243,6 +246,9 @@ function run() {
             bl.delete_sensor_measurement(req.params.measurement_id, function(callback) {
                 res.json(callback);
             })
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,PUT,DELETE').json( req.method + ' method is not supported.' );
         });
     app.route('/api/nodes')
         .get(function(req, res) {
@@ -255,9 +261,12 @@ function run() {
         .post(function(req, res) {
             bl.api_add_node(req.body, function(err, callback) {
                 if(err)
-                    res.sendStatus(err);
+                    res.status(err);
                 res.json(callback);
             })
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,POST').json( req.method + ' method is not supported.' );
         });
     app.route('/api/nodes/:node_id')
         .get(function(req, res) {
@@ -270,11 +279,15 @@ function run() {
         })
         .delete(function(req, res) {
             
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,PUT,DELETE').json( req.method + ' method is not supported.' );
         });
     app.route('/api/clusters')
         .get(function(req, res) {
             bl.get_clusters({ data: {} }, function (err, clusters) {
-                if (err) return res.json(err);
+                //if (err) return res.json(err);
+                if (clusters[0].error == 404) res.json("To je to!");/*return res.status(404).json({ error: 'Specified measurement was not found' })*/
                 res.json(clusters);
             });
         })
@@ -284,6 +297,9 @@ function run() {
                     res.sendStatus(err);
                 res.json(callback);
             });*/
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,POST').json( req.method + ' method is not supported.' );
         });
     app.route('/api/clusters/:cluster_id')
         .get(function(req, res) {
@@ -301,6 +317,9 @@ function run() {
         })
         .delete(function(req, res) {
             
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,PUT,DELETE').json( req.method + ' method is not supported.' );
         });
     app.get('/api/*', main_handler);
     app.post('/api/*', main_handler);
