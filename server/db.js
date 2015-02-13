@@ -519,10 +519,10 @@ function get_sensor_history(node_id, id, callback) {
     });
 };
 
-function get_all_sensor_history(callback) {
+function get_all_measurements(callback) {
     db[collection_measurements].find().sort({ ts: -1 }).toArray(function (err, docs) {
         if (err) return callback(err);
-        callback(docs);
+        callback(null, docs);
     });
 };
 
@@ -545,7 +545,7 @@ function get_sensor_measurement(rec, callback) {
     else db[collection_measurements].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
         if (err) return callback(err);
 		else if (res.length == 0)
-            callback({ message: 'Measurement not found!' });
+            callback({ error: 404 });
         else
 			callback(res);
     });
@@ -558,7 +558,7 @@ function update_sensor_measurement(rec, callback) {
 		else if (res.n)
             callback({ message: 'Measurement successfully updated!' });
         else
-			callback({ message: 'Measurement not found!' });
+			callback({ message: 'Measurement not found!', status: 404 });
     });
 }
 
@@ -952,7 +952,7 @@ exports.get_all_node_roles = get_all_node_roles;
 exports.get_sensor = get_sensor;
 exports.get_sensors_for_node = get_sensors_for_node;
 exports.get_sensor_history = get_sensor_history;
-exports.get_all_sensor_history = get_all_sensor_history;
+exports.get_all_measurements = get_all_measurements;
 exports.update_sensors_for_node = update_sensors_for_node;
 exports.add_sensor_measurement = add_sensor_measurement;
 exports.get_sensor_measurement = get_sensor_measurement;
