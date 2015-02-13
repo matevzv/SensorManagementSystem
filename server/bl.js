@@ -1333,8 +1333,8 @@ exports.get_sensors_for_node = function (req, callback) {
 exports.get_sensor_history = function (req, callback) {
     db.get_sensor_history(req.data.node, req.data.sensor, callback)
 };
-exports.get_all_sensor_history = function (callback) {
-    db.get_all_sensor_history(callback)
+exports.get_all_measurements = function (callback) {
+    db.get_all_measurements(callback)
 };
 exports.get_sensor_measurement = function (req, callback) {
     db.get_sensor_measurement(req, callback)
