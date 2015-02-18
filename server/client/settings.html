@@ -95,6 +95,63 @@
                             <button id="inBtn2" class="btn btn-default btn-primary" type="button" data-bind="click: ChangePassword"><i class="glyphicon glyphicon-floppy-disk"></i> Change password </button>
                         </div>
                     </div>
+                    <div class="well">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#">Notify</a></li>
+                        </ul>
+                        <div class="form-horizontal">
+                            <div class="list-group">
+                                <label class="control-label" for="inEn">Enabled</label>
+                                <div>
+                                    <input type="checkbox" id="inEnabled" data-bind="checked: Enabled"></select>
+                                </div>
+                            </div>
+                            <div class="list-group">
+                                <label class="control-label" for="inSe">Server</label>
+                                <div class="controls">
+                                    <input class="form-control" type="text" id="inServer" placeholder="Insert server" data-bind="value: Server" name="server" />
+                                </div>
+                            </div>
+                            <div class="list-group">
+                                <label class="control-label" for="inPo">Port</label>
+                                <div class="controls">
+                                    <input class="form-control" type="text" id="inPort" placeholder="Insert port" data-bind="value: Port" name="port" />
+                                </div>
+                            </div>
+                            <div class="list-group">
+                                <label class="control-label" for="inPas">Path after sensor scan</label>
+                                <div class="controls">
+                                    <input class="form-control" type="text" id="inPathAfterSensorScan" placeholder="path after sensor scan" data-bind="value: PathAfterSensorScan" name="path_after_sensor_scan" />
+                                </div>
+                            </div>
+                            <div class="list-group">
+                                <label class="control-label" for="inPanc">Path after node change</label>
+                                <div class="controls">
+                                    <input class="form-control" type="text" id="inPathAfterNodeChange" placeholder="path after node change" data-bind="value: PathAfterNodeChange" name="path_after_node_change" />
+                                </div>
+                            </div>
+                            <div class="list-group">
+                                <label class="control-label" for="inPasc">Path after sensor change</label>
+                                <div class="controls">
+                                    <input class="form-control" type="text" id="inPathAfterSensorChange" placeholder="path after sensor change" data-bind="value: PathAfterSensorChange" name="path_after_sensor_change" />
+                                </div>
+                            </div>
+                            <label class="control-label" for="inAnc">After node change</label>
+                            <div>
+                                <input type="checkbox" id="inAnc" data-bind="checked: AfterNodeChange"></select>
+                            </div>
+                            <label class="control-label" for="inAss">After sensor scan</label>
+                            <div>
+                                <input type="checkbox" id="inAss" data-bind="checked: AfterSensorScan"></select>
+                            </div>
+                            <label class="control-label" for="inAsc">After sensor change</label>
+                            <div>
+                                <input type="checkbox" id="inAsc" data-bind="checked: AfterSensorChange"></select>
+                            </div>
+                            <button id="inBtn3" class="btn btn-default btn-primary" type="button" data-bind="click: ChangeNotify"><i class="glyphicon glyphicon-floppy-disk"></i> Change Notify </button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

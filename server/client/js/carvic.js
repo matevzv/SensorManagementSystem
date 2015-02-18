@@ -2452,6 +2452,15 @@ Carvic.Model.SettingsModel = function () {
     self.CurrentFullName = ko.observable("");
     self.NewPwd1 = ko.observable("");
     self.NewPwd2 = ko.observable("");
+    self.Enabled = ko.observable(false);
+    self.Server = ko.observable("");
+    self.Port = ko.observable("");
+    self.PathAfterSensorScan = ko.observable("");
+    self.PathAfterNodeChange = ko.observable("");
+    self.PathAfterSensorChange = ko.observable("");
+    self.AfterNodeChange = ko.observable(false);
+    self.AfterSensorScan = ko.observable(false);
+    self.AfterSensorChange = ko.observable(false);
     self.Msg = ko.observable("");
     self.MsgType = ko.observable("");
 
@@ -2474,8 +2483,42 @@ Carvic.Model.SettingsModel = function () {
             document.form.pwd1.value = "";
             document.form.pwd2.value = "";
         });
+    };
+
+    self.ChangeNotify = function () {
+        var query = {
+            enabled: self.Enabled(),
+            server: self.Server(),
+            port: self.Port(),
+            path_after_sensor_scan: self.PathAfterSensorScan(),
+            path_after_node_change: self.PathAfterNodeChange(),
+            path_after_sensor_change: self.PathAfterSensorChange(),
+            after_node_change: self.AfterNodeChange(),
+            after_sensor_scan: self.AfterSensorScan(),
+            after_sensor_change: self.AfterSensorChange()
+        };
+        Carvic.Utils.Post({ action: "change_notify", data: query }, function (data) {
+            alert("Notify changed successfully");
+        });
         
     };
+
+    self.Load = function (username) {
+        var query = { username: username };
+        Carvic.Utils.Post({ action: "get_notify", data: query }, function (data) {
+            var obj = data;
+            self.Enabled(obj.enabled);
+            self.Server(obj.server);
+            self.Port(obj.port);
+            self.PathAfterSensorScan(obj.path_after_sensor_scan);
+            self.PathAfterNodeChange(obj.path_after_node_change);
+            self.PathAfterSensorChange(obj.path_after_sensor_change);
+            self.AfterNodeChange(obj.after_node_change);
+            self.AfterSensorScan(obj.after_sensor_scan);
+            self.AfterSensorChange(obj.after_sensor_change);
+        });
+    };
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2605,5 +2648,6 @@ Carvic.InitSettings = function () {
     Carvic.Model.Settings = new Carvic.Model.SettingsModel();
     Carvic.Utils.SetCurrentUser(Carvic.Model.Settings, function () {
         Carvic.Model.Settings.CurrentFullName(Carvic.Model.Settings.StdData.CurrentUserFullname());
+        Carvic.Model.Settings.Load(Carvic.Model.Settings.StdData.CurrentUserFullname());
     });
 }

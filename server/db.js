@@ -20,6 +20,7 @@ var archive_dir = null;
 var archive_format = null;
 
 var collection_users = "users";
+var collection_notify = "notify";
 var collection_logins = "logins";
 var collection_components = "components";
 var collection_clusters = "clusters";
@@ -36,6 +37,7 @@ var collection_user_types = "user_types";
 
 var collections = [
     collection_users,
+    collection_notify,
     collection_logins,
     collection_components,
     collection_clusters,
@@ -538,6 +540,37 @@ function update_user(username, rec, callback) {
     });
 };
 
+function update_notify(username, rec, callback) {
+    var query = { username: username };
+    db[collection_notify].find(query, function (err, docs) {
+        if (err) {
+            callback(err);
+        } else if (!docs || docs.length === 0) {
+            rec.username = username;
+            db[collection_notify].insert(rec, function (err, res) {
+                callback(err, {});
+            });
+        } else {
+            db[collection_notify].update(query, { $set: rec }, null, function (err, res) {
+                callback(err, {});
+            });
+        };
+    });
+}
+
+function get_notify(username, callback) {
+    var query = { username: username };
+    db[collection_notify].find(query, function (err, docs) {
+        if (err) {
+            callback(err);
+        } else if (!docs || docs.length === 0) {
+            callback(err);
+        } else {
+            callback(null, docs[0]);
+        }
+    });
+};
+
 function get_user(username, callback) {
     var query = { username: username };
     db[collection_users].find(query, function (err, docs) {
@@ -890,6 +923,8 @@ exports.add_sensor_measurement = add_sensor_measurement;
 
 exports.new_user = new_user;
 exports.update_user = update_user;
+exports.update_notify = update_notify;
+exports.get_notify = get_notify;
 exports.delete_user = delete_user;
 exports.get_user = get_user;
 exports.get_username_map = get_username_map;

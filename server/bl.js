@@ -242,6 +242,42 @@ exports.change_pwd = function (req, callback) {
     });
 };
 
+exports.change_notify = function (req, callback) {
+    var rec = req.data;
+    db.update_notify(req.session.user, rec, function (err, data2) {
+        var h = {
+            node: null,
+            user: req.session.user,
+            status: null,
+            code: "user_change",
+            ts: new Date(),
+            title: "User '" + req.session.user + "' changed notify",
+            description: null,
+            sys_data: rec
+        };
+        db.new_history(h, callback);
+        load_username_map();
+    });
+};
+
+exports.get_notify = function (req, callback) {
+    db.get_notify(req.data.username, callback);
+};
+
+exports.get_cluster_stats = function (req, callback) {
+    db.get_cluster_stats(function (err, data) {
+        if (err) return callback(err);
+
+        data.forEach(function (item) {
+            if (cluster_map[item.id])
+                item.title = cluster_map[item.id].name;
+        });
+
+        callback(err, data);
+    });
+};
+
+
 exports.change_my_full_name = function (req, callback) {
     //console.log(req);
     if (/^\s*$/.test(req.data.full_name)) {
