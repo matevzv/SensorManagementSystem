@@ -171,6 +171,33 @@ function create_regexp2(req, query, where, prop_name) {
     }
 }
 
+function after_node_change(id) {
+    db.get_all_notify(function (err, data) {
+        data.forEach(function (item) {
+            if(item.enabled && item.after_node_change)
+                notify_after_node_change(id, item);
+        });
+    });
+}
+
+function after_sensor_scan(rec) {
+    db.get_all_notify(function (err, data) {
+        data.forEach(function (item) {
+            if(item.enabled && item.after_sensor_scan)
+                notify_after_sensor_scan(rec.node, rec.sensor, item);
+        });
+    });
+}
+
+function after_sensor_change(id) {
+    db.get_all_notify(function (err, data) {
+        data.forEach(function (item) {
+            if(item.enabled && item.after_node_change)
+                notify_after_sensor_change(id, item);
+        });
+    });
+}
+
 ///////////////////////////////////////////////////////////////////////
 
 exports.init = init;
@@ -445,9 +472,7 @@ exports.add_node = function (req, callback) {
 				if (err) return callback(err);
 				callback(null, { id: rec.id });
 			});
-			if (notify_after_node_change) {
-				notify_after_node_change(rec.id);
-			}
+			after_node_change(rec.id);
 			load_node_map();
 		});
     });
@@ -652,9 +677,7 @@ exports.update_node = function (req, callback) {
                 };
 
                 db.new_history(h, callback);
-                if (notify_after_node_change) {
-                    notify_after_node_change(rec.id);
-                }
+                after_node_change(rec.id);
                 load_node_map();
             });
         } else {
@@ -694,9 +717,7 @@ exports.delete_node = function (req, callback) {
         };
 
         db.new_history(h, callback);
-        if (notify_after_node_change) {
-            notify_after_node_change(node_id);
-        }
+        after_node_change(node_id);
         load_node_map();
     });
 }
@@ -1281,9 +1302,7 @@ exports.new_history = function (rec, callback) {
 exports.add_sensor_measurement = function (rec, callback) {
     db.add_sensor_measurement(rec, function (err) {
         if (err) return callback(err);
-        if (notify_after_sensor_scan) {
-            notify_after_sensor_scan(rec);
-        }
+        after_sensor_scan(rec);
         callback();
     });
 }

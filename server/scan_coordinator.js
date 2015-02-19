@@ -1,8 +1,8 @@
 // top level code for scanning, loops over all scanable clusters
 
 var async = require("async");
-var scanner = require("./scanner");
-//var scanner = require("./scanner_mock");
+//var scanner = require("./scanner");
+var scanner = require("./scanner_mock");
 
 ///////////////////////////////////////////////////
 

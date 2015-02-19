@@ -571,6 +571,13 @@ function get_notify(username, callback) {
     });
 };
 
+function get_all_notify(callback) {
+    db[collection_notify].find({}, function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
+};
+
 function get_user(username, callback) {
     var query = { username: username };
     db[collection_users].find(query, function (err, docs) {
@@ -925,6 +932,7 @@ exports.new_user = new_user;
 exports.update_user = update_user;
 exports.update_notify = update_notify;
 exports.get_notify = get_notify;
+exports.get_all_notify = get_all_notify;
 exports.delete_user = delete_user;
 exports.get_user = get_user;
 exports.get_username_map = get_username_map;
