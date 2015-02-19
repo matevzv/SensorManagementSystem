@@ -61,6 +61,10 @@ HttpClient.prototype.post_data = function (server, port, path, body, callback) {
         });
     });
 
+    post_req.on('error', function (err) {
+        console.log(err);
+    });
+
     post_req.write(post_data);
     post_req.end();
 }
