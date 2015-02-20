@@ -297,19 +297,6 @@ exports.get_notify = function (req, callback) {
     db.get_notify(req.data.username, callback);
 };
 
-exports.get_cluster_stats = function (req, callback) {
-    db.get_cluster_stats(function (err, data) {
-        if (err) return callback(err);
-
-        data.forEach(function (item) {
-            if (cluster_map[item.id])
-                item.title = cluster_map[item.id].name;
-        });
-
-        callback(err, data);
-    });
-};
-
 
 exports.change_my_full_name = function (req, callback) {
     //console.log(req);
