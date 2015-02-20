@@ -1074,20 +1074,7 @@ exports.add_components = function (req, callback) {
 //////////////////////////////////////////////////////////////////
 
 exports.get_clusters = function (req, callback) {
-    var query = {};
-    if (req.data.id && req.data.id.length > 0) {
-        if (req.data.id[0] == "*") {
-            var s = "/" + req.data.id.substr(1) + "/.test(this.id)";
-            query["$where"] = s;
-        } else {
-            query.id = req.data.id;
-        }
-    }
-    if (req.data.tag) query.tag = create_regexp(req.data.tag);
-    if (req.data.name) query.name = create_regexp(req.data.name);
-    if (req.data.type) query.type = req.data.type;
-
-    db.get_clusters(query, callback);
+    db.get_clusters(req, callback);
 };
 
 exports.get_cluster = function (req, callback) {
@@ -1327,6 +1314,15 @@ exports.mark_node_scan = function (node_id, cluster_id, callback) {
 
 ///////////////////
 
+exports.get_sensors = function (req, callback) {
+    db.get_sensors(req, callback);
+};
+exports.get_sensor = function (req, callback) {
+    db.get_sensor(req, callback);
+};
+exports.add_sensor = function (req, callback) {
+    db.add_sensor(req, callback);
+}
 exports.get_sensors_for_node = function (req, callback) {
     db.get_sensors_for_node(req.data.node, callback)
 };
