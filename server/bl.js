@@ -271,6 +271,12 @@ exports.change_pwd = function (req, callback) {
 
 exports.change_notify = function (req, callback) {
     var rec = req.data;
+    if(!/^[0-9]*$/.test(rec.port)) {
+        return callback(new Error("Only numbers in port section"));
+    }
+    if(rec.port < 0 || rec.port > 65535) {
+        return callback(new Error("Port number must be between 0 and 65535"));
+    }
     db.update_notify(req.session.user, rec, function (err, data2) {
         var h = {
             node: null,
