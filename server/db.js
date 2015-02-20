@@ -502,6 +502,13 @@ function get_sensor_history(node_id, id, callback) {
     });
 };
 
+function get_all_sensor_history(callback) {
+    db[collection_sensor_history].find().sort({ ts: -1 }).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(docs);
+    });
+};
+
 function update_sensors_for_node(node_id, sensors, callback) {
     var query = { id: node_id };
     db[collection_nodes].update(query, { $set: { sensors: sensors} }, null, function (err, res) {
@@ -511,7 +518,41 @@ function update_sensors_for_node(node_id, sensors, callback) {
 
 function add_sensor_measurement(rec, callback) {
     db[collection_sensor_history].insert(rec, function (err, res) {
-        callback(err, {});
+        if (err) return callback(err);
+        else callback({ message: 'Measurement successfully added!' });
+    });
+}
+
+function get_sensor_measurement(rec, callback) {
+    if (rec.length != 24) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters" });
+    else db[collection_sensor_history].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+        if (err) return callback(err);
+		else if (res.length == 0)
+            callback({ message: 'Measurement not found!' });
+        else
+			callback(res);
+    });
+}
+
+function update_sensor_measurement(rec, callback) {
+    if (rec.params.measurement_id.length != 24) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters" });
+    else db[collection_sensor_history].update( { _id: mongojs.ObjectId(rec.params.measurement_id) }, { $set: rec.body }, function (err, res) {
+        if (err) return callback(err);
+		else if (res.n)
+            callback({ message: 'Measurement successfully updated!' });
+        else
+			callback({ message: 'Measurement not found!' });
+    });
+}
+
+function delete_sensor_measurement(rec, callback) {
+    if (rec.length != 24) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters" });
+    else db[collection_sensor_history].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+        if (err) return callback(err);
+        else if (res.n)
+				callback({ message: 'Measurement successfully deleted!' });
+			else
+				callback({ message: 'Measurement not found!' });
     });
 }
 
@@ -547,6 +588,19 @@ function get_user(username, callback) {
             callback(new Error("User with specified username not found: " + username));
         } else {
             callback(null, docs[0]);
+        }
+    });
+};
+
+function get_users_token(req, callback) {
+    var query = { token: req };
+    db[collection_users].find(query, function (err, docs) {
+        if (err) {
+            callback(err);
+        } else if (!docs || docs.length === 0) {
+            callback(new Error("Specified token is not valid: " + req));
+        } else {
+            callback(docs);
         }
     });
 };
@@ -881,8 +935,12 @@ exports.get_all_node_roles = get_all_node_roles;
 exports.get_sensor = get_sensor;
 exports.get_sensors_for_node = get_sensors_for_node;
 exports.get_sensor_history = get_sensor_history;
+exports.get_all_sensor_history = get_all_sensor_history;
 exports.update_sensors_for_node = update_sensors_for_node;
 exports.add_sensor_measurement = add_sensor_measurement;
+exports.get_sensor_measurement = get_sensor_measurement;
+exports.update_sensor_measurement = update_sensor_measurement;
+exports.delete_sensor_measurement = delete_sensor_measurement;
 
 //exports.add_sensor = add_sensor;
 //exports.update_sensor = update_sensor;
@@ -892,6 +950,7 @@ exports.new_user = new_user;
 exports.update_user = update_user;
 exports.delete_user = delete_user;
 exports.get_user = get_user;
+exports.get_users_token = get_users_token;
 exports.get_username_map = get_username_map;
 exports.get_user_pwd = get_user_pwd;
 exports.get_user_history = get_user_history;
