@@ -285,9 +285,9 @@ function run() {
         });
     app.route('/api/clusters')
         .get(function(req, res) {
-            bl.get_clusters({ data: {} }, function (err, clusters) {
-                //if (err) return res.json(err);
-                if (clusters[0].error == 404) res.json("To je to!");/*return res.status(404).json({ error: 'Specified measurement was not found' })*/
+            bl.get_clusters({ query: {} }, function (err, clusters) {
+                if (err) return res.json(err);
+                //if (clusters[0].error == 404) res.json("To je to!");
                 res.json(clusters);
             });
         })
@@ -305,6 +305,41 @@ function run() {
         .get(function(req, res) {
             var query = { id: req.params.cluster_id };
             bl.get_cluster({ data: query }, function (err, cluster) {
+                if (err) return res.json(err);
+                res.json(cluster);
+            });
+        })
+        .put(function(req, res) {
+            bl.update_cluster_rest(req, function (err, callback) {
+                if (err) return res.json(err);
+                res.json(callback);
+            })
+        })
+        .delete(function(req, res) {
+            
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,PUT,DELETE').json( req.method + ' method is not supported.' );
+        });
+    app.route('/api/sensors')
+        .get(function(req, res) {
+            bl.get_sensors({ data: {} }, function (err, sensors) {
+                if (err) return res.json(err);
+                res.json(sensors);
+            });
+        })
+        .post(function(req, res) {
+            bl.add_sensor(req.body, function(err, callback) {
+                if(err) res.sendStatus(err);
+                res.json(callback);
+            });
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,POST').json( req.method + ' method is not supported.' );
+        });
+    app.route('/api/sensors/:sensor_id')
+        .get(function(req, res) {
+            bl.get_sensor(req.params.sensor_id, function (err, cluster) {
                 if (err) return res.json(err);
                 res.json(cluster);
             });

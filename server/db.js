@@ -246,8 +246,7 @@ function delete_cluster(id, callback) {
 };
 
 function get_cluster(id, callback) {
-    var query = { id: id };
-    db[collection_clusters].find(query, function (err, docs) {
+    db[collection_clusters].find({ _id: mongojs.ObjectId(id) }, function (err, docs) {
         if (err) {
             callback(err);
         } else if (!docs || docs.length === 0) {
@@ -482,22 +481,25 @@ function get_node_clusters(callback) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-
-function get_sensor(node_id, id, callback) {
-    get_node(node_id, function (err, data) {
-        if (err) {
-            callback(err);
-        } else {
-            for (var i = 0; i < data.sensors.length; i++) {
-                if (data.sensors[i].id === id) {
-                    callback(null, node.sensors[i]);
-                    return;
-                }
-            }
-            callback(new Error("Sensor with specified ID not found: node=" + node_id + ", id=" + id));
-        }
+function get_sensors(req, callback) {
+    db[collection_sensors].find().sort({ ts: -1 }).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
     });
 };
+
+function get_sensor(id, callback) {
+    db[collection_sensors].find( { _id: mongojs.ObjectId(id) }, function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
+};
+
+function add_sensor(rec, callback) {
+    db[collection_sensors].insert(rec, function (err, res) {
+        callback(err, {});
+    });
+}
 
 function get_sensors_for_node(node_id, callback) {
     /*get_node(node_id, function (err, node) {
@@ -545,7 +547,7 @@ function get_sensor_measurement(rec, callback) {
     else db[collection_measurements].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
         if (err) return callback(err);
 		else if (res.length == 0)
-            callback({ error: 404 });
+            callback({ error: 404 }); //??
         else
 			callback(res);
     });
@@ -949,6 +951,7 @@ exports.get_node_clusters = get_node_clusters;
 exports.get_all_node_statuses = get_all_node_statuses;
 exports.get_all_node_roles = get_all_node_roles;
 
+exports.get_sensors = get_sensors;
 exports.get_sensor = get_sensor;
 exports.get_sensors_for_node = get_sensors_for_node;
 exports.get_sensor_history = get_sensor_history;
@@ -959,7 +962,7 @@ exports.get_sensor_measurement = get_sensor_measurement;
 exports.update_sensor_measurement = update_sensor_measurement;
 exports.delete_sensor_measurement = delete_sensor_measurement;
 
-//exports.add_sensor = add_sensor;
+exports.add_sensor = add_sensor;
 //exports.update_sensor = update_sensor;
 //exports.remove_sensor = remove_sensor;
 
