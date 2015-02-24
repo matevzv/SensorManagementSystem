@@ -1323,6 +1323,12 @@ exports.get_sensor = function (req, callback) {
 exports.add_sensor = function (req, callback) {
     db.add_sensor(req, callback);
 }
+exports.update_sensor = function (req, callback) {
+    db.update_sensor(req, callback);
+}
+exports.delete_sensor = function (req, callback) {
+    db.delete_sensor(req, callback);
+}
 exports.get_sensors_for_node = function (req, callback) {
     db.get_sensors_for_node(req.data.node, callback)
 };

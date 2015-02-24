@@ -501,6 +501,28 @@ function add_sensor(rec, callback) {
     });
 }
 
+function update_sensor(rec, callback) {
+    if (rec.params.sensor_id.length != 24) callback( { error: "Sensor ID passed in must be a single string of 12 bytes or a string of 24 hex characters" });
+    else db[collection_sensors].update( { _id: mongojs.ObjectId(rec.params.sensor_id) }, { $set: rec.body }, function (err, res) {
+        if (err) return callback(err);
+		else if (res.n)
+            callback({ message: 'Sensor successfully updated!' });
+        else
+			callback({ message: 'Sensor not found!', status: 404 });
+    });
+};
+
+function delete_sensor(rec, callback) {
+    if (rec.length != 24) callback( { error: "Sensor ID passed in must be a single String of 12 bytes or a string of 24 hex characters" });
+    else db[collection_sensors].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+        if (err) return callback(err);
+        else if (res.n)
+				callback({ message: 'Sensor successfully deleted!' });
+			else
+				callback({ message: 'Sensor not found!' });
+    });
+}
+
 function get_sensors_for_node(node_id, callback) {
     /*get_node(node_id, function (err, node) {
         if (err) return callback(err);
@@ -963,8 +985,8 @@ exports.update_sensor_measurement = update_sensor_measurement;
 exports.delete_sensor_measurement = delete_sensor_measurement;
 
 exports.add_sensor = add_sensor;
-//exports.update_sensor = update_sensor;
-//exports.remove_sensor = remove_sensor;
+exports.update_sensor = update_sensor;
+exports.delete_sensor = delete_sensor;
 
 exports.new_user = new_user;
 exports.update_user = update_user;

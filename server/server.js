@@ -162,7 +162,7 @@ function run() {
     app.use(morgan('dev'));
     app.use(cookieParser());    
     app.use(session({ secret: 'jcvsnasdovhjdsfanbdwkjv', saveUninitialized: true,
-                 resave: true, store: new MongoStore({ db: db_url , auto_reconnect: true, safe: true}) }));
+                 resave: true, store: new MongoStore({ db: db_url , autoReconnect: true, safe: true}) }));
     app.use(log_url);
     app.use(static_file_handler2);
     app.use(preprocess_api_calls);
@@ -330,8 +330,8 @@ function run() {
         })
         .post(function(req, res) {
             bl.add_sensor(req.body, function(err, callback) {
-                if(err) res.sendStatus(err);
-                res.json(callback);
+                if(err) res.json(err);
+                res.status(201).json("Sensor successfully added.");
             });
         })
         .all(function(req, res) {
@@ -345,13 +345,16 @@ function run() {
             });
         })
         .put(function(req, res) {
-            bl.update_cluster_rest(req, function (err, callback) {
+            bl.update_sensor(req, function (err, callback) {
                 if (err) return res.json(err);
                 res.json(callback);
             })
         })
         .delete(function(req, res) {
-            
+            bl.delete_sensor(req.params.sensor_id, function(err, callback) {
+                if (err) return res.json(err);
+                res.json("Sensor successfully deleted.");
+            })
         })
         .all(function(req, res) {
             res.status(405).header('Access-Control-Allow-Methods', 'GET,PUT,DELETE').json( req.method + ' method is not supported.' );
