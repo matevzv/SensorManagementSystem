@@ -560,40 +560,41 @@ function update_sensors_for_node(node_id, sensors, callback) {
 function add_sensor_measurement(rec, callback) {
     db[collection_measurements].insert(rec, function (err, res) {
         if (err) return callback(err);
-        else callback({ message: 'Measurement successfully added!' });
+        else callback({ message: 'Measurement successfully added!', status: 201 });
     });
 }
 
 function get_sensor_measurement(rec, callback) {
-    if (rec.length != 24) callback( { error: "Measurement ID passed in must be a single string of 12 bytes or a string of 24 hex characters" });
+    if (rec.length != 24) callback( { error: "Measurement ID passed in must be a single string of 12 bytes or a string of 24 hex characters", status: 404 } );
     else db[collection_measurements].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
         if (err) return callback(err);
 		else if (res.length == 0)
-            callback({ error: 404 }); //??
+            callback({ error: "Measurement ID not found.", status: 404 }); //??
         else
 			callback(res);
     });
 }
 
 function update_sensor_measurement(rec, callback) {
-    if (rec.params.measurement_id.length != 24) callback( { error: "Measurement ID passed in must be a single string of 12 bytes or a string of 24 hex characters" });
+    if (rec.params.measurement_id.length != 24) callback( { error: "Measurement ID passed in must be a single string of 12 bytes or a string of 24 hex characters", status: 404 } );
     else db[collection_measurements].update( { _id: mongojs.ObjectId(rec.params.measurement_id) }, { $set: rec.body }, function (err, res) {
-        if (err) return callback(err);
+        if (err) return callback({ status: 500 });
 		else if (res.n)
             callback({ message: 'Measurement successfully updated!' });
         else
-			callback({ message: 'Measurement not found!', status: 404 });
+			callback({ error: 'Measurement not found!', status: 404 });
     });
 }
 
 function delete_sensor_measurement(rec, callback) {
-    if (rec.length != 24) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters" });
+    if (rec.length != 24) callback( { error: "LENGTHMeasurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else if (rec.match(/^#[0-9A-Fa-f]$/gi) !== null) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
     else db[collection_measurements].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
         if (err) return callback(err);
         else if (res.n)
-				callback({ message: 'Measurement successfully deleted!' });
-			else
-				callback({ message: 'Measurement not found!' });
+            callback({ message: 'Measurement successfully deleted!' });
+        else
+            callback({ error: 'Measurement ID not found!', status: 404 });
     });
 }
 

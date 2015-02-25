@@ -223,9 +223,9 @@ function run() {
             if (!req.body.ts) {
                 req.body.ts = new Date();
             }
-            bl.add_sensor_measurement(req.body, function(err) {
-                if(err) res.sendStatus(err);
-                else res.status(201).json( 'Successfully added the measurement.' );
+            bl.add_sensor_measurement(req.body, function(callback) {
+                if(callback) res.status(callback.status).json(callback.message);
+                else res./*status(201).*/json( 'Successfully added the measurement.' );
             });
         })
         .all(function(req, res) {
@@ -234,17 +234,20 @@ function run() {
     app.route('/api/measurements/:measurement_id')
         .get(function(req, res) {
             bl.get_sensor_measurement(req.params.measurement_id, function(callback) {
-                res.json(callback);
+                if (callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback);
             })
         })
         .put(function(req, res) {
             bl.update_sensor_measurement(req, function(callback) {
-                res.json(callback);
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
             })
         })
         .delete(function(req, res) {
             bl.delete_sensor_measurement(req.params.measurement_id, function(callback) {
-                res.json(callback);
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
             })
         })
         .all(function(req, res) {
@@ -262,7 +265,7 @@ function run() {
             bl.api_add_node(req.body, function(err, callback) {
                 if(err)
                     res.status(err);
-                res.json(callback);
+                res.status(201).json(callback);
             })
         })
         .all(function(req, res) {
@@ -292,11 +295,11 @@ function run() {
             });
         })
         .post(function(req, res) {
-            /*bl.api_add_node(req.body, function(err, callback) {
+            bl.api_add_node(req.body, function(err, callback) {
                 if(err)
                     res.sendStatus(err);
-                res.json(callback);
-            });*/
+                res.status(201).json(callback);
+            });
         })
         .all(function(req, res) {
             res.status(405).header('Access-Control-Allow-Methods', 'GET,POST').json( req.method + ' method is not supported.' );
