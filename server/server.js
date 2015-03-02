@@ -301,10 +301,9 @@ function run() {
             });
         })
         .post(function(req, res) {
-            bl.api_add_cluster(req.body, function(err, callback) {
-                if(err)
-                    res.sendStatus(err);
-                res.status(201).json(callback);
+            bl.api_add_cluster(req.body, function(callback) {
+                if(callback) res.status(callback.status).json(callback.message);
+                else res.status(201).json( 'Successfully added the measurement.' );
             });
         })
         .all(function(req, res) {
@@ -312,35 +311,37 @@ function run() {
         });
     app.route('/api/clusters/:cluster_id')
         .get(function(req, res) {
-            var query = { id: req.params.cluster_id };
-            bl.get_cluster({ data: query }, function (err, cluster) {
-                if (err) return res.json(err);
-                res.json(cluster);
-            });
+            bl.api_get_cluster(req.params.cluster_id, function (callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback);
+            })
         })
         .put(function(req, res) {
-            bl.api_update_cluster(req, function (err, callback) {
-                if (err) return res.json(err);
-                res.json(callback);
+            bl.api_update_cluster(req, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
             })
         })
         .delete(function(req, res) {
-            
+            bl.api_delete_cluster(req.params.cluster_id, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
+            })
         })
         .all(function(req, res) {
             res.status(405).header('Access-Control-Allow-Methods', 'GET,PUT,DELETE').json( req.method + ' method is not supported.' );
         });
     app.route('/api/sensors')
         .get(function(req, res) {
-            bl.get_sensors({ data: {} }, function (err, sensors) {
+            bl.get_sensors(function (err, sensors) {
                 if (err) return res.json(err);
                 res.json(sensors);
             });
         })
         .post(function(req, res) {
-            bl.add_sensor(req.body, function(err, callback) {
-                if(err) res.json(err);
-                res.status(201).json("Sensor successfully added.");
+            bl.add_sensor(req.body, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.status(callback.status).json(callback.message)
             });
         })
         .all(function(req, res) {
@@ -348,21 +349,21 @@ function run() {
         });
     app.route('/api/sensors/:sensor_id')
         .get(function(req, res) {
-            bl.get_sensor(req.params.sensor_id, function (err, cluster) {
-                if (err) return res.json(err);
-                res.json(cluster);
-            });
+            bl.get_sensor(req.params.sensor_id, function(callback) {
+                if (callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback);
+            })
         })
         .put(function(req, res) {
-            bl.update_sensor(req, function (err, callback) {
-                if (err) return res.json(err);
-                res.json(callback);
+            bl.update_sensor(req, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
             })
         })
         .delete(function(req, res) {
-            bl.delete_sensor(req.params.sensor_id, function(err, callback) {
-                if (err) return res.json(err);
-                res.json("Sensor successfully deleted.");
+            bl.delete_sensor(req.params.sensor_id, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
             })
         })
         .all(function(req, res) {

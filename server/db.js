@@ -219,6 +219,13 @@ function add_cluster(rec, callback) {
     });
 };
 
+function api_add_cluster(rec, callback) {
+    db[collection_clusters].insert(rec, function (err, res) {
+        if (err) return callback(err);
+        else callback({ message: 'Cluster successfully added!', status: 201 });
+    });
+}
+
 function update_cluster(id, rec, callback) {
     var query = { id: id };    
     if(Object.keys(rec).length > 0) {
@@ -234,6 +241,17 @@ function update_cluster(id, rec, callback) {
     }
 };
 
+function api_update_cluster(rec, callback) {
+    if (rec.params.cluster_id.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Cluster ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_clusters].update( { _id: mongojs.ObjectId(rec.params.cluster_id) }, { $set: rec.body }, function (err, res) {
+        if (err) return callback({ status: 500 });
+		else if (res.n)
+            callback({ message: 'Cluster successfully updated!' });
+        else
+			callback({ error: 'Cluster ID not found!', status: 404 });
+    });
+}
+
 function get_all_cluster_types(callback){
     db[collection_cluster_types].find({}, { _id: 0 }).toArray(function (err, docs) {
         if (err) return callback(err);
@@ -245,8 +263,20 @@ function delete_cluster(id, callback) {
     db[collection_clusters].remove({ id: id }, callback);
 };
 
+function api_delete_cluster(rec, callback) {
+    if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Cluster ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_clusters].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+        if (err) return callback(err);
+        else if (res.n)
+            callback({ message: 'Cluster successfully deleted!' });
+        else
+            callback({ error: 'Cluster ID not found!', status: 404 });
+    });
+}
+
 function get_cluster(id, callback) {
-    db[collection_clusters].find({ _id: mongojs.ObjectId(id) }, function (err, docs) {
+    var query = { id: id };
+    db[collection_clusters].find(query, function (err, docs) {
         if (err) {
             callback(err);
         } else if (!docs || docs.length === 0) {
@@ -257,6 +287,17 @@ function get_cluster(id, callback) {
     });
 };
 
+
+function api_get_cluster(rec, callback) {
+    if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Cluster ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_clusters].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+        if (err) return callback(err);
+		else if (res.length == 0)
+            callback({ error: "Cluster ID not found.", status: 404 }); //??
+        else
+			callback(res);
+    });
+}
 
 function get_clusters(query, callback) {
     db[collection_clusters].find(query, function (err, docs) {
@@ -515,7 +556,7 @@ function get_node_clusters(callback) {
 ////////////////////////////////////////////////////////////////////////////////
 
 function get_sensors(req, callback) {
-    db[collection_sensors].find().sort({ ts: -1 }).toArray(function (err, docs) {
+    db[collection_sensors].find(req).sort({ ts: -1 }).toArray(function (err, docs) {
         if (err) return callback(err);
         callback(null, docs);
     });
@@ -528,31 +569,43 @@ function get_sensor(id, callback) {
     });
 };
 
+function get_sensor(rec, callback) {
+    if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Sensor ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_sensors].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+        if (err) return callback(err);
+		else if (res.length == 0)
+            callback({ error: "Sensor ID not found.", status: 404 }); //??
+        else
+			callback(res);
+    });
+}
+
 function add_sensor(rec, callback) {
     db[collection_sensors].insert(rec, function (err, res) {
-        callback(err, {});
+        if (err) return callback({ error: "Measurement could not be inserted" + err, status: 500 });
+        else callback({ message: 'Measurement successfully added!', status: 201 });
     });
 }
 
 function update_sensor(rec, callback) {
-    if (rec.params.sensor_id.length != 24) callback( { error: "Sensor ID passed in must be a single string of 12 bytes or a string of 24 hex characters" });
+    if (rec.params.sensor_id.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Sensor ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
     else db[collection_sensors].update( { _id: mongojs.ObjectId(rec.params.sensor_id) }, { $set: rec.body }, function (err, res) {
-        if (err) return callback(err);
+        if (err) return callback({ status: 500 });
 		else if (res.n)
             callback({ message: 'Sensor successfully updated!' });
         else
-			callback({ message: 'Sensor not found!', status: 404 });
+			callback({ error: 'Sensor ID not found!', status: 404 });
     });
-};
+}
 
 function delete_sensor(rec, callback) {
-    if (rec.length != 24) callback( { error: "Sensor ID passed in must be a single String of 12 bytes or a string of 24 hex characters" });
+    if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Sensor ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
     else db[collection_sensors].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
         if (err) return callback(err);
         else if (res.n)
-				callback({ message: 'Sensor successfully deleted!' });
-			else
-				callback({ message: 'Sensor not found!' });
+            callback({ message: 'Sensor successfully deleted!' });
+        else
+            callback({ error: 'Sensor ID not found!', status: 404 });
     });
 }
 
@@ -609,7 +662,7 @@ function get_sensor_measurement(rec, callback) {
 }
 
 function update_sensor_measurement(rec, callback) {
-    if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    if (rec.params.measurement_id.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
     else db[collection_measurements].update( { _id: mongojs.ObjectId(rec.params.measurement_id) }, { $set: rec.body }, function (err, res) {
         if (err) return callback({ status: 500 });
 		else if (res.n)
@@ -976,6 +1029,10 @@ exports.get_cluster = get_cluster;
 exports.get_clusters = get_clusters;
 exports.get_cluster_history = get_cluster_history;
 exports.get_all_cluster_types = get_all_cluster_types;
+exports.api_get_cluster = api_get_cluster;
+exports.api_add_cluster = api_add_cluster;
+exports.api_update_cluster = api_update_cluster;
+exports.api_delete_cluster = api_delete_cluster;
 
 exports.add_component = add_component;
 exports.add_component_type = add_component_type;

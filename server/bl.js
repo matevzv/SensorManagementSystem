@@ -1131,6 +1131,10 @@ exports.get_cluster = function (req, callback) {
     db.get_cluster(req.data.id, callback)
 };
 
+exports.api_get_cluster = function (req, callback) {
+    db.api_get_cluster(req, callback);
+};
+
 exports.update_cluster = function (req, callback) {
     var rec = req.data;
     db.get_cluster(rec.id, function (err, data) {
@@ -1170,41 +1174,7 @@ exports.update_cluster = function (req, callback) {
 };
 
 exports.api_update_cluster = function (req, callback) {
-    var rec = req.body;
-    if (typeof rec.id == "undefined") {
-        rec.id = req.params.cluster_id;
-    }
-    db.get_cluster(rec.id, function (err, data) {
-        if (err) return callback(err);
-
-        var rec2 = xutil.get_diff_fields(rec, data);
-        var changes = [];
-        for (var i in rec2) {
-            if (rec2[i] !== undefined && rec2[i] !== null || data[i] !== undefined && data[i] !== null) {
-                changes.push("" + i + " [" + data[i] + " -> " + rec2[i] + "]");
-            }
-        }
-        db.update_cluster(rec.id, rec2, function (xerr) {
-            //console.log("###", xerr);
-            if (xerr) return callback(xerr);
-
-            load_cluster_map();
-            var cluster_name = rec2.name || data.name;
-            var h = {
-                cluster: rec.id,
-                user: req.session.user,
-                status: "",
-                code: "cluster_update",
-                ts: new Date(),
-                title: "Cluster '" + cluster_name + "' (" + rec.id + ") was updated",
-                description: "Cluster '" + cluster_name + "' (" + rec.id + ") was updated - " + changes.join(", "),
-                sys_data: {}
-            };
-            exports.new_history(h, callback);
-            load_cluster_map();
-        });
-
-    });
+    db.api_update_cluster(req, callback)
 };
 
 exports.delete_cluster = function (req, callback) {
@@ -1233,6 +1203,10 @@ exports.delete_cluster = function (req, callback) {
             });
         });
     });
+};
+
+exports.api_delete_cluster = function (req, callback) {
+    db.api_delete_cluster(req, callback)
 };
 
 exports.add_cluster = function (req, callback) {
@@ -1305,6 +1279,10 @@ exports.add_cluster = function (req, callback) {
     });
 };
 
+exports.api_add_cluster = function (req, callback) {
+    db.api_add_cluster(req, callback)
+};
+
 exports.get_cluster_history = function (req, callback) {
     db.get_cluster_history(req.data.id, callback);
 };
@@ -1364,8 +1342,8 @@ exports.mark_node_scan = function (node_id, cluster_id, callback) {
 
 ///////////////////
 
-exports.get_sensors = function (req, callback) {
-    db.get_sensors(req, callback);
+exports.get_sensors = function (callback) {
+    db.get_sensors({}, callback);
 };
 exports.get_sensor = function (req, callback) {
     db.get_sensor(req, callback);
