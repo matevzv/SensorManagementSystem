@@ -460,28 +460,13 @@ exports.api_add_node = function (req, callback) {
         var rec = req;
         rec.id = Number(max_id) + 1;
         console.log("this is the new maxId:", rec.id);
-        db.add_node(req, function (err2, data2) {
+        db.add_node(rec, function (err2, data2) {
             if (err2) return callback(err2);
-            /*var h = {
-                node: rec.id,
-                cluster: rec.cluster,
-                //user: req.session.user,
-                status: rec.status,
-                code: "node_change",
-                ts: new Date(),
-                title: "Node '" + rec.name + "' (" + rec.id + ") created",
-                description: "Node '" + rec.name + "' (" + rec.id + ") was successfully created.",
-                sys_data: rec
-            };
-
-            db.new_history(h, function (err) {
-                if (err) return callback(err);
-                callback(null, { id: rec.id });
-            });*/
+            else callback({ message: 'Node successfully added!', status: 201 });
             if (notify_after_node_change) {
                 notify_after_node_change(rec.id);
             }
-            load_node_map();
+            //load_node_map();
         });
     });
 };
@@ -502,6 +487,46 @@ exports.get_nodes = function (req, callback) {
         }
         callback(err, data);
     });
+};
+
+
+function load_node_map(callback) {
+    db.get_nodes({}, function (err, data) {
+        if (err) {
+            console.log("Error while loading node cache: " + err.message);
+            if (callback)
+                callback(err);
+        } else {
+            node_map = {};
+            data.forEach(function (item) {
+                node_map[item.id] = item;
+            });
+            if (callback)
+                callback(null);
+        }
+    });
+}
+
+exports.api_get_nodes = function (callback) {
+    var query = {};
+    db.get_nodes(query, function (err, nodes) {
+        if (err) return callback(err);
+        var res = [];
+        nodes.forEach(function (item) {
+            res.push({
+                _id: item._id,
+                //id: item.id,
+                name: item.name,
+                //cluster: item.cluster,
+                cluster: (cluster_map[item.cluster] ? cluster_map[item.cluster].name : "")
+            });
+        });
+        callback(null, res);
+    });
+}
+
+exports.api_get_node = function (req, callback) {
+    db.api_get_node(req, callback)
 };
 
 exports.get_nodes2 = function (req, callback) {
@@ -705,6 +730,52 @@ exports.update_node = function (req, callback) {
     });
 };
 
+exports.api_update_node = function (req, callback) {
+    var rec = req.data;
+    db.get_node(rec.id, function (err, data) {
+        var rec2 = xutil.get_diff_fields(rec, data); // detect simple field changes        
+        if (JSON.stringify(rec.components) == JSON.stringify(data.components)) { // components are trickier
+            rec2.components = null;
+        }
+        rec2.sensors = null; // sensors are not updated via this function
+        xutil.remove_empty_members(rec2);
+        var changes = [];
+        for (var i in rec2) {
+            if (rec2[i] !== undefined && rec2[i] !== null) {
+                changes.push("" + i + " [" + data[i] + " -> " + rec2[i] + "]");
+                //changes.push("" + i + " = " + rec2[i]);
+            }
+        }
+
+        if (changes.length > 0) {
+            db.update_node(rec.id, rec2, function (err, data2) {
+                if (err) return callback(err);
+                var node_name = rec2.name || data.name;
+                var h = {
+                    node: rec.id,
+                    cluster: data.cluster,
+                    user: req.session.user,
+                    status: rec2.status,
+                    code: "node_change",
+                    ts: new Date(),
+                    title: "Node '" + node_name + "' (" + rec.id + ") updated",
+                    description: "Node '" + node_name + "' (" + rec.id + ") was successfuly updated - " + changes.join(", "),
+                    sys_data: rec
+                };
+
+                db.new_history(h, callback);
+                if (notify_after_node_change) {
+                    notify_after_node_change(rec.id);
+                }
+                load_node_map();
+            });
+        } else {
+            // no changes, don't update the database needlessly
+            callback();
+        }
+    });
+};
+
 exports.delete_node = function (req, callback) {
     if (!is_user_admin(req.session.user))
         return callback(error_not_admin(req.session.user));
@@ -740,6 +811,34 @@ exports.delete_node = function (req, callback) {
         }
         load_node_map();
     });
+}
+
+exports.api_delete_node = function (req, callback) {
+    db.api_get_node(req, function(res) {
+        if(res.error) return callback(res);
+        else {
+            db.delete_node(res.id, function (err) {
+                if (err) return callback(err);
+                var h = {
+                    node: res.id,
+                    cluster: res.cluster,
+                    //user: req.session.user,
+                    status: "deleted",
+                    code: "node_change",
+                    ts: new Date(),
+                    title: "Node '" + res.name + "' (" + res.id + ") deleted",
+                    description: "Node '" + res.name + "' (" + res.id + ") was successfully deleted by "/* + user_full_name,
+                    sys_data: req*/
+                };
+
+                db.new_history(h, callback);
+                if (notify_after_node_change) {
+                    notify_after_node_change(node_id);
+                }
+                load_node_map();
+            });
+        }
+    })
 }
 
 //////////////////////////////////////////////////////////////////
@@ -1074,7 +1173,24 @@ exports.add_components = function (req, callback) {
 //////////////////////////////////////////////////////////////////
 
 exports.get_clusters = function (req, callback) {
-    db.get_clusters(req, callback);
+    var query = {};
+    if (req.data.id && req.data.id.length > 0) {
+        if (req.data.id[0] == "*") {
+            var s = "/" + req.data.id.substr(1) + "/.test(this.id)";
+            query["$where"] = s;
+        } else {
+            query.id = req.data.id;
+        }
+    }
+    if (req.data.tag) query.tag = create_regexp(req.data.tag);
+    if (req.data.name) query.name = create_regexp(req.data.name);
+    if (req.data.type) query.type = req.data.type;
+
+    db.get_clusters(query, callback);
+ };
+
+exports.api_get_clusters = function (callback) {
+    db.get_clusters({}, callback);
 };
 
 exports.get_cluster = function (req, callback) {
@@ -1119,7 +1235,7 @@ exports.update_cluster = function (req, callback) {
     });
 };
 
-exports.update_cluster_rest = function (req, callback) {
+exports.api_update_cluster = function (req, callback) {
     var rec = req.body;
     if (typeof rec.id == "undefined") {
         rec.id = req.params.cluster_id;
@@ -1372,12 +1488,12 @@ exports.new_history = function (rec, callback) {
 }
 
 exports.add_sensor_measurement = function (rec, callback) {
-    db.add_sensor_measurement(rec, function (err) {
-        if (err) return callback(err);
-        if (notify_after_sensor_scan) {
+    db.add_sensor_measurement(rec, function (res) {
+        if (res) return callback(res);
+        /*if (notify_after_sensor_scan) {
             notify_after_sensor_scan(rec);
         }
-        callback();
+        callback();*/
     });
 }
 
@@ -1466,7 +1582,7 @@ exports.node_data = function(req, callback) {
     });
 }
 
-exports.rest_sensorInfo = function (node_id, callback) {
+/*exports.rest_sensorInfo = function (node_id, callback) {
     db.get_node(node_id, function (err, data) {
         if (err) return callback(err);
         var res_array = [];
@@ -1531,7 +1647,7 @@ exports.rest = function (req, callback) {
     } else {
         callback(new Error("Unsupported REST request: " + req.$url));
     }
-};
+};*/
 
 /////////////////////////////////////////////
 

@@ -71,7 +71,8 @@ function preprocess_api_calls(req, res, next) {
         //check token
         if(req.headers.authorization != null) {
             bl.get_users_token(req.headers.authorization, function(data) {
-                if (data[0] == null) res.status(401).json({ error: 'Specified token is not valid' });
+                if(data.error) res.status(data.status).json(data.error)
+                else if (data[0] == null) res.status(401).json({ error: 'Specified token is not valid' });
                 else {
                     req.session.is_authenticated = true;
                     req.session.user = data[0].username;
@@ -225,7 +226,7 @@ function run() {
             }
             bl.add_sensor_measurement(req.body, function(callback) {
                 if(callback) res.status(callback.status).json(callback.message);
-                else res./*status(201).*/json( 'Successfully added the measurement.' );
+                else res.status(201).json( 'Successfully added the measurement.' );
             });
         })
         .all(function(req, res) {
@@ -255,17 +256,16 @@ function run() {
         });
     app.route('/api/nodes')
         .get(function(req, res) {
-            bl.get_node_ids(function (err, callback) {
+            bl.api_get_nodes(function (err, callback) {
                 if(err)
-                    res.sendStatus(err);
+                    res.send(err);
                 res.json(callback);
             })
         })
         .post(function(req, res) {
             bl.api_add_node(req.body, function(err, callback) {
-                if(err)
-                    res.status(err);
-                res.status(201).json(callback);
+                if(callback) res.status(callback.status).json(callback.message);
+                else res.status(201).json( 'Successfully added the node.' );
             })
         })
         .all(function(req, res) {
@@ -273,29 +273,35 @@ function run() {
         });
     app.route('/api/nodes/:node_id')
         .get(function(req, res) {
-            bl.node_data(req.params.node_id, function (callback) {
-                res.json(callback);
+            bl.api_get_node(req.params.node_id, function (callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback);
             })
         })
         .put(function(req, res) {
-            
+            bl.api_update_node(req, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
+            })
         })
         .delete(function(req, res) {
-            
+            bl.api_delete_node(req.params.node_id, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
+            })
         })
         .all(function(req, res) {
             res.status(405).header('Access-Control-Allow-Methods', 'GET,PUT,DELETE').json( req.method + ' method is not supported.' );
         });
     app.route('/api/clusters')
         .get(function(req, res) {
-            bl.get_clusters({ query: {} }, function (err, clusters) {
+            bl.api_get_clusters(function (err, clusters) {
                 if (err) return res.json(err);
-                //if (clusters[0].error == 404) res.json("To je to!");
                 res.json(clusters);
             });
         })
         .post(function(req, res) {
-            bl.api_add_node(req.body, function(err, callback) {
+            bl.api_add_cluster(req.body, function(err, callback) {
                 if(err)
                     res.sendStatus(err);
                 res.status(201).json(callback);
@@ -313,7 +319,7 @@ function run() {
             });
         })
         .put(function(req, res) {
-            bl.update_cluster_rest(req, function (err, callback) {
+            bl.api_update_cluster(req, function (err, callback) {
                 if (err) return res.json(err);
                 res.json(callback);
             })
