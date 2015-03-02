@@ -731,49 +731,7 @@ exports.update_node = function (req, callback) {
 };
 
 exports.api_update_node = function (req, callback) {
-    var rec = req.data;
-    db.get_node(rec.id, function (err, data) {
-        var rec2 = xutil.get_diff_fields(rec, data); // detect simple field changes        
-        if (JSON.stringify(rec.components) == JSON.stringify(data.components)) { // components are trickier
-            rec2.components = null;
-        }
-        rec2.sensors = null; // sensors are not updated via this function
-        xutil.remove_empty_members(rec2);
-        var changes = [];
-        for (var i in rec2) {
-            if (rec2[i] !== undefined && rec2[i] !== null) {
-                changes.push("" + i + " [" + data[i] + " -> " + rec2[i] + "]");
-                //changes.push("" + i + " = " + rec2[i]);
-            }
-        }
-
-        if (changes.length > 0) {
-            db.update_node(rec.id, rec2, function (err, data2) {
-                if (err) return callback(err);
-                var node_name = rec2.name || data.name;
-                var h = {
-                    node: rec.id,
-                    cluster: data.cluster,
-                    user: req.session.user,
-                    status: rec2.status,
-                    code: "node_change",
-                    ts: new Date(),
-                    title: "Node '" + node_name + "' (" + rec.id + ") updated",
-                    description: "Node '" + node_name + "' (" + rec.id + ") was successfuly updated - " + changes.join(", "),
-                    sys_data: rec
-                };
-
-                db.new_history(h, callback);
-                if (notify_after_node_change) {
-                    notify_after_node_change(rec.id);
-                }
-                load_node_map();
-            });
-        } else {
-            // no changes, don't update the database needlessly
-            callback();
-        }
-    });
+    db.api_update_node(req, callback)
 };
 
 exports.delete_node = function (req, callback) {
@@ -814,31 +772,7 @@ exports.delete_node = function (req, callback) {
 }
 
 exports.api_delete_node = function (req, callback) {
-    db.api_get_node(req, function(res) {
-        if(res.error) return callback(res);
-        else {
-            db.delete_node(res.id, function (err) {
-                if (err) return callback(err);
-                var h = {
-                    node: res.id,
-                    cluster: res.cluster,
-                    //user: req.session.user,
-                    status: "deleted",
-                    code: "node_change",
-                    ts: new Date(),
-                    title: "Node '" + res.name + "' (" + res.id + ") deleted",
-                    description: "Node '" + res.name + "' (" + res.id + ") was successfully deleted by "/* + user_full_name,
-                    sys_data: req*/
-                };
-
-                db.new_history(h, callback);
-                if (notify_after_node_change) {
-                    notify_after_node_change(node_id);
-                }
-                load_node_map();
-            });
-        }
-    })
+    db.api_delete_node(req, callback)
 }
 
 //////////////////////////////////////////////////////////////////

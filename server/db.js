@@ -429,6 +429,28 @@ function api_get_node(rec, callback) {
     });
 };
 
+function api_update_node(rec, callback) {
+    if (rec.params.node_id.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Node ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_nodes].update( { _id: mongojs.ObjectId(rec.params.node_id) }, { $set: rec.body }, function (err, res) {
+        if (err) return callback({ status: 500 });
+		else if (res.n)
+            callback({ message: 'Node successfully updated!' });
+        else
+			callback({ error: 'Node ID not found!', status: 404 });
+    });
+}
+
+function api_delete_node(rec, callback) {
+    if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Node ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_nodes].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+        if (err) return callback(err);
+        else if (res.n)
+            callback({ message: 'Node successfully deleted!' });
+        else
+            callback({ error: 'Node ID not found!', status: 404 });
+    });
+}
+
 function get_node_history(id, callback) {
     var query = { node: id };
     get_history(query, 0, 30, callback);
@@ -977,6 +999,8 @@ exports.update_node = update_node;
 exports.delete_node = delete_node;
 exports.get_node = get_node;
 exports.api_get_node = api_get_node;
+exports.api_update_node = api_update_node;
+exports.api_delete_node = api_delete_node;
 exports.get_node_history = get_node_history;
 exports.get_nodes = get_nodes;
 exports.get_nodes2 = get_nodes2;
