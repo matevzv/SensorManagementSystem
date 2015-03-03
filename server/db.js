@@ -629,10 +629,25 @@ function get_sensor_history(node_id, id, callback) {
     });
 };
 
-function get_all_measurements(callback) {
-    db[collection_measurements].find().sort({ ts: -1 }).toArray(function (err, docs) {
+function get_all_measurements(req, callback) {
+    var query = {};
+    if (req.query.node) query.node = Number(req.query.node);
+    if (req.query.sensor) query.sensor = req.query.sensor;
+    if (req.query.from || req.query.to) {
+        query.ts = {};
+        if (req.query.from) {
+            query.ts.$gte = new Date(req.query.from);
+        }
+        if (req.query.to) {
+            query.ts.$lte = new Date(req.query.to);
+        }
+    }
+    db[collection_measurements].find(query).sort({ ts: -1 }).toArray(function (err, res) {
         if (err) return callback(err);
-        callback(null, docs);
+		else if (res.length == 0)
+            callback({ error: "No measurements found.", status: 404 });
+        else
+			callback(res);
     });
 };
 

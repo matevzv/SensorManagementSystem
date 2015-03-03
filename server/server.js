@@ -214,10 +214,10 @@ function run() {
 
     app.route('/api/measurements')
         .get(function(req, res) {
-            bl.get_all_measurements(function(err, measurements) {
-                if(err)
-                    res.send(err);
-                res.json(measurements);
+            console.log(req.query);
+            bl.get_all_measurements(req, function(callback) {
+                if (callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback);
             });
         })
         .post(function(req, res) {
