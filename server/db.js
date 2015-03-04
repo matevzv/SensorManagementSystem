@@ -631,6 +631,7 @@ function get_sensor_history(node_id, id, callback) {
 
 function get_all_measurements(req, callback) {
     var query = {};
+    if (req.query.node_id) query.node_id = req.query.node_id;
     if (req.query.node) query.node = Number(req.query.node);
     if (req.query.sensor) query.sensor = req.query.sensor;
     if (req.query.from || req.query.to) {
