@@ -1400,13 +1400,7 @@ exports.new_history = function (rec, callback) {
 }
 
 exports.add_sensor_measurement = function (rec, callback) {
-    db.add_sensor_measurement(rec, function (res) {
-        if (res) return callback(res);
-        /*if (notify_after_sensor_scan) {
-            notify_after_sensor_scan(rec);
-        }
-        callback();*/
-    });
+    db.add_sensor_measurement(rec, callback);
 }
 
 ////////////////////////
