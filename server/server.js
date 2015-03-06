@@ -62,7 +62,7 @@ function log_url(req, res, next) {
 };
 
 function preprocess_api_calls(req, res, next) {
-    if (req.url.indexOf("/api/measurements") == 0 || req.url.indexOf("/api/nodes") == 0 || req.url.indexOf("/api/clusters") == 0) {
+    if (req.url.indexOf("/api") == 0) {
         // rest-like url parser
         var tmp_url = req.url;
         req.body = xutil.parse_rest_request(tmp_url);
@@ -214,7 +214,6 @@ function run() {
 
     app.route('/api/measurements')
         .get(function(req, res) {
-            console.log(req.query);
             bl.get_all_measurements(req, function(callback) {
                 if (callback.error) res.status(callback.status).json(callback.error);
                 else res.json(callback);
@@ -225,8 +224,8 @@ function run() {
                 req.body.ts = new Date();
             }
             bl.add_sensor_measurement(req.body, function(callback) {
-                if(callback) res.status(callback.status).json(callback.message);
-                else res.status(201).json( 'Successfully added the measurement.' );
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.status(callback.status).json(callback.message);
             });
         })
         .all(function(req, res) {
