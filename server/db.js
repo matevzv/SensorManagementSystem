@@ -562,29 +562,43 @@ function get_sensors(req, callback) {
     });
 };
 
-function get_sensor(id, callback) {
-    db[collection_sensors].find( { _id: mongojs.ObjectId(id) }, function (err, docs) {
-        if (err) return callback(err);
-        callback(null, docs);
-    });
-};
-
 function get_sensor(rec, callback) {
     if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Sensor ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
-    else db[collection_sensors].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
-        if (err) return callback(err);
-		else if (res.length == 0)
-            callback({ error: "Sensor ID not found.", status: 404 }); //??
-        else
-			callback(res);
-    });
+    else {
+        db[collection_measurements].find( { sensor_id: rec } ).toArray(function (err, data) {
+            if (err) return callback(err);
+            else {
+                i = 0;
+                var measurements = {};
+                data.forEach(function(measurement) {
+                    measurements["id"+i.toString()] = measurement._id;
+                    i++;
+                })
+                var query = {};
+                query.measurements = measurements;
+                if (data.length !== 0) db[collection_sensors].update( { _id: mongojs.ObjectId(rec) }, { $set: query });
+            }
+            db[collection_sensors].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+                if (err) return callback(err);
+                else if (res.length == 0)
+                    callback({ error: "Sensor ID not found.", status: 404 });
+                else {
+                    callback(res);
+                }
+            });
+        })
+    }
 }
 
 function add_sensor(rec, callback) {
-    db[collection_sensors].insert(rec, function (err, res) {
-        if (err) return callback({ error: "Measurement could not be inserted" + err, status: 500 });
-        else callback({ message: 'Measurement successfully added!', status: 201 });
-    });
+    if (rec.id == null || rec.type == null || rec.name == null || rec.node_id == null) {
+        callback({ error: "Incomplete request body. Must include 'id', 'name', 'type' and 'node_id' fields.", status: 400 });
+    } else {
+        db[collection_sensors].insert(rec, function (err, res) {
+            if (err) return callback({ error: "Sensor could not be added" + err, status: 500 });
+            else callback({ message: 'Sensor successfully added!', status: 201 });
+        });
+    }
 }
 
 function update_sensor(rec, callback) {
@@ -634,6 +648,7 @@ function get_all_measurements(req, callback) {
     if (req.query.node_id) query.node_id = req.query.node_id;
     if (req.query.node) query.node = Number(req.query.node);
     if (req.query.sensor) query.sensor = req.query.sensor;
+    if (req.query.sensor_id) query.sensor = req.query.sensor_id;
     if (req.query.from || req.query.to) {
         query.ts = {};
         if (req.query.from) {
@@ -660,10 +675,14 @@ function update_sensors_for_node(node_id, sensors, callback) {
 };
 
 function add_sensor_measurement(rec, callback) {
-    db[collection_measurements].insert(rec, function (err, res) {
-        if (err) return callback(err);
-        else callback({ message: 'Measurement successfully added!', status: 201 });
-    });
+    if (rec.sensor_id == null || rec.node_id == null || rec.value == null) {
+        callback({ error: "Incomplete request body. Must include 'sensor_id', 'node_id'' and 'value' fields.", status: 400 });
+    } else {
+        db[collection_measurements].insert(rec, function (err, res) {
+            if (err) return callback(err);
+            else callback({ message: 'Measurement successfully added!', status: 201 });
+        });
+    }
 }
 
 function get_sensor_measurement(rec, callback) {
