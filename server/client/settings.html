@@ -25,8 +25,6 @@
         <title>Sensor Management System - settings</title>
     </head>
     <body>
-
-
         <div class="navbar navbar-inverse navbar-fixed-top">
                 <div class="container-fluid">
                     <div class="navbar-header">
@@ -53,18 +51,16 @@
                     </div>
                 </div>
         </div>
-
         <div class="container-fluid">
-
             <div class="row">
                 <div class="col-md-6">
                     <div class="well">
                         <h2><i class="glyphicon glyphicon-user"></i> Personal settings</h2>
                     </div>
                     <div class="well">
-                        <ul class="nav nav-tabs">
+                        <!--<ul class="nav nav-tabs">
                             <li class="active"><a href="#">Change full name</a></li>
-                        </ul>
+                        </ul>--><h4>Change your full name</h4>
                         <div class="form-horizontal">
                             <div class="list-group">
                                 <label class="control-label" for="inFn">Full name</label>
@@ -74,25 +70,31 @@
                             </div>
                             <button id="inBtn1" class="btn btn-default btn-primary" type="button" data-bind="click: SaveNewFullName"><i class="glyphicon glyphicon-floppy-disk"></i> Change full name </button>
                         </div>
-                    </div>
-                    <div class="well">
-                        <ul class="nav nav-tabs">
-                            <li class="active"><a href="#">Change your password</a></li>
-                        </ul>
+                        <div>
+                            <!--<ul class="nav nav-tabs">
+                                <li class="active"><a href="#">Change your password</a></li>
+                            </ul>--><h4>Change your password</h4>
+                            <div class="form-horizontal">
+                                <div class="list-group">
+                                    <label class="control-label" for="inP1">New password</label>
+                                    <div class="controls">
+                                        <input class="form-control" type="password" id="inP1" placeholder="Enter new password" data-bind="value: NewPwd1" name="pwd1" />
+                                    </div>
+                                </div>
+                                <div class="list-group">
+                                    <label class="control-label" for="inP2">New password again</label>
+                                    <div class="controls">
+                                        <input class="form-control" type="password" id="inP2" placeholder="Repeat the new password" data-bind="value: NewPwd2" name="pwd2" />
+                                    </div>
+                                </div>
+                                <button id="inBtn2" class="btn btn-default btn-primary" type="button" data-bind="click: ChangePassword"><i class="glyphicon glyphicon-floppy-disk"></i> Change password </button>
+                            </div>
+                        </div>
+                        <!--<div class="active"><h4>REST API Token</h4></div>-->
                         <div class="form-horizontal">
-                            <div class="list-group">
-                                <label class="control-label" for="inP1">New password</label>
-                                <div class="controls">
-                                    <input class="form-control" type="password" id="inP1" placeholder="Enter new password" data-bind="value: NewPwd1" name="pwd1" />
-                                </div>
-                            </div>
-                            <div class="list-group">
-                                <label class="control-label" for="inP2">New password again</label>
-                                <div class="controls">
-                                    <input class="form-control" type="password" id="inP2" placeholder="Repeat the new password" data-bind="value: NewPwd2" name="pwd2" />
-                                </div>
-                            </div>
-                            <button id="inBtn2" class="btn btn-default btn-primary" type="button" data-bind="click: ChangePassword"><i class="glyphicon glyphicon-floppy-disk"></i> Change password </button>
+                            <h4>REST API Token</h4>
+                            <p class="bg-warning">For the purpose of authenticating you need to include this token in the header of every request you send to the REST API.</p>
+                            <input type="text" class="form-control" data-bind="value: APIToken" readonly="readonly">
                         </div>
                     </div>
                     <div class="well">

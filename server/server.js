@@ -5,7 +5,15 @@ var util = require('util');
 var xutil = require('./xutil');
 var fs = require('fs');
 var path = require('path');
-var MongoStore = require('connect-mongo')(express);
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
+var bodyParser = require('body-parser');
+var basicAuth = require('basic-auth-connect');
+var favicon = require('serve-favicon');
+var morgan = require('morgan');
+var cookieParser = require('cookie-parser');
+var redis = require("redis");
+var crypto = require("crypto");
 
 ///////////////////////////////////////////////////////////////////////////
 // Module variables
@@ -23,9 +31,9 @@ var login_content = null;
 var root_content = null;
 
 // optional middleware handlers
-var body_parser = express.urlencoded();
-var json_parser = express.json();
-var basic_auth = express.basicAuth(function (user, pass, callback) {
+var body_parser = bodyParser.urlencoded({ extended: true });
+var json_parser = bodyParser.json({ extended: true, limit: '10mb'});
+var basic_auth = basicAuth(function (user, pass, callback) {
     bl.verify_user(user, pass, callback);
 });
 
@@ -40,7 +48,7 @@ var static_file_handler2 = function (req, res, next) {
         }
     }
     if (fs.existsSync(fn)) {
-        return res.sendfile(fn);
+        return res.sendFile(fn);
     }
     next();
 }
@@ -53,7 +61,26 @@ function log_url(req, res, next) {
 };
 
 function preprocess_api_calls(req, res, next) {
-    if (req.url.indexOf("/api/") == 0) {
+    if (req.url.indexOf("/api/measurements/") == 0) {
+        // rest-like url parser
+        var tmp_url = req.url.substr(17);
+        req.body = xutil.parse_rest_request(tmp_url);
+        req.body.action = "rest";
+
+        //check token
+        if(req.headers.authorization != null) {
+            bl.get_users_token(req.headers.authorization, function(data) {
+                if (data[0] == null) res.json('Error: Specified token is not valid');
+                else {
+                    req.session.is_authenticated = true;
+                    req.session.user = data[0].username;
+                    next();
+                }
+            });
+        } else {
+            res.json("Error: Missing authentication token");
+        }
+    } else if ((req.url.indexOf("/api/") == 0))  {
         // rest-like url parser
         var tmp_url = req.url.substr(4);
         req.body = xutil.parse_rest_request(tmp_url);
@@ -102,7 +129,7 @@ function main_handler(req, res, next) {
             } else {
                 scan_coordinator.scan(db_syncer, null, function () { });
             }
-            res.end("{}"); // return immidiatelly
+            res.end("{}"); // return immediatelly
         } else if (bl[action]) {
             // requests that map directly to exported function on BL are called here
             bl[action](cmd, function (err, result) {
@@ -130,14 +157,16 @@ function run() {
     console.log("Running HTTP server at port " + port);
     var app = express();
     
-    app.use(express.favicon("client/img/favicon.ico"));
-    app.use(express.logger('dev'));
-    app.use(express.cookieParser());    
-    app.use(express.session({ secret: 'jcvsnasdovhjdsfanbdwkjv', store: new MongoStore({ db: db_url , auto_reconnect: true, safe: true}) }));
+    app.use(favicon("client/img/favicon.ico"));
+    app.use(morgan('dev'));
+    app.use(cookieParser());    
+    app.use(session({ secret: 'jcvsnasdovhjdsfanbdwkjv', saveUninitialized: true,
+                 resave: true, store: new MongoStore({ db: db_url , auto_reconnect: true, safe: true}) }));
     app.use(log_url);
     app.use(static_file_handler2);
     app.use(preprocess_api_calls);
-    app.use(app.router);
+    app.use(json_parser);
+    app.use(body_parser);
 
     // routes 
 
@@ -180,14 +209,46 @@ function run() {
         res.setHeader("Content-Type", "text/html");
         res.end(help_content);
     });
+    app.post('/handler', ensure_authenticated, main_handler);    
+    app.route('/api/measurements/:measurement_id')
+        .get(function(req, res) {
+            bl.get_sensor_measurement(req.params.measurement_id, function(callback) {
+                res.json(callback);
+            })
+        })
+        .put(function(req, res) {
+            bl.update_sensor_measurement(req, function(callback) {
+                res.json(callback);
+            })
+        })
+        .delete(function(req, res) {
+            bl.delete_sensor_measurement(req.params.measurement_id, function(callback) {
+                res.json(callback);
+            })
+        });
+    app.route('/api/measurements')
+        .post(function(req, res) {
+            if (!req.body.ts) {
+                req.body.ts = new Date();
+            }
+            bl.add_sensor_measurement(req.body, function(err) {
+                if(err) res.send(err);
+                else res.json( 'Successfully added the following measurement.' + 'Sensor: ' + req.body.sensor + ', node: ' + req.body.node + ', timestamp: ' + req.body.ts + ', sys_data: ' + req.body.sys_data + ", value: " + req.body.value );
+            });
+        })
+        .get(function(req, res) {
+            bl.get_all_sensor_history(function(err, measurements) {
+                if(err)
+                    res.send(err);
+                res.json(measurements);
+            });
+        });
 
-    app.post('/handler', ensure_authenticated, main_handler);
     app.get('/api/*', main_handler);
-    //app.post('/api/*', main_handler);
-
+    app.post('/api/*', main_handler);
     // ok, start the server
-
     app.listen(port);
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
