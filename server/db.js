@@ -556,37 +556,28 @@ function get_node_clusters(callback) {
 ////////////////////////////////////////////////////////////////////////////////
 
 function get_sensors(req, callback) {
-    db[collection_sensors].find(req).sort({ ts: -1 }).toArray(function (err, docs) {
+    var query = {};
+    if (req.query.node_id) query.node_id = req.query.node_id;
+    db[collection_sensors].find(query).sort({ ts: -1 }).toArray(function (err, res) {
         if (err) return callback(err);
-        callback(null, docs);
+		else if (res.length == 0)
+            callback({ error: "No measurements found.", status: 404 });
+        else
+			callback(res);
     });
 };
 
 function get_sensor(rec, callback) {
     if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Sensor ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
     else {
-        db[collection_measurements].find( { sensor_id: rec } ).toArray(function (err, data) {
+        db[collection_sensors].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
             if (err) return callback(err);
+            else if (res.length == 0)
+                callback({ error: "Sensor ID not found.", status: 404 });
             else {
-                i = 0;
-                var measurements = {};
-                data.forEach(function(measurement) {
-                    measurements["id"+i.toString()] = measurement._id;
-                    i++;
-                })
-                var query = {};
-                query.measurements = measurements;
-                if (data.length !== 0) db[collection_sensors].update( { _id: mongojs.ObjectId(rec) }, { $set: query });
+                callback(res);
             }
-            db[collection_sensors].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
-                if (err) return callback(err);
-                else if (res.length == 0)
-                    callback({ error: "Sensor ID not found.", status: 404 });
-                else {
-                    callback(res);
-                }
-            });
-        })
+        });
     }
 }
 
@@ -648,7 +639,7 @@ function get_all_measurements(req, callback) {
     if (req.query.node_id) query.node_id = req.query.node_id;
     if (req.query.node) query.node = Number(req.query.node);
     if (req.query.sensor) query.sensor = req.query.sensor;
-    if (req.query.sensor_id) query.sensor = req.query.sensor_id;
+    if (req.query.sensor_id) query.sensor_id = req.query.sensor_id;
     if (req.query.from || req.query.to) {
         query.ts = {};
         if (req.query.from) {
