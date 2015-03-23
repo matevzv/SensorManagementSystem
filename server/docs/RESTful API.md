@@ -1,14 +1,59 @@
 USING RESTful API
 ==========================
 
-RESTful API was developed to provide the ability to upload sensor data. Only authorized users are able to access it using the following procedure: every request has to provide a header with fields "Authorization": "your_token" for authorization and field "Content-Type": ""application/json" for requests including data in JSON format. Your API token is located in the user settings page.
-This is a list of available API URIs:
--http://sms.ijs.si/api/measurements
--http://sms.ijs.si/api/nodes
--http://sms.ijs.si/api/clusters
--http://sms.ijs.si/api/sensors
+RESTful API was developed to provide the ability to upload sensor data. Only authorized users are able to access it using the following procedure: every request has to provide a header with fields "Authorization": "your_token" for authorization and field "Content-Type": "application/json" for requests including data in JSON format. Your API token is located in the user settings page.
 
-And their sample usage:
+Header example:
+```json
+{
+    "Content-Type": "application/json",
+    "Authorization": "bJy/hrH4vztPpSbVvEkIRaogHmF1ejZ0"
+}
+```
+
+###A list of available API URIs:
+- http://sms.ijs.si/api/measurements
+- http://sms.ijs.si/api/nodes
+- http://sms.ijs.si/api/clusters
+- http://sms.ijs.si/api/sensors
+
+###API entry point:
+- http://sms.ijs.si/api
+
+Sample response to a GET request to "http://sms.ijs.si/api":
+```json
+{
+    "collections": {
+        "nodes": {
+            "Collection URI": "/nodes",
+            "Collection methods": "GET, POST",
+            "Document URI": "/nodes/:node_id",
+            "Document methods": "GET, PUT, DELETE"
+        },
+        "clusters": {
+            "Collection URI": "/clusters",
+            "Collection methods": "GET, POST",
+            "Document URI": "/clusters/:cluster_id",
+            "Document methods": "GET, PUT, DELETE"
+        },
+        "sensors": {
+            "Collection URI": "/sensors",
+            "Collection methods": "GET, POST",
+            "Document URI": "/sensors/:sensor_id",
+            "Document methods": "GET, PUT, DELETE"
+        },
+        "measurements": {
+            "Collection URI": "/measurements",
+            "Collection methods": "GET, POST",
+            "Document URI": "/measurements/:measurement_id",
+            "Document methods": "GET, PUT, DELETE"
+        }
+    }
+}
+```
+
+
+###API sample usage
 #####GET all measurements:
 a GET request has to be sent to "http://sms.ijs.si/api/measurements"
 Sample response:
