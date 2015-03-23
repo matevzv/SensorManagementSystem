@@ -1342,8 +1342,8 @@ exports.mark_node_scan = function (node_id, cluster_id, callback) {
 
 ///////////////////
 
-exports.get_sensors = function (callback) {
-    db.get_sensors({}, callback);
+exports.get_sensors = function (req, callback) {
+    db.get_sensors(req, callback);
 };
 exports.get_sensor = function (req, callback) {
     db.get_sensor(req, callback);
