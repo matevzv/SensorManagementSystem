@@ -211,6 +211,15 @@ function run() {
         res.end(help_content);
     });
     app.post('/handler', ensure_authenticated, main_handler);
+    
+    app.route('/api')
+        .get(function(req, res) {
+            var response = { "collections": { nodes: { "Collection URI": "/nodes", "Collection methods": "GET, POST", "Document URI": "/nodes/:node_id", "Document methods": "GET, PUT, DELETE" }, clusters: { "Collection URI": "/clusters", "Collection methods": "GET, POST", "Document URI": "/clusters/:cluster_id", "Document methods": "GET, PUT, DELETE" }, sensors: { "Collection URI": "/sensors", "Collection methods": "GET, POST", "Document URI": "/sensors/:sensor_id", "Document methods": "GET, PUT, DELETE" }, measurements: { "Collection URI": "/measurements", "Collection methods": "GET, POST", "Document URI": "/measurements/:measurement_id", "Document methods": "GET, PUT, DELETE" } } };
+            res.json(response);
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET').json( req.method + ' method is not supported.' );
+        });
 
     app.route('/api/measurements')
         .get(function(req, res) {
@@ -332,9 +341,9 @@ function run() {
         });
     app.route('/api/sensors')
         .get(function(req, res) {
-            bl.get_sensors(function (err, sensors) {
-                if (err) return res.json(err);
-                res.json(sensors);
+            bl.get_sensors(req, function (callback) {
+                if (callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback);
             });
         })
         .post(function(req, res) {
