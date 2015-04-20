@@ -214,7 +214,26 @@ function run() {
     
     app.route('/api')
         .get(function(req, res) {
-            var response = { "collections": { nodes: { "Collection URI": "/nodes", "Collection methods": "GET, POST", "Document URI": "/nodes/:node_id", "Document methods": "GET, PUT, DELETE" }, clusters: { "Collection URI": "/clusters", "Collection methods": "GET, POST", "Document URI": "/clusters/:cluster_id", "Document methods": "GET, PUT, DELETE" }, sensors: { "Collection URI": "/sensors", "Collection methods": "GET, POST", "Document URI": "/sensors/:sensor_id", "Document methods": "GET, PUT, DELETE" }, measurements: { "Collection URI": "/measurements", "Collection methods": "GET, POST", "Document URI": "/measurements/:measurement_id", "Document methods": "GET, PUT, DELETE" } } };
+            var response = {
+                "collections": [
+                    {
+                        "name": "nodes",
+                        "href": "/nodes"
+                    },
+                    {
+                        "name": "clusters",
+                        "href": "/clusters"
+                    },
+                    {
+                        "name": "sensors",
+                        "href": "/sensors"
+                    },
+                    {
+                        "name": "measurements",
+                        "href": "/measurements"
+                    }
+                ]
+            }
             res.json(response);
         })
         .all(function(req, res) {
@@ -264,11 +283,10 @@ function run() {
         });
     app.route('/api/nodes')
         .get(function(req, res) {
-            bl.api_get_nodes(function (err, callback) {
-                if(err)
-                    res.send(err);
-                res.json(callback);
-            })
+            bl.api_get_nodes(req, function(callback) {
+                if (callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback);
+            });
         })
         .post(function(req, res) {
             bl.api_add_node(req.body, function(err, callback) {

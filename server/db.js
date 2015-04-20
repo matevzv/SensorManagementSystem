@@ -459,6 +459,18 @@ function get_node(id, callback) {
     });
 };
 
+function api_get_nodes(req, callback) {
+    var query = {};
+    if (req.query.cluster_id) query.cluster_id = req.query.cluster_id;
+    db[collection_nodes].find(query).sort({ ts: -1 }).toArray(function (err, res) {
+        if (err) return callback(err);
+		else if (res.length == 0)
+            callback({ error: "No nodes found.", status: 404 });
+        else
+			callback(res);
+    });
+};
+
 function api_get_node(rec, callback) {
     if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Node ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
     else db[collection_nodes].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
@@ -512,7 +524,6 @@ function get_all_node_roles(callback){
 };
 
 function get_nodes2(query, skip, limit, callback) {
-    console.log("query:", query);
     db[collection_nodes]
         .find(query)
         .sort({ ts: -1 })
@@ -1081,6 +1092,7 @@ exports.add_node = add_node;
 exports.update_node = update_node;
 exports.delete_node = delete_node;
 exports.get_node = get_node;
+exports.api_get_nodes = api_get_nodes;
 exports.api_get_node = api_get_node;
 exports.api_update_node = api_update_node;
 exports.api_delete_node = api_delete_node;
