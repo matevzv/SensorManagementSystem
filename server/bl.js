@@ -507,21 +507,20 @@ function load_node_map(callback) {
     });
 }
 
-exports.api_get_nodes = function (callback) {
-    var query = {};
-    db.get_nodes(query, function (err, nodes) {
-        if (err) return callback(err);
+
+exports.api_get_nodes = function (req, callback) {
+    db.api_get_nodes(req, function (nodes) {
+        if (nodes.error) return callback(nodes);
         var res = [];
         nodes.forEach(function (item) {
             res.push({
                 _id: item._id,
-                //id: item.id,
                 name: item.name,
-                //cluster: item.cluster,
+                cluster_id: item.cluster_id,
                 cluster: (cluster_map[item.cluster] ? cluster_map[item.cluster].name : "")
             });
         });
-        callback(null, res);
+        callback(res);
     });
 }
 
