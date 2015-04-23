@@ -593,8 +593,8 @@ function get_sensor(rec, callback) {
 }
 
 function add_sensor(rec, callback) {
-    if (rec.id == null || rec.type == null || rec.name == null || rec.node_id == null) {
-        callback({ error: "Incomplete request body. Must include 'id', 'name', 'type' and 'node_id' fields.", status: 400 });
+    if (rec.id == null || rec.type == null || rec.quantity == null || rec.unit == null || rec.node_id == null) {
+        callback({ error: "Incomplete request body. Must include 'id', 'quantity', 'unit', 'type' and 'node_id' fields.", status: 400 });
     } else {
         db[collection_sensors].insert(rec, function (err, res) {
             if (err) return callback({ error: "Sensor could not be added" + err, status: 500 });
@@ -631,6 +631,14 @@ function get_sensors_for_node(node_id, callback) {
         callback(null, node.sensors);
     });*/
     var query = { node: node_id };
+    db[collection_sensors].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
+};
+
+function get_sensors_for_node2(node_id, callback) {
+    var query = { node_id: node_id };
     db[collection_sensors].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
         if (err) return callback(err);
         callback(null, docs);
@@ -1107,6 +1115,7 @@ exports.get_all_node_roles = get_all_node_roles;
 exports.get_sensors = get_sensors;
 exports.get_sensor = get_sensor;
 exports.get_sensors_for_node = get_sensors_for_node;
+exports.get_sensors_for_node2 = get_sensors_for_node2;
 exports.get_sensor_history = get_sensor_history;
 exports.get_all_measurements = get_all_measurements;
 exports.update_sensors_for_node = update_sensors_for_node;

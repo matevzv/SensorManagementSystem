@@ -783,9 +783,19 @@ Carvic.Model.NodesModel = function (callback) {
             for (var i = 0; i < data.records.length; i++) {
                 var obj = data.records[i];
                 var sensors = [];
-                obj.sensors.forEach(function (item) {
-                    sensors.push(item.name + " (" + item.type + ")");
+                Carvic.Utils.Post({ action: "get_sensors_for_node2", data: obj._id}, function (sensor_data) {
+                    sensor_data.forEach(function (item) {
+                        sensors.push(item.quantity + " (" + item.type + ")");
+                    });
                 });
+                if (typeof obj.sensors !== 'undefined') {
+                    obj.sensors.forEach(function (item) {  
+                        sensors.push(item.quantity + " (" + item.type + ")");
+                    });
+                }
+                console.log("typeof obj.status:", (typeof obj.status));
+                if (typeof obj.status === 'undefined') obj.status = "Unknown";
+                //console.log("obj.status:", self.NodeStatusesMap[obj.status].title);
                 self.SearchResult.push(ko.observable({
                     ID: obj.id,
                     Name: obj.name,

@@ -289,9 +289,9 @@ function run() {
             });
         })
         .post(function(req, res) {
-            bl.api_add_node(req.body, function(err, callback) {
-                if(callback) res.status(callback.status).json(callback.message);
-                else res.status(201).json( 'Successfully added the node.' );
+            bl.api_add_node(req.body, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.status(callback.status).json(callback.message);
             })
         })
         .all(function(req, res) {
