@@ -397,6 +397,9 @@ function run() {
         });
     app.get('/api/*', main_handler);
     app.post('/api/*', main_handler);
+    app.use(function(err, req, res, next) {
+        res.status(404).json("The requested resource is not available");
+    });
     // ok, start the server
     app.listen(port);
     
