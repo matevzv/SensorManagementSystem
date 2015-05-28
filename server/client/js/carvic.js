@@ -19,6 +19,9 @@ Carvic.Model.StdData = function () {
     self.CurrentUserTooltip = ko.computed(function () {
         return "Logged in: " + self.CurrentUserFullname() + " (" + self.CurrentUsername() + ")"; ateen
     }, self);
+    self.CurrentUserPage = function () {
+        window.location = "user.html?u=" + self.CurrentUsername();
+    };
     self.CurrentUserType = ko.observable("normal");
     self.CurrentUserIsAdmin = ko.observable(false);
     self.CurrentUserToken = ko.observable("");
@@ -406,6 +409,7 @@ Carvic.Model.UserModel = function () {
         Status: ko.observable(""),
         TypeStr: ko.observable(""),
         Type: ko.observable(""),
+        APIToken: ko.observable(""),
         LastLogin: (new Date()),
         LastBadLogin: (new Date()),
         BadLoginCount: 0,
@@ -533,6 +537,7 @@ Carvic.Model.UserModel = function () {
                 Status: ko.observable(data.status),
                 TypeStr: ko.observable(self.UserTypesMap[data.type].title),
                 Type: ko.observable(data.type),
+                APIToken: ko.observable(data.token),
                 LastLogin: new Date(Date.parse(data.last_login)),
                 LastBadLogin: new Date(Date.parse(data.last_bad_login)),
                 BadLoginCount: data.bad_login_cnt,

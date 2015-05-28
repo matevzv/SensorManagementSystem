@@ -55,7 +55,7 @@
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li class="active"><a href="help"><i class="glyphicon glyphicon-question-sign" title="Show help"></i> Help</a></li>
-                            <li><a href="settings.html"><i class="glyphicon glyphicon-user"></i> <span data-bind="text: $root.StdData.CurrentUserFullname, attr: { title: StdData.CurrentUserTooltip } "></span></a></li>
+                            <li><a data-bind="click: $root.StdData.CurrentUserPage", style="cursor: pointer"><i class="glyphicon glyphicon-user"></i> <span data-bind="text: $root.StdData.CurrentUserFullname, attr: { title: StdData.CurrentUserTooltip }"></span></a></li>
                             <li><a href="#" onclick="javascript: Carvic.Utils.Logout(); "><i class="glyphicon glyphicon-log-out"></i> Logout</a></li>
                         </ul>
                     </div>
