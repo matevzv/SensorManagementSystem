@@ -29,7 +29,8 @@
     "morgan": "*",
     "cookie-parser": "*",
     "connect-mongo": "*",
-    "crypto": "*"
+    "crypto": "*",
+    "redis": "*"
   },
   "license": "GPL",
   "engines": {

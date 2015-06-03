@@ -46,7 +46,7 @@
                         </ul>
                         <ul class="nav pull-right">
                             <li><a href="help"><i class="icon-question-sign" title="Show help"></i> Help</a></li>
-                            <li><a href="settings.html"><i class="icon-user"></i> <span data-bind="text: $root.StdData.CurrentUserFullname, attr: { title: StdData.CurrentUserTooltip } "></span></a></li>
+                            <li><a data-bind="click: $root.StdData.CurrentUserPage", style="cursor: pointer"><i class="glyphicon glyphicon-user"></i> <span data-bind="text: $root.StdData.CurrentUserFullname, attr: { title: StdData.CurrentUserTooltip }"></span></a></li>
                             <li><a href="logout"><i class="icon-signout"></i> Logout</a></li>
                         </ul>
                     </div>

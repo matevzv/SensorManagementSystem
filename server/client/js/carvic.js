@@ -19,6 +19,9 @@ Carvic.Model.StdData = function () {
     self.CurrentUserTooltip = ko.computed(function () {
         return "Logged in: " + self.CurrentUserFullname() + " (" + self.CurrentUsername() + ")"; ateen
     }, self);
+    self.CurrentUserPage = function () {
+        window.location = "user.html?u=" + self.CurrentUsername();
+    };
     self.CurrentUserType = ko.observable("normal");
     self.CurrentUserIsAdmin = ko.observable(false);
     self.CurrentUserToken = ko.observable("");
@@ -406,6 +409,7 @@ Carvic.Model.UserModel = function () {
         Status: ko.observable(""),
         TypeStr: ko.observable(""),
         Type: ko.observable(""),
+        APIToken: ko.observable(""),
         LastLogin: (new Date()),
         LastBadLogin: (new Date()),
         BadLoginCount: 0,
@@ -533,6 +537,7 @@ Carvic.Model.UserModel = function () {
                 Status: ko.observable(data.status),
                 TypeStr: ko.observable(self.UserTypesMap[data.type].title),
                 Type: ko.observable(data.type),
+                APIToken: ko.observable(data.token),
                 LastLogin: new Date(Date.parse(data.last_login)),
                 LastBadLogin: new Date(Date.parse(data.last_bad_login)),
                 BadLoginCount: data.bad_login_cnt,
@@ -612,6 +617,20 @@ Carvic.Model.UserModel = function () {
             Carvic.Utils.Post(req, function (data) {
                 alert("User successfully deleted.");
                 self.CloseUserDetails();
+            });
+        }
+    };
+
+    self.RegenerateToken = function () {
+        if (confirm("This user's token might be hard coded into an application. Regenerating it will block the application's access to SMS API. \nAre you sure you want to regenerate token for this user?")) {
+            var req = {
+                action: "regenerate_token",
+                data: { username: self.CurrentUser().Username() }
+            };
+
+            Carvic.Utils.Post(req, function (data) {
+                alert("Token successfully regenerated.");
+                self.LoadUser(self.CurrentUser().Username());
             });
         }
     };
@@ -766,13 +785,22 @@ Carvic.Model.NodesModel = function (callback) {
             self.RecCount(data.count);
             self.PageCount(Math.floor(data.count / data.page_size));
             self.UpdatePageButtons();
-
             for (var i = 0; i < data.records.length; i++) {
                 var obj = data.records[i];
                 var sensors = [];
-                obj.sensors.forEach(function (item) {
-                    sensors.push(item.name + " (" + item.type + ")");
+                Carvic.Utils.Post({ action: "get_sensors_for_node2", data: obj._id}, function (sensor_data) {
+                    sensor_data.forEach(function (item) {
+                        sensors.push(item.quantity + " (" + item.type + ")");
+                    });
                 });
+                if (typeof obj.sensors !== 'undefined') {
+                    obj.sensors.forEach(function (item) {  
+                        sensors.push(item.quantity + " (" + item.type + ")");
+                    });
+                }
+                console.log("typeof obj.status:", (typeof obj.status));
+                if (typeof obj.status === 'undefined') obj.status = "Unknown";
+                //console.log("obj.status:", self.NodeStatusesMap[obj.status].title);
                 self.SearchResult.push(ko.observable({
                     ID: obj.id,
                     Name: obj.name,
@@ -2294,7 +2322,7 @@ Carvic.Model.ClusterModel = function () {
             return;
         }
 
-        var d = { orig_id: self.LastData.id };
+        var d = { id: self.LastData.id };
         if (self.LastData.type != self.Type())
             d.type = self.Type();
         if (self.LastData.tag != self.Tag())
