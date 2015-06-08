@@ -227,18 +227,10 @@ function api_add_cluster(rec, callback) {
 }
 
 function update_cluster(id, rec, callback) {
-    var query = { id: id };    
-    if(Object.keys(rec).length > 0) {
-        db[collection_clusters].update(query, { $set: rec }, null, function (err, res) {
-            if (err) return callback(err);
-            else if (res.n)
-                callback({ message: 'Cluster successfully updated!' });
-            else    
-                callback({ message: 'Cluster not found!' });
-        });
-    } else {
-        callback({ message: 'No changes to the cluster were made!' });
-    }
+    var query = { id: id };
+    db[collection_clusters].update(query, { $set: rec }, null, function (err, res) {
+        callback(err);
+    });
 };
 
 function api_update_cluster(rec, callback) {

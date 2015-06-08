@@ -1173,13 +1173,12 @@ exports.update_cluster = function (req, callback) {
             exports.new_history(h, callback);
             load_cluster_map();
         });
-
     });
 };
 
 exports.update_agenda = function(req, callback) {
     var rec = req.data;
-    db.get_cluster(rec.orig_id, function (err, data) {
+    db.get_cluster(rec.id, function (err, data) {
         if(err) return callback(err);
         Agenda.update_job(data);
     });
