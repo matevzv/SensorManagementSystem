@@ -52,7 +52,7 @@
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="help"><i class="glyphicon glyphicon-question-sign" title="Show help"></i> Help</a></li>
-                            <li><a href="settings.html"><i class="glyphicon glyphicon-user"></i> <span data-bind="text: $root.StdData.CurrentUserFullname, attr: { title: StdData.CurrentUserTooltip } "></span></a></li>
+                            <li><a data-bind="click: $root.StdData.CurrentUserPage", style="cursor: pointer"><i class="glyphicon glyphicon-user"></i> <span data-bind="text: $root.StdData.CurrentUserFullname, attr: { title: StdData.CurrentUserTooltip }"></span></a></li>
                             <li><a href="#" onclick="javascript: Carvic.Utils.Logout(); "><i class="glyphicon glyphicon-log-out"></i> Logout</a></li>
                         </ul>
                     </div>
@@ -113,9 +113,16 @@
                                     <span id="inLastLogin" data-bind="text: Carvic.Utils.FormatDateTime(LastLogin)"></span>
                                 </div>
                             </div>
+                            
+                            <div class="list-group">
+                                <label class="control-label" for="inAPIToken">API Token </label>
+                                <p><span class="bg-warning">For the purpose of authenticating you need to include this token in the header of every request you send to the API.</span></p>
+                                <div class="controls">
+                                    <span id="inAPIToken" data-bind="text: APIToken"></span>
+                                </div>
+                            </div>
 
                             <div class="list-group" data-bind="visible: $root.CurrentUserEditing()==true">
-                                <label class="control-label" for="btnSaveNewUser"></label>
                                 <div class="controls">
                                     <button id="btnSaveNewUser" class="btn btn-default btn-primary" type="button" data-bind="click: $root.CurrentUserSave"><i class="glyphicon glyphicon-floppy-disk"></i> Save changes </button>
                                     <button id="btnCancelSaveNewUser" class="btn btn-default" type="button" data-bind="click: $root.CurrentUserCancelEditing"><i class="glyphicon glyphicon-remove"></i> Cancel </button>
@@ -124,9 +131,10 @@
                         </div>
                         <div>
                             <div data-bind="visible: $root.CurrentUserEditing()==false && $root.CurrentUserEditingPwd() == false">
-                                <button class="btn btn-default" data-bind="click: $root.CurrentUserStartEditing"><i class="glyphicon glyphicon-edit"></i> Edit user data </button>
-                                <button class="btn btn-default" data-bind="click: $root.CurrentUserStartEditingPwd"><i class="glyphicon glyphicon-lock"></i> Change password </button>
-                                <button class="btn btn-danger" data-bind="click: $root.DeleteUser, visible: $root.StdData.CurrentUserIsAdmin() == true"><i class="glyphicon glyphicon-trash"></i> Delete user</button>
+                                <button class="btn btn-default" data-bind="click: $root.CurrentUserStartEditing, visible: $root.StdData.CurrentUserIsAdmin() || Username() == $root.StdData.CurrentUsername()"><i class="glyphicon glyphicon-edit"></i> Edit user data </button>
+                                <button class="btn btn-default" data-bind="click: $root.CurrentUserStartEditingPwd, visible: $root.StdData.CurrentUserIsAdmin() || Username() == $root.StdData.CurrentUsername()"><i class="glyphicon glyphicon-lock"></i> Change password </button>
+                                <button class="btn btn-default" data-bind="click: $root.RegenerateToken, visible: $root.StdData.CurrentUserIsAdmin() || Username() == $root.StdData.CurrentUsername()"><i class="glyphicon glyphicon-refresh"></i> Regenerate token</button>
+                                <button class="btn btn-danger" data-bind="click: $root.DeleteUser, visible: $root.StdData.CurrentUserIsAdmin()"><i class="glyphicon glyphicon-trash"></i> Delete user</button>
                             </div>
                         </div>
 
