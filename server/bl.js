@@ -344,7 +344,7 @@ exports.update_user = function (req, callback) {
     var rec = req.data;
     var rec2 = { full_name: "", status: "", type: "" };
     xutil.override_members(rec, rec2, false);
-    xutil.remove_empty_members(rec2);    
+    xutil.remove_empty_members(rec2);
     db.get_user(rec.username, function (err, data) {
         if (err) return callback(err);
         var changes = [];
@@ -690,7 +690,7 @@ exports.get_all_node_roles = function (res, callback) {
 exports.update_node = function (req, callback) {
     var rec = req.data;
     db.get_node(rec.id, function (err, data) {
-        var rec2 = xutil.get_diff_fields(rec, data); // detect simple field changes        
+        var rec2 = xutil.get_diff_fields(rec, data); // detect simple field changes
         if (JSON.stringify(rec.components) == JSON.stringify(data.components)) { // components are trickier
             rec2.components = null;
         }
@@ -790,7 +790,7 @@ exports.get_components2 = function (req, callback) {
     //console.log("#", req);
     var query = {};
     var where = [];
-    
+
     if (req.data.type) query.type = req.data.type;
     //if (req.data.product_number) query.product_number = req.data.product_number;
     //create_regexp(req.data, query, where, "product_number");
@@ -869,7 +869,7 @@ exports.get_all_component_types = function (res, callback) {
     db.get_all_component_types( function(err, data) {
         if (err) return callback(err);
         return callback(null, data)
-        
+
     });
 }
 
@@ -1235,7 +1235,7 @@ exports.add_cluster = function (req, callback) {
 
     db.add_cluster(req.data, function (err) {
         if (err) return callback(err);
-		
+
         load_cluster_map();
 
         var h = {
@@ -1294,7 +1294,7 @@ exports.get_all_cluster_types = function (res, callback) {
     db.get_all_cluster_types( function(err, data) {
         if (err) return callback(err);
         return callback(null, data)
-        
+
     });
 }
 

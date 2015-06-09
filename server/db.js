@@ -132,7 +132,7 @@ function fill_dummy_data(callback) {
     loop(data.user_statuses, collection_user_statuses);
     loop(data.user_types, collection_user_types);
     loop(data.sensors, collection_sensors);
-    
+
 
     var calls = [];
     inserts.forEach(function (item) {
@@ -159,7 +159,7 @@ function init(options, callback) {
     db[collection_components].ensureIndex({ id: 1 }, { unique: true, sparse: true });
     db[collection_clusters].ensureIndex({ id: 1 }, { unique: true, sparse: true });
     db[collection_nodes].ensureIndex({ id: 1 }, { unique: true, sparse: true });
-    db[collection_nodes].ensureIndex({ network_addr: 1, cluster: 2 }, { unique: true, sparse: true });
+    //db[collection_nodes].ensureIndex({ network_addr: 1, cluster: 2 }, { unique: true, sparse: true });
     //db[collection_sensor_types].ensureIndex({ name: 1 }, { unique: true, sparse: true });
 
     // set up indexes
@@ -227,13 +227,13 @@ function api_add_cluster(rec, callback) {
 }
 
 function update_cluster(id, rec, callback) {
-    var query = { id: id };    
+    var query = { id: id };
     if(Object.keys(rec).length > 0) {
         db[collection_clusters].update(query, { $set: rec }, null, function (err, res) {
             if (err) return callback(err);
             else if (res.n)
                 callback({ message: 'Cluster successfully updated!' });
-            else    
+            else
                 callback({ message: 'Cluster not found!' });
         });
     } else {
@@ -572,7 +572,7 @@ function get_sensors(req, callback) {
     db[collection_sensors].find(query).sort({ ts: -1 }).toArray(function (err, res) {
         if (err) return callback(err);
 		else if (res.length == 0)
-            callback({ error: "No measurements found.", status: 404 });
+            callback({ error: "No sensors found.", status: 404 });
         else
 			callback(res);
     });
@@ -647,6 +647,7 @@ function get_sensors_for_node2(node_id, callback) {
 
 function get_sensor_history(node_id, id, callback) {
     var query = { sensor: id, node: node_id };
+    console.log(query);
     db[collection_measurements].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
         if (err) return callback(err);
         callback(null, docs);
@@ -685,7 +686,7 @@ function update_sensors_for_node(node_id, sensors, callback) {
 };
 
 function add_sensor_measurement(rec, callback) {
-    if (rec.sensor_id == null || rec.node_id == null || rec.value == null) {
+    if (false) {
         callback({ error: "Incomplete request body. Must include 'sensor_id', 'node_id'' and 'value' fields.", status: 400 });
     } else {
         db[collection_measurements].insert(rec, function (err, res) {
