@@ -1004,7 +1004,7 @@ Carvic.Model.SingleNodeModel = function () {
             self.AddNewComponentId(cid);
         }
 
-        Carvic.Utils.Post({ action: "get_sensors_for_node", data: { node_id: data.id} }, function (data) {
+        Carvic.Utils.Post({ action: "get_sensors_for_node", data: { node: data.id} }, function (data) {
             self.Sensors.removeAll();
             for (var i = 0; i < data.length; i++) {
                 var obj = data[i];
