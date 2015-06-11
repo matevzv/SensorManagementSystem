@@ -79,7 +79,7 @@
                         <span data-bind="text: NodeName"></span></h2>
                 </div>
             </div>
-            
+
             <div class="row">
                 <div class="col-md-4">
                     <div class="well well-small">
@@ -170,10 +170,6 @@
                             <h2><i class="glyphicon glyphicon-signal"></i> Sensor info</h2>
                             <table class="table">
                                 <tr>
-                                    <th>Observed phenomenon </th>
-                                    <td data-bind="text: Name"></td>
-                                </tr>
-                                <tr>
                                     <th>ID</th>
                                     <td data-bind="text: ID"></td>
                                 </tr>
@@ -182,8 +178,12 @@
                                     <td data-bind="text: Type"></td>
                                 </tr>
                                 <tr>
-                                    <th>Description </th>
-                                    <td data-bind="text: Description"></td>
+                                    <th>Quantity </th>
+                                    <td data-bind="text: Quantity"></td>
+                                </tr>
+                                <tr>
+                                    <th>Unit </th>
+                                    <td data-bind="text: Unit"></td>
                                 </tr>
                             </table>
                         </div>
@@ -191,8 +191,8 @@
                         <div data-bind="with: $root.CurrentSensor()">
                             <table class="table table-hover">
                                 <tr>
-                                    <th>When</th>
-                                    <th>What</th>
+                                    <th>Timestamp</th>
+                                    <th>Value</th>
                                 </tr>
                                 <tbody data-bind="foreach: History">
                                 <tr>

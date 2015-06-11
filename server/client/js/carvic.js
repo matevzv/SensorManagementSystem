@@ -1457,8 +1457,8 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
     self.ID = obj.id;
     self.Name = ko.observable(obj.name);
     self.Type = ko.observable(obj.type);
-    self.Description = ko.observable(obj.description);
-    //self.Enabled = ko.observable(obj.enabled);
+    self.Quantity = ko.observable(obj.quantity);
+    self.Unit = ko.observable(obj.unit);
     self.History = ko.observableArray();
 
     self.Show = function () {
