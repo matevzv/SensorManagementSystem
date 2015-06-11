@@ -460,7 +460,7 @@ function get_node(id, callback) {
 };
 
 function api_get_nodes(req, callback) {
-    var query = {};
+    var query = req.query;
     if (req.query.cluster_id) query.cluster_id = req.query.cluster_id;
     db[collection_nodes].find(query).sort({ ts: -1 }).toArray(function (err, res) {
         if (err) return callback(err);
@@ -567,7 +567,7 @@ function get_node_clusters(callback) {
 ////////////////////////////////////////////////////////////////////////////////
 
 function get_sensors(req, callback) {
-    var query = {};
+    var query = req.query;
     if (req.query.node_id) query.node_id = req.query.node_id;
     db[collection_sensors].find(query).sort({ ts: -1 }).toArray(function (err, res) {
         if (err) return callback(err);
