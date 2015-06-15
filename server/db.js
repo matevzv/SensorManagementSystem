@@ -159,6 +159,7 @@ function init(options, callback) {
     db[collection_components].ensureIndex({ id: 1 }, { unique: true, sparse: true });
     db[collection_clusters].ensureIndex({ id: 1 }, { unique: true, sparse: true });
     db[collection_nodes].ensureIndex({ id: 1 }, { unique: true, sparse: true });
+    db[collection_nodes].ensureIndex({ name: 1 }, { unique: true, sparse: true });
     //db[collection_nodes].ensureIndex({ network_addr: 1, cluster: 2 }, { unique: true, sparse: true });
     //db[collection_sensor_types].ensureIndex({ name: 1 }, { unique: true, sparse: true });
 
