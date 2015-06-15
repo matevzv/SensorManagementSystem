@@ -17,6 +17,7 @@
         <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="js/bootstrap3-typeahead.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
+        <script type="text/javascript" src="js/Chart.min.js"></script>
         <script type="text/javascript" src="js/carvic.js"></script>
         <script>
             $(document).ready(function () {
@@ -189,19 +190,38 @@
                             </table>
                         </div>
 
-                        <div data-bind="with: $root.CurrentSensor()">
-                            <table class="table table-hover">
-                                <tr>
-                                    <th>Timestamp</th>
-                                    <th>Value</th>
-                                </tr>
-                                <tbody data-bind="foreach: History">
-                                <tr>
-                                    <td><span data-bind="text: Carvic.Utils.FormatDateTime(Ts)"></span></td>
-                                    <td><span data-bind="text: Value"></span></td>
-                                </tr>
-									              </tbody>
-                            </table>
+                        <ul class="nav nav-tabs">
+                            <li data-bind="css: {active: $root.ShowRawSensorData()==true }">
+                                <a href="#" data-bind="click: $root.DoShowRawSensorData">Raw data</a>
+                            </li>
+                            <li data-bind="css: {active: $root.ShowSensorGraph()==true }">
+                                <a href="#" data-bind="click: $root.DoShowSensorGraph">Graph</a>
+                            </li>
+                            <li data-bind="css: {active: $root.ShowDownloadSensorData()==true }">
+                                <a href="#" data-bind="click: $root.DoShowDownloadSensorData">Download</a>
+                            </li>
+                        </ul>
+                        <div data-bind="visible: $root.ShowRawSensorData()==true ">
+                          <div data-bind="with: $root.CurrentSensor()">
+                              <table class="table table-hover">
+                                  <tr>
+                                      <th>Timestamp</th>
+                                      <th>Value</th>
+                                  </tr>
+                                  <tbody data-bind="foreach: History">
+                                  <tr>
+                                      <td><span data-bind="text: Carvic.Utils.FormatDateTime(Ts)"></span></td>
+                                      <td><span data-bind="text: Value"></span></td>
+                                  </tr>
+  									              </tbody>
+                              </table>
+                          </div>
+                        </div>
+                        <div data-bind="visible: $root.ShowSensorGraph()==true ">
+                          <canvas id="myChart" width="400" height="400"></canvas>
+                        </div>
+                        <div data-bind="visible: $root.ShowDownloadSensorData()==true ">
+                          TODO DOWNLOAD
                         </div>
                     </div>
                     <div data-bind="visible: $root.ShowNodeData()==true ">

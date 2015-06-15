@@ -934,6 +934,9 @@ Carvic.Model.SingleNodeModel = function () {
     self.ShowSensorHistory = ko.observable(false);
     self.ShowSensorList = ko.observable(false);
     self.ShowNodeData = ko.observable(true);
+    self.ShowRawSensorData = ko.observable(true);
+    self.ShowSensorGraph = ko.observable(false);
+    self.ShowDownloadSensorData = ko.observable(false);
 
     self.NodeEditComponentToAdd = ko.observable();
 
@@ -948,7 +951,7 @@ Carvic.Model.SingleNodeModel = function () {
                     code: item.code
                 });
                 self.NodeStatusesMap[item.code] = item;
-            });;
+            });
             if(callback) callback();
         });
     }
@@ -1235,6 +1238,50 @@ Carvic.Model.SingleNodeModel = function () {
         self.ShowSensorHistory(false);
         self.ShowSensorList(false);
         self.ShowNodeData(true);
+    };
+
+    self.DoShowRawSensorData = function () {
+        self.ShowRawSensorData(true);
+        self.ShowSensorGraph(false);
+        self.ShowDownloadSensorData(false);
+    };
+
+    self.DoShowSensorGraph = function () {
+        self.ShowRawSensorData(false);
+        self.ShowSensorGraph(true);
+        self.ShowDownloadSensorData(false);
+        var ctx = document.getElementById("myChart").getContext("2d");
+        var data = {
+        labels: ["January", "February", "March", "April", "May", "June", "July"],
+        datasets: [
+            {
+                label: "My First dataset",
+                fillColor: "rgba(220,220,220,0.2)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: [65, 59, 80, 81, 56, 55, 40]
+            },
+            {
+                label: "My Second dataset",
+                fillColor: "rgba(151,187,205,0.2)",
+                strokeColor: "rgba(151,187,205,1)",
+                pointColor: "rgba(151,187,205,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(151,187,205,1)",
+                data: [28, 48, 40, 19, 86, 27, 90]
+            }
+        ]};
+        var myLineChart = new Chart(ctx).Line(data);
+    };
+
+    self.DoShowDownloadSensorData = function () {
+        self.ShowRawSensorData(false);
+        self.ShowSensorGraph(false);
+        self.ShowDownloadSensorData(true);
     };
 
     self.getNodeStatuses( function() {
