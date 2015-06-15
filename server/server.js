@@ -252,6 +252,8 @@ function run() {
             if (!req.body.ts) {
                 req.body.ts = new Date();
             }
+            io.emit(req.body[0].sensor, req.body);
+            console.log(req.body[0].sensor);
             bl.add_sensor_measurement(req.body, function(callback) {
                 if(callback.error) res.status(callback.status).json(callback.error);
                 else res.status(callback.status).json(callback.message);
@@ -388,7 +390,7 @@ function run() {
             })
         })
         .delete(function(req, res) {
-            bl.delete_sensor(req.params.sensor_id, function(callback) {
+            bl.delete_sensor(req.params.id, function(callback) {
                 if(callback.error) res.status(callback.status).json(callback.error);
                 else res.json(callback.message);
             })

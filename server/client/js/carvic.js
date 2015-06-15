@@ -1486,6 +1486,17 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
             }
         });
     };
+
+    var socket = io.connect('http://localhost:3000');
+    socket.on(self.ID, function (data) {
+      for (var i = 0; i < data.length; i++) {
+          var obj = data[i];
+          self.History.push(ko.observable({
+              Ts: new Date(Date.parse(obj.ts)),
+              Value: obj.value
+          }));
+      }
+  });
 };
 
 ////////////////////////////////////////////////////////////////////
