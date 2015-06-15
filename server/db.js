@@ -648,7 +648,7 @@ function get_sensors_for_node2(node_id, callback) {
 
 function get_sensor_history(node_id, id, callback) {
     var query = { sensor: id, node: node_id };
-    db[collection_measurements].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
+    db[collection_measurements].find(query).sort({ ts: 1 }).limit(30).toArray(function (err, docs) {
         if (err) return callback(err);
         callback(null, docs);
     });
