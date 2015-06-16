@@ -1250,7 +1250,7 @@ Carvic.Model.SingleNodeModel = function () {
         self.ShowRawSensorData(false);
         self.ShowSensorGraph(true);
         self.ShowDownloadSensorData(false);
-        var ctx = document.getElementById("myChart").getContext("2d");
+        var ctx = document.getElementById("sensorChart").getContext("2d");
         var data = {
         labels: ["January", "February", "March", "April", "May", "June", "July"],
         datasets: [

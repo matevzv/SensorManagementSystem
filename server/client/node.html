@@ -218,7 +218,9 @@
                           </div>
                         </div>
                         <div data-bind="visible: $root.ShowSensorGraph()==true ">
-                          <canvas id="myChart" width="400" height="400"></canvas>
+                          <div class="span12">
+                            <canvas class="sensor_chart" id="sensorChart"></canvas>
+                          </div>
                         </div>
                         <div data-bind="visible: $root.ShowDownloadSensorData()==true ">
                           TODO DOWNLOAD
