@@ -572,7 +572,7 @@ function get_sensors(req, callback) {
     db[collection_sensors].find(query).sort({ ts: -1 }).toArray(function (err, res) {
         if (err) return callback(err);
 		else if (res.length == 0)
-            callback({ error: "No measurements found.", status: 404 });
+            callback({ error: "No sensors found.", status: 404 });
         else
 			callback(res);
     });
