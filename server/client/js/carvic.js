@@ -1537,19 +1537,23 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
 
     var socket = io.connect('http://localhost:3000');
     socket.on(self.ID, function (data) {
-      if (self.History().length > 50)
-          return;
       for (var i = 0; i < data.length; i++) {
           var obj = data[i];
           if (self.sensorChart != null) {
             self.sensorChart.addData([obj.value], new Date(obj.ts));
           }
-          self.History.push(ko.observable({
+          if (self.History().length <= 50) {
+            self.History.push(ko.observable({
               Ts: new Date(Date.parse(obj.ts)),
               Value: obj.value
-          }));
-      }
-  });
+            }));
+          } else {
+            if (self.sensorChart != null) {
+              self.sensorChart.removeData();
+            }
+          }
+        }
+    });
 };
 
 ////////////////////////////////////////////////////////////////////
