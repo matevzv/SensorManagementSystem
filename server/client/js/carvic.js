@@ -1250,32 +1250,7 @@ Carvic.Model.SingleNodeModel = function () {
         self.ShowRawSensorData(false);
         self.ShowSensorGraph(true);
         self.ShowDownloadSensorData(false);
-        var ctx = document.getElementById("sensorChart").getContext("2d");
-        var data = {
-        labels: ["January", "February", "March", "April", "May", "June", "July"],
-        datasets: [
-            {
-                label: "My First dataset",
-                fillColor: "rgba(220,220,220,0.2)",
-                strokeColor: "rgba(220,220,220,1)",
-                pointColor: "rgba(220,220,220,1)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(220,220,220,1)",
-                data: [65, 59, 80, 81, 56, 55, 40]
-            },
-            {
-                label: "My Second dataset",
-                fillColor: "rgba(151,187,205,0.2)",
-                strokeColor: "rgba(151,187,205,1)",
-                pointColor: "rgba(151,187,205,1)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(151,187,205,1)",
-                data: [28, 48, 40, 19, 86, 27, 90]
-            }
-        ]};
-        var myLineChart = new Chart(ctx).Line(data);
+        self.CurrentSensor().GetChart();
     };
 
     self.DoShowDownloadSensorData = function () {
@@ -1507,6 +1482,8 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
     self.Quantity = ko.observable(obj.quantity);
     self.Unit = ko.observable(obj.unit);
     self.History = ko.observableArray();
+    self.sensorData = [];
+    self.sensorChart = null;
 
     self.Show = function () {
         self.Parent.DoShowSensor(self.ID);
@@ -1526,6 +1503,7 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
         Carvic.Utils.Post(req, function (data) {
             for (var i = 0; i < data.length; i++) {
                 var obj = data[i];
+                self.sensorData.push(obj);
                 self.History.push(ko.observable({
                     Ts: new Date(Date.parse(obj.ts)),
                     Value: obj.value
@@ -1534,12 +1512,38 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
         });
     };
 
+    self.GetChart = function () {
+      if (self.sensorChart == null) {
+        var ctx = document.getElementById("sensorChart").getContext("2d");
+        var data = {
+        labels: [],
+        datasets: [
+            {
+                fillColor: "rgba(151,187,205,0.2)",
+                strokeColor: "rgba(151,187,205,1)",
+                pointColor: "rgba(151,187,205,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(151,187,205,1)",
+                data: []
+            }
+        ]};
+        self.sensorChart = new Chart(ctx).Line(data);
+        for (i = 0; i < self.History().length; i++) {
+          self.sensorChart.addData([self.sensorData[i].value], new Date(self.sensorData[i].ts));
+        }
+      }
+    };
+
     var socket = io.connect('http://localhost:3000');
     socket.on(self.ID, function (data) {
       if (self.History().length > 50)
           return;
       for (var i = 0; i < data.length; i++) {
           var obj = data[i];
+          if (self.sensorChart != null) {
+            self.sensorChart.addData([obj.value], new Date(obj.ts));
+          }
           self.History.push(ko.observable({
               Ts: new Date(Date.parse(obj.ts)),
               Value: obj.value
