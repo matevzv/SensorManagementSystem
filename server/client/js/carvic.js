@@ -939,6 +939,9 @@ Carvic.Model.SingleNodeModel = function () {
     self.ShowDownloadSensorData = ko.observable(false);
 
     self.NodeEditComponentToAdd = ko.observable();
+    
+    self.From = ko.observable("");
+    self.To = ko.observable("");
 
     self.getNodeStatuses = function (callback) {
         var d = {}
@@ -1266,6 +1269,26 @@ Carvic.Model.SingleNodeModel = function () {
             else selg.LoadNode(5);
         });
     });
+    
+    self.downloadMeasurements = function() {
+        var query = {};
+        var d1 = self.From();
+        if (d1 && d1 != "") query.ts_from = Carvic.Utils.ParseDate(d1);
+        var d2 = self.To();
+        if (d2 && d2 != "") query.ts_to = Carvic.Utils.ParseDate(d2);
+        var req = {
+            action: "download_measurements",
+            data: {
+                id: self.NodeID(),
+                from: d1,
+                to: d2
+            }
+        };
+        console.log("query.ts_from:", query.ts_from);
+        Carvic.Utils.Post(req, function(data) {
+            callback(data);
+        });
+    }
 }
 
 Carvic.Model.NewNodeModel = function () {
