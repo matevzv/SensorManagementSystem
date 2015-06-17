@@ -673,6 +673,10 @@ exports.get_node_history = function (req, callback) {
     });
 };
 
+exports.download_measurements = function (req, callback) {
+    db.download_measurements(req, callback)
+};
+
 exports.get_all_node_statuses = function (res, callback) {
     db.get_all_node_statuses( function(err, data) {
         if (err) return callback(err);
@@ -1461,6 +1465,7 @@ exports.get_history = function (req, callback) {
             query.ts.$lte = new Date(req.data.ts_to);
         }
     }
+    console.log("query:", query);
     db.get_history(query, skip, page_size, function (err, data) {
         if (err) callback(err);
         data.forEach(function (item) {

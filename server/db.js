@@ -679,6 +679,27 @@ function get_all_measurements(req, callback) {
     });
 };
 
+function download_measurements(req, callback) {
+    var query = {};
+    if (req.data.node_id) query.node_id = req.data.node_id;
+    if (req.data.from || req.data.to) {
+        query.ts = {};
+        if (req.data.from) {
+            query.ts.$gte = new Date(req.data.from);
+        }
+        if (req.data.to) {
+            query.ts.$lte = new Date(req.data.to);
+        }
+    }
+    db[collection_measurements].find(query).limit(Number(req.data.limit)).sort({ ts: -1 }).toArray(function (err, docs) {
+        if (err) return callback(err);
+        else if (docs.length == 0)
+            callback({ error: "No measurements found.", status: 404 });
+        else
+            callback(null, docs);
+    })
+};
+
 function update_sensors_for_node(node_id, sensors, callback) {
     var query = { id: node_id };
     db[collection_nodes].update(query, { $set: { sensors: sensors} }, null, function (err, res) {
@@ -1120,6 +1141,7 @@ exports.get_sensors_for_node = get_sensors_for_node;
 exports.get_sensors_for_node2 = get_sensors_for_node2;
 exports.get_sensor_history = get_sensor_history;
 exports.get_all_measurements = get_all_measurements;
+exports.download_measurements = download_measurements;
 exports.update_sensors_for_node = update_sensors_for_node;
 exports.add_sensor_measurement = add_sensor_measurement;
 exports.get_sensor_measurement = get_sensor_measurement;
