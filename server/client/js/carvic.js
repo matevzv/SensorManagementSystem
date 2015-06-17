@@ -940,6 +940,9 @@ Carvic.Model.SingleNodeModel = function () {
 
     self.NodeEditComponentToAdd = ko.observable();
 
+    Chart.defaults.global.responsive = true;
+    Chart.defaults.global.animation = false;
+
     self.getNodeStatuses = function (callback) {
         var d = {}
         self.NodeStatuses.removeAll();
