@@ -1553,25 +1553,41 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
     self.DownloadMeasurements = function() {
         var query = {};
         var d1 = self.From();
-        if (d1 && d1 != "") query.from = Carvic.Utils.ParseDate(d1).toISOString();
+        if (d1 && d1 != "") {
+          query.from = Carvic.Utils.ParseDate(d1).toISOString();
+        } else {
+          alert("No begin date specified!");
+          return;
+        }
         var d2 = self.To();
+        if (d2 && d2 != "") {
+          query.to = Carvic.Utils.ParseDate(d2).toISOString();
+        } else {
+          alert("No end date specified!");
+          return;
+        }
         if (d2 && d2 != "") query.to = Carvic.Utils.ParseDate(d2).toISOString();
+        if (self.DownloadLimit() == "") {
+          query.limit = 10000;
+        } else {
+          query.limit = self.DownloadLimit();
+        }
         var req = {
             action: "download_measurements",
             data: {
                 sensor: self.ID,
                 from: query.from,
                 to: query.to,
-                limit: self.DownloadLimit()
+                limit: query.limit
             }
         };
         Carvic.Utils.Post(req, function(data) {
-            console.log(JSON.stringify(data));
-            //var blob=new Blob([data]);
-            //var link=document.createElement('a');
-            //link.href=window.URL.createObjectURL(blob);
-            //link.download="myFileName.txt";
-            //link.click();
+            //console.log(JSON.stringify(data));
+            var blob=new Blob([JSON.stringify(data)]);
+            var link=document.createElement('a');
+            link.href=window.URL.createObjectURL(blob);
+            link.download=self.ID;
+            link.click();
         });
     };
 
