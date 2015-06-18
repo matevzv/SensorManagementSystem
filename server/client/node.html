@@ -36,10 +36,12 @@
                     .attr("data-placement", "right")
                     .tooltip();
                 $('#inTime').datepicker({
-                    format: "dd.mm.yyyy"
+                    format: "dd.mm.yyyy",
+                    autoclose: true
                 });
                 $('#inTime2').datepicker({
-                    format: "dd.mm.yyyy"
+                    format: "dd.mm.yyyy",
+                    autoclose: true
                 });
             });
         </script>
@@ -231,27 +233,29 @@
                           </div>
                         </div>
                         <div data-bind="visible: $root.ShowDownloadSensorData()==true ">
-                            <form class="form-horizontal" role="form">
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Start date</label>
-                                    <div class="col-sm-5">
-                                        <input type="text" class="form-control" id="inTime" placeholder="From" data-bind="value: From">
+                            <div class="well well-small">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Start date</label>
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control" id="inTime" placeholder="From" data-bind="value: From">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">End date</label>
-                                    <div class="col-sm-5">
-                                        <input type="text" class="form-control" id="inTime2" placeholder="To" data-bind="value: To">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">End date</label>
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control" id="inTime2" placeholder="To" data-bind="value: To">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label">Limit results</label>
-                                    <div class="col-sm-5">
-                                        <input type="text" class="form-control" id="limit" placeholder="10000 (0 means no limit!)" data-bind="value: DownloadLimit">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Limit results</label>
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control" id="limit" placeholder="10000 (0 means no limit!)" data-bind="value: DownloadLimit">
+                                        </div>
                                     </div>
-                                </div>
-                                <button class="btn btn-primary" type="button" data-bind="click: $root.downloadMeasurements">Download</button>
-                            </form>
+                                    <button class="btn btn-primary" type="button" data-bind="click: $root.downloadMeasurements">Download</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <div data-bind="visible: $root.ShowNodeData()==true ">
