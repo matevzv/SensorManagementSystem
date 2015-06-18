@@ -936,14 +936,9 @@ Carvic.Model.SingleNodeModel = function () {
     self.ShowSensorList = ko.observable(false);
     self.ShowNodeData = ko.observable(true);
     self.ShowRawSensorData = ko.observable(true);
-    self.ShowSensorGraph = ko.observable(false);
+    self.ShowSensorChart = ko.observable(false);
     self.ShowDownloadSensorData = ko.observable(false);
-
     self.NodeEditComponentToAdd = ko.observable();
-    
-    self.From = ko.observable("");
-    self.To = ko.observable("");
-    self.DownloadLimit = ko.observable("");
 
     Chart.defaults.global.responsive = true;
     Chart.defaults.global.animation = false;
@@ -1251,21 +1246,29 @@ Carvic.Model.SingleNodeModel = function () {
 
     self.DoShowRawSensorData = function () {
         self.ShowRawSensorData(true);
-        self.ShowSensorGraph(false);
+        self.ShowSensorChart(false);
         self.ShowDownloadSensorData(false);
     };
 
-    self.DoShowSensorGraph = function () {
+    self.DoShowSensorChart = function () {
         self.ShowRawSensorData(false);
-        self.ShowSensorGraph(true);
+        self.ShowSensorChart(true);
         self.ShowDownloadSensorData(false);
         self.CurrentSensor().GetChart();
     };
 
     self.DoShowDownloadSensorData = function () {
         self.ShowRawSensorData(false);
-        self.ShowSensorGraph(false);
+        self.ShowSensorChart(false);
         self.ShowDownloadSensorData(true);
+        $('#begindate').datepicker({
+          format: "dd.mm.yyyy",
+          autoclose: true
+        });
+        $('#enddate').datepicker({
+          format: "dd.mm.yyyy",
+          autoclose: true
+        });
     };
 
     self.getNodeStatuses( function() {
@@ -1275,26 +1278,6 @@ Carvic.Model.SingleNodeModel = function () {
             else selg.LoadNode(5);
         });
     });
-    
-    self.downloadMeasurements = function() {
-        var query = {};
-        var d1 = self.From();
-        if (d1 && d1 != "") query.from = Carvic.Utils.ParseDate(d1).toISOString();
-        var d2 = self.To();
-        if (d2 && d2 != "") query.to = Carvic.Utils.ParseDate(d2).toISOString();
-        var req = {
-            action: "download_measurements",
-            data: {
-                node_id: self.Node_ID(),
-                from: query.from,
-                to: query.to,
-                limit: self.DownloadLimit()
-            }
-        };
-        Carvic.Utils.Post(req, function(data) {
-            console.log(data);
-        });
-    }
 }
 
 Carvic.Model.NewNodeModel = function () {
@@ -1513,6 +1496,9 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
     self.History = ko.observableArray();
     self.sensorData = [];
     self.sensorChart = null;
+    self.From = ko.observable("");
+    self.To = ko.observable("");
+    self.DownloadLimit = ko.observable("");
 
     self.Show = function () {
         self.Parent.DoShowSensor(self.ID);
@@ -1562,6 +1548,31 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
           self.sensorChart.addData([self.sensorData[i].value], new Date(self.sensorData[i].ts));
         }
       }
+    };
+
+    self.DownloadMeasurements = function() {
+        var query = {};
+        var d1 = self.From();
+        if (d1 && d1 != "") query.from = Carvic.Utils.ParseDate(d1).toISOString();
+        var d2 = self.To();
+        if (d2 && d2 != "") query.to = Carvic.Utils.ParseDate(d2).toISOString();
+        var req = {
+            action: "download_measurements",
+            data: {
+                sensor: self.ID,
+                from: query.from,
+                to: query.to,
+                limit: self.DownloadLimit()
+            }
+        };
+        Carvic.Utils.Post(req, function(data) {
+            console.log(JSON.stringify(data));
+            //var blob=new Blob([data]);
+            //var link=document.createElement('a');
+            //link.href=window.URL.createObjectURL(blob);
+            //link.download="myFileName.txt";
+            //link.click();
+        });
     };
 
     var socket = io.connect('http://localhost:3000');

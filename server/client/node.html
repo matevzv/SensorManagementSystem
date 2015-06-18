@@ -32,17 +32,6 @@
                     minLength: 3,
                     matcher: function () { return true; }
                 });
-                $(".input")
-                    .attr("data-placement", "right")
-                    .tooltip();
-                $('#inTime').datepicker({
-                    format: "dd.mm.yyyy",
-                    autoclose: true
-                });
-                $('#inTime2').datepicker({
-                    format: "dd.mm.yyyy",
-                    autoclose: true
-                });
             });
         </script>
         <title>Sensor Management System - node</title>
@@ -204,8 +193,8 @@
                             <li data-bind="css: {active: $root.ShowRawSensorData()==true }">
                                 <a href="#" data-bind="click: $root.DoShowRawSensorData">Raw data</a>
                             </li>
-                            <li data-bind="css: {active: $root.ShowSensorGraph()==true }">
-                                <a href="#" data-bind="click: $root.DoShowSensorGraph">Graph</a>
+                            <li data-bind="css: {active: $root.ShowSensorChart()==true }">
+                                <a href="#" data-bind="click: $root.DoShowSensorChart">Chart</a>
                             </li>
                             <li data-bind="css: {active: $root.ShowDownloadSensorData()==true }">
                                 <a href="#" data-bind="click: $root.DoShowDownloadSensorData">Download</a>
@@ -227,24 +216,24 @@
                               </table>
                           </div>
                         </div>
-                        <div data-bind="visible: $root.ShowSensorGraph()==true ">
+                        <div data-bind="visible: $root.ShowSensorChart()==true ">
                           <div class="span12">
                             <canvas class="sensor_chart" id="sensorChart"></canvas>
                           </div>
                         </div>
                         <div data-bind="visible: $root.ShowDownloadSensorData()==true ">
-                            <div class="well well-small">
+                            <div class="well well-small" data-bind="with: $root.CurrentSensor()">
                                 <form class="form-horizontal" role="form">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">Start date</label>
                                         <div class="col-sm-5">
-                                            <input type="text" class="form-control" id="inTime" placeholder="From" data-bind="value: From">
+                                            <input type="text" class="form-control" id="begindate" placeholder="From" data-bind="value: From">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">End date</label>
                                         <div class="col-sm-5">
-                                            <input type="text" class="form-control" id="inTime2" placeholder="To" data-bind="value: To">
+                                            <input type="text" class="form-control" id="enddate" placeholder="To" data-bind="value: To">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -253,7 +242,7 @@
                                             <input type="text" class="form-control" id="limit" placeholder="10000 (0 means no limit!)" data-bind="value: DownloadLimit">
                                         </div>
                                     </div>
-                                    <button class="btn btn-primary" type="button" data-bind="click: $root.downloadMeasurements">Download</button>
+                                    <button class="btn btn-default btn-primary" data-bind="click: DownloadMeasurements">Download</button>
                                 </form>
                             </div>
                         </div>
