@@ -893,6 +893,7 @@ Carvic.Model.SingleNodeModel = function () {
     self.NodeRolesMap = {};
 
     self.NodeID = ko.observable("");
+    self.Node_ID = ko.observable("");
     self.NodeName = ko.observable("");
     self.NodeStatus = ko.observable("unknown");
     self.NodeStatusStr = ko.computed(function () {
@@ -939,6 +940,10 @@ Carvic.Model.SingleNodeModel = function () {
     self.ShowDownloadSensorData = ko.observable(false);
 
     self.NodeEditComponentToAdd = ko.observable();
+    
+    self.From = ko.observable("");
+    self.To = ko.observable("");
+    self.DownloadLimit = ko.observable("");
 
     Chart.defaults.global.responsive = true;
     Chart.defaults.global.animation = false;
@@ -977,6 +982,7 @@ Carvic.Model.SingleNodeModel = function () {
 
     self.LoadDataFromObject = function (data) {
         self.NodeID(data.id);
+        self.Node_ID(data._id);
         self.NodeName(data.name);
         self.NodeStatus(data.status);
         self.NodeCluster(data.cluster);
@@ -1269,6 +1275,26 @@ Carvic.Model.SingleNodeModel = function () {
             else selg.LoadNode(5);
         });
     });
+    
+    self.downloadMeasurements = function() {
+        var query = {};
+        var d1 = self.From();
+        if (d1 && d1 != "") query.from = Carvic.Utils.ParseDate(d1).toISOString();
+        var d2 = self.To();
+        if (d2 && d2 != "") query.to = Carvic.Utils.ParseDate(d2).toISOString();
+        var req = {
+            action: "download_measurements",
+            data: {
+                node_id: self.Node_ID(),
+                from: query.from,
+                to: query.to,
+                limit: self.DownloadLimit()
+            }
+        };
+        Carvic.Utils.Post(req, function(data) {
+            console.log(data);
+        });
+    }
 }
 
 Carvic.Model.NewNodeModel = function () {
