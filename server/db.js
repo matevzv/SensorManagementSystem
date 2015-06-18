@@ -685,18 +685,18 @@ function download_measurements(req, callback) {
     if (req.data.from || req.data.to) {
         query.ts = {};
         if (req.data.from) {
-            query.ts.$gte = new Date(req.data.from);
+            query.ts.$gte = req.data.from;
         }
         if (req.data.to) {
-            query.ts.$lte = new Date(req.data.to);
+            query.ts.$lte = req.data.to;
         }
     }
-    db[collection_measurements].find(query).limit(Number(req.data.limit)).sort({ ts: -1 }).toArray(function (err, docs) {
+    db[collection_measurements].find(query).limit(Number(req.data.limit)).sort({ ts: -1 }).toArray(function (err, res) {
         if (err) return callback(err);
-        else if (docs.length == 0)
+        else if (res.length == 0)
             callback({ error: "No measurements found.", status: 404 });
         else
-            callback(null, docs);
+            callback(null, res);
     })
 };
 

@@ -41,13 +41,6 @@
                 $('#inTime2').datepicker({
                     format: "dd.mm.yyyy"
                 });
-                $(function() {
-                    $("#begindatepicker").datepicker({ dateFormat: 'yy-mm-dd' });
-                });
-
-                $(function() {
-                    $("#enddatepicker").datepicker({ dateFormat: 'yy-mm-dd' });
-                });
             });
         </script>
         <title>Sensor Management System - node</title>
@@ -254,7 +247,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">Limit results</label>
                                     <div class="col-sm-5">
-                                        <input type="text" class="form-control" id="limit" placeholder="10000 (0 means no limit!)">
+                                        <input type="text" class="form-control" id="limit" placeholder="10000 (0 means no limit!)" data-bind="value: DownloadLimit">
                                     </div>
                                 </div>
                                 <button class="btn btn-primary" type="button" data-bind="click: $root.downloadMeasurements">Download</button>

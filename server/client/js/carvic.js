@@ -943,6 +943,7 @@ Carvic.Model.SingleNodeModel = function () {
     
     self.From = ko.observable("");
     self.To = ko.observable("");
+    self.DownloadLimit = ko.observable("");
 
     self.getNodeStatuses = function (callback) {
         var d = {}
@@ -1275,20 +1276,20 @@ Carvic.Model.SingleNodeModel = function () {
     self.downloadMeasurements = function() {
         var query = {};
         var d1 = self.From();
-        if (d1 && d1 != "") query.from = Carvic.Utils.ParseDate(d1);
+        if (d1 && d1 != "") query.from = Carvic.Utils.ParseDate(d1).toISOString();
         var d2 = self.To();
-        if (d2 && d2 != "") query.to = Carvic.Utils.ParseDate(d2);
+        if (d2 && d2 != "") query.to = Carvic.Utils.ParseDate(d2).toISOString();
         var req = {
             action: "download_measurements",
             data: {
                 node_id: self.Node_ID(),
                 from: query.from,
                 to: query.to,
-                limit: document.getElementById("limit").value
+                limit: self.DownloadLimit()
             }
         };
         Carvic.Utils.Post(req, function(data) {
-            console.log(data); 
+            console.log(data);
         });
     }
 }
