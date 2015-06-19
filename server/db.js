@@ -697,7 +697,7 @@ function download_measurements(req, callback) {
             callback({ error: "No measurements found.", status: 404 });
         else
             callback(null, res);
-    })
+    });
 };
 
 function update_sensors_for_node(node_id, sensors, callback) {

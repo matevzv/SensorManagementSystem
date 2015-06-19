@@ -1583,6 +1583,7 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
         };
         Carvic.Utils.Post(req, function(data) {
             //console.log(JSON.stringify(data));
+            if (data.hasOwnProperty('error')) alert("No data!");
             var blob=new Blob([JSON.stringify(data)]);
             var link=document.createElement('a');
             link.href=window.URL.createObjectURL(blob);
