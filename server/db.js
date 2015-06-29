@@ -702,14 +702,10 @@ function update_sensors_for_node(node_id, sensors, callback) {
 };
 
 function add_sensor_measurement(rec, callback) {
-    if (false) {
-        callback({ error: "Incomplete request body. Must include 'sensor_id', 'node_id'' and 'value' fields.", status: 400 });
-    } else {
-        db[collection_measurements].insert(rec, function (err, res) {
-            if (err) return callback(err);
-            else callback({ message: 'Measurement successfully added!', status: 201 });
-        });
-    }
+    db[collection_measurements].insert(rec, function (err, res) {
+        if (err) return callback(err);
+        else callback({ message: 'Measurement successfully added!', status: 201 });
+    });
 }
 
 function get_sensor_measurement(rec, callback) {
