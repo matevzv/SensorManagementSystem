@@ -22,7 +22,7 @@
     "body-parser": "*",
     "express": "*",
     "marked": "*",
-    "mongojs": "*",
+    "mongojs": "^0.18.1",
     "express-session": "*",
     "basic-auth-connect": "*",
     "serve-favicon": "*",
