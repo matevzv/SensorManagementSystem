@@ -1,6 +1,7 @@
 // "business logic" - all smart stuff is happening here, except scanning
 
 var async = require("async");
+var Agenda = require("./agenda_server");
 var utils_hash = require("./utils_hash");
 var xutil = require('./xutil');
 var crypto = require("crypto");
@@ -172,6 +173,33 @@ function create_regexp2(req, query, where, prop_name) {
     }
 }
 
+function after_node_change(id) {
+    db.get_all_notify(function (err, data) {
+        data.forEach(function (item) {
+            if(item.enabled && item.after_node_change)
+                notify_after_node_change(id, item);
+        });
+    });
+}
+
+function after_sensor_scan(rec) {
+    db.get_all_notify(function (err, data) {
+        data.forEach(function (item) {
+            if(item.enabled && item.after_sensor_scan)
+                notify_after_sensor_scan(rec.node, rec.sensor, item);
+        });
+    });
+}
+
+function after_sensor_change(id) {
+    db.get_all_notify(function (err, data) {
+        data.forEach(function (item) {
+            if(item.enabled && item.after_node_change)
+                notify_after_sensor_change(id, item);
+        });
+    });
+}
+
 ///////////////////////////////////////////////////////////////////////
 
 exports.init = init;
@@ -240,6 +268,29 @@ exports.change_pwd = function (req, callback) {
         callback(err);
     });
 };
+
+exports.change_notify = function (req, callback) {
+    var rec = req.data;
+    db.update_notify(rec.username, rec, function (err, data2) {
+        var h = {
+            node: null,
+            user: req.session.user,
+            status: null,
+            code: "user_change",
+            ts: new Date(),
+            title: "User '" + req.session.user + "' changed notify",
+            description: null,
+            sys_data: rec
+        };
+        db.new_history(h, callback);
+        load_username_map();
+    });
+};
+
+exports.get_notify = function (req, callback) {
+    db.get_notify(req.data.username, callback);
+};
+
 
 exports.change_my_full_name = function (req, callback) {
     //console.log(req);
@@ -441,14 +492,11 @@ exports.add_node = function (req, callback) {
                 description: "Node '" + rec.name + "' (" + rec.id + ") was successfully created.",
                 sys_data: rec
             };
-
             db.new_history(h, function (err) {
                 if (err) return callback(err);
                 callback(null, { id: rec.id });
             });
-            if (notify_after_node_change) {
-                notify_after_node_change(rec.id);
-            }
+            after_node_change(rec.id);
             load_node_map();
         });
     });
@@ -725,9 +773,7 @@ exports.update_node = function (req, callback) {
                 };
 
                 db.new_history(h, callback);
-                if (notify_after_node_change) {
-                    notify_after_node_change(rec.id);
-                }
+                after_node_change(rec.id);
                 load_node_map();
             });
         } else {
@@ -771,9 +817,7 @@ exports.delete_node = function (req, callback) {
         };
 
         db.new_history(h, callback);
-        if (notify_after_node_change) {
-            notify_after_node_change(node_id);
-        }
+        after_node_change(node_id);
         load_node_map();
     });
 }
@@ -1176,9 +1220,17 @@ exports.update_cluster = function (req, callback) {
             exports.new_history(h, callback);
             load_cluster_map();
         });
-
     });
 };
+
+exports.update_agenda = function(req, callback) {
+    var rec = req.data;
+    db.get_cluster(rec.id, function (err, data) {
+        if(err) return callback(err);
+        Agenda.update_job(data);
+    });
+    if(callback) callback();
+}
 
 exports.api_update_cluster = function (req, callback) {
     db.api_update_cluster(req, callback)
@@ -1193,6 +1245,7 @@ exports.delete_cluster = function (req, callback) {
             if (data2.length > 0) return callback(new Error("Cannot delete cluster - nodes are assigned to it."));
             db.delete_cluster(id, function (xerr) {
                 if (xerr) return callback(xerr);
+                Agenda.delete_job(data);
                 var user_full_name = username_map[req.session.user].full_name;
                 var cluster_name = data.name;
                 var h = {
@@ -1410,7 +1463,14 @@ exports.new_history = function (rec, callback) {
 }
 
 exports.add_sensor_measurement = function (rec, callback) {
-    db.add_sensor_measurement(rec, callback);
+    db.add_sensor_measurement(rec, function (err) {
+         if (err) return callback(err);
+         if (notify_after_sensor_scan) {
+            notify_after_sensor_scan(rec);
+        }
+        after_sensor_scan(rec);
+        callback();
+     });
 }
 
 ////////////////////////

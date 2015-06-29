@@ -29,7 +29,9 @@
     "morgan": "*",
     "cookie-parser": "*",
     "connect-mongo": "*",
-    "socket.io": "*"
+    "socket.io": "*",
+    "crypto": "*",
+    "agenda": "*"
   },
   "license": "GPL",
   "engines": {

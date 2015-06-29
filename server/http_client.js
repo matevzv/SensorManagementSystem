@@ -50,7 +50,7 @@ HttpClient.prototype.post_data = function (server, port, path, body, callback) {
         }
     };
 
-	var obj = get_correct_object(url);
+	var obj = get_correct_object(post_options.host);
     var post_req = obj.request(post_options, function (res) {
         res.setEncoding('utf8');
         res.on('data', function (chunk) {
@@ -59,6 +59,10 @@ HttpClient.prototype.post_data = function (server, port, path, body, callback) {
         res.on('error', function (err) {
             callback(err);
         });
+    });
+
+    post_req.on('error', function (err) {
+        console.log(err);
     });
 
     post_req.write(post_data);
