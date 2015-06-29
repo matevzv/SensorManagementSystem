@@ -2114,7 +2114,12 @@ Carvic.Model.ClustersModel = function () {
             tag: self.NewTag(),
             type: self.NewType(),
             url: self.NewUrl(),
-            comment: self.NewComment()
+            comment: self.NewComment(),
+            scan: false,
+            scheduling: "",
+            intervalUnit: "",
+            interval: "",
+            time: ""
         };
         Carvic.Utils.Post({ action: "add_cluster", data: d }, function (data) {
             self.Search();
@@ -2202,6 +2207,10 @@ Carvic.Model.ClusterModel = function () {
     self.Comment = ko.observable();
     self.LastScan = ko.observable();
     self.LastData = {};
+    self.Scheduling = ko.observable("");
+    self.IntervalUnit = ko.observable("");
+    self.Interval = ko.observable("");
+    self.Time = ko.observable("");
 
     self.ShowNodes = ko.observable(true);
     self.ShowHistory = ko.observable(false);
@@ -2249,6 +2258,10 @@ Carvic.Model.ClusterModel = function () {
             self.ClusterMapUrl("map.html?type=cluster&id=" + encodeURI(obj.id));
             self.Scan(obj.scan);
             self.Comment(obj.comment);
+            self.Scheduling(obj.scheduling);
+            self.IntervalUnit(obj.intervalUnit);
+            self.Interval(obj.interval);
+            self.Time(obj.time);
             if (obj.last_scan) {
                 self.LastScan(new Date(Date.parse(obj.last_scan)));
             }
@@ -2321,8 +2334,28 @@ Carvic.Model.ClusterModel = function () {
             alert(s);
             return;
         }
+        if (self.Scan() == true && self.Scheduling() === "")
+            return alert("Scheduling cannot be empty");
+        if (self.Scan() == true && self.Scheduling() === "recur_scheduling" && self.IntervalUnit() === "")
+            return alert("Interval unit cannot be empty");
+        if (self.Scan() == true && self.Scheduling() === "recur_scheduling" && self.IntervalUnit() !== "" && self.Interval() === "")
+            return alert("Interval cannot be empty");
+        if (self.Scan() == true && self.Scheduling() === "time_scheduling" && self.Time() === "")
+            return alert("Exact time cannot be empty");
+        if (self.Scan() == true && self.Scheduling() === "recur_scheduling"){
+            if (parseInt(self.Interval()) < 1)
+                return alert("Interval must be higher then 0");
+            var reg = new RegExp('^\\d+$');
+            if (!reg.test(self.Interval()))
+                return alert("Insert numbers only");
+        }
 
         var d = { id: self.LastData.id };
+        var agendaChange = false;
+        if(self.LastData.scan != self.Scan() || self.LastData.scheduling != self.Scheduling() || self.LastData.interval != self.Interval()
+        || self.LastData.time != self.Time() || self.LastData.intervalUnit != self.IntervalUnit())
+            agendaChange = true;
+
         if (self.LastData.type != self.Type())
             d.type = self.Type();
         if (self.LastData.tag != self.Tag())
@@ -2335,13 +2368,30 @@ Carvic.Model.ClusterModel = function () {
             d.scan = self.Scan();
         if (self.LastData.comment != self.Comment())
             d.comment = self.Comment();
-
+        if (self.LastData.scheduling != self.Scheduling())
+            d.scheduling = self.Scheduling();
+        if (self.LastData.interval != self.Interval())
+            d.interval = self.Interval();
+        if (self.LastData.time != self.Time())
+            d.time = self.Time();
+        if (self.LastData.intervalUnit != self.IntervalUnit())
+            d.intervalUnit = self.IntervalUnit();
         var req = { action: "update_cluster", data: d };
         Carvic.Utils.Post(req, function (data) {
-            var id = Carvic.Utils.GetUrlParam("id");
-            Carvic.Model.Cluster.Load(id);
+            if(agendaChange){
+                var req1 = { action: "update_agenda", data: d };
+                Carvic.Utils.Post(req1, function (data) {
+                    var id = Carvic.Utils.GetUrlParam("id");
+                    Carvic.Model.Cluster.Load(id);
+                    self.Editing(false);
+                });
+            }
+            else {
+                var id = Carvic.Utils.GetUrlParam("id");
+                Carvic.Model.Cluster.Load(id);
+                self.Editing(false);
+            }
         });
-        self.Editing(false);
     };
     self.CancelEditing = function () {
         self.Editing(false);

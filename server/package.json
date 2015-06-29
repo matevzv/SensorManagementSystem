@@ -30,6 +30,7 @@
     "cookie-parser": "*",
     "connect-mongo": "*",
     "crypto": "*",
+    "agenda": "^0.6.27",
     "redis": "*"
   },
   "license": "GPL",

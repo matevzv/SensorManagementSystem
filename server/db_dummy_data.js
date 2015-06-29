@@ -75,7 +75,11 @@ data.clusters.push({
     id: "10005",
     name: "Polica",
     type: "zigbee",
-    scan: true,
+    scan: false,
+    scheduling: "",
+    intervalUnit: "",
+    interval: "",
+    time: "",
     comment: "",
     url: "http://194.249.231.26:9004/communicator"
 });
@@ -83,7 +87,11 @@ data.clusters.push({
     id: "10003",
     name: "Vojkova",
     type: "zigbee",
-    scan: true,
+    scan: false,
+    scheduling: "",
+    intervalUnit: "",
+    interval: "",
+    time: "",
     comment: "",
     url: "http://194.249.231.26:9001/communicator"
 });
@@ -91,7 +99,11 @@ data.clusters.push({
     id: "X1",
     name: "Test IPv6",
     type: "ipv6",
-    scan: true,
+    scan: false,
+    scheduling: "",
+    intervalUnit: "",
+    interval: "",
+    time: "",
     comment: "",
     url: "e6hermes.ijs.si"
 });

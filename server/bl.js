@@ -1,6 +1,7 @@
 // "business logic" - all smart stuff is happening here, except scanning
 
 var async = require("async");
+var Agenda = require("./agenda_server");
 var utils_hash = require("./utils_hash");
 var xutil = require('./xutil');
 var crypto = require("crypto");
@@ -1172,9 +1173,17 @@ exports.update_cluster = function (req, callback) {
             exports.new_history(h, callback);
             load_cluster_map();
         });
-
     });
 };
+
+exports.update_agenda = function(req, callback) {
+    var rec = req.data;
+    db.get_cluster(rec.id, function (err, data) {
+        if(err) return callback(err);
+        Agenda.update_job(data);
+    });
+    if(callback) callback();
+}
 
 exports.api_update_cluster = function (req, callback) {
     db.api_update_cluster(req, callback)
@@ -1189,6 +1198,7 @@ exports.delete_cluster = function (req, callback) {
             if (data2.length > 0) return callback(new Error("Cannot delete cluster - nodes are assigned to it."));
             db.delete_cluster(id, function (xerr) {
                 if (xerr) return callback(xerr);
+                Agenda.delete_job(data);
                 var user_full_name = username_map[req.session.user].full_name;
                 var cluster_name = data.name;
                 var h = {
