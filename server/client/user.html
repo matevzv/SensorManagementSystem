@@ -122,6 +122,64 @@
                                 </div>
                             </div>
 
+                            <div class="form-horizontal">
+                                <div class="list-group">
+                                    <label class="control-label" for="inEn">Enabled</label>
+                                    <div>
+                                        <input type="checkbox" id="inEnabled" data-bind="checked: $root.Enabled, enable: $root.CurrentUserEditing()==true"></select>
+                                    </div>
+                               </div>
+                               <div class="list-group">
+                                <label class="control-label" for="inSe">Server</label>
+                                <div class="controls">
+                                    <span data-bind="text: $root.Server, visible: $root.CurrentUserEditing()==false"></span>
+                                    <input type="text" class="input form-control" id="inServer" placeholder="Insert server" data-bind="value: $root.Server, visible: $root.CurrentUserEditing()==true" name="server" />
+                                    
+                                </div>
+                            </div>
+                            <div class="list-group">
+                                <label class="control-label" for="inPo">Port</label>
+                                <div class="controls">
+                                    <span data-bind="text: $root.Port, visible: $root.CurrentUserEditing()==false"></span>
+                                    <input class="form-control" type="text" id="inPort" placeholder="Insert port" data-bind="value: $root.Port, visible: $root.CurrentUserEditing()==true" name="port" />
+                                </div>
+                            </div>
+                            <div class="list-group">
+                                <label class="control-label" for="inPas">Path after sensor scan</label>
+                                <div class="controls">
+                                    <span data-bind="text: $root.PathAfterSensorScan, visible: $root.CurrentUserEditing()==false"></span>
+                                    <input class="form-control" type="text" id="inPathAfterSensorScan" placeholder="path after sensor scan" data-bind="value: $root.PathAfterSensorScan, visible: $root.CurrentUserEditing()==true" name="path_after_sensor_scan" />
+                                </div>
+                            </div>
+                            <div class="list-group">
+                                <label class="control-label" for="inPanc">Path after node change</label>
+                                <div class="controls">
+                                <span data-bind="text: $root.PathAfterNodeChange, visible: $root.CurrentUserEditing()==false"></span>
+                                    <input class="form-control" type="text" id="inPathAfterNodeChange" placeholder="path after node change" data-bind="value: $root.PathAfterNodeChange, visible: $root.CurrentUserEditing()==true" name="path_after_node_change" />
+                                </div>
+                            </div>
+                            <div class="list-group">
+                                <label class="control-label" for="inPasc">Path after sensor change</label>
+                                <div class="controls">
+                                <span data-bind="text: $root.PathAfterSensorChange, visible: $root.CurrentUserEditing()==false"></span>
+                                    <input class="form-control" type="text" id="inPathAfterSensorChange" placeholder="path after sensor change" data-bind="value: $root.PathAfterSensorChange, visible: $root.CurrentUserEditing()==true" name="path_after_sensor_change" />
+                                </div>
+                            </div>
+                            <label class="control-label" for="inAnc">After node change</label>
+                            <div>
+                                <input type="checkbox" id="inAnc" data-bind="checked: $root.AfterNodeChange, enable: $root.CurrentUserEditing()==true"></select>
+                            </div>
+                            <label class="control-label" for="inAss">After sensor scan</label>
+                            <div>
+                                <input type="checkbox" id="inAss" data-bind="checked: $root.AfterSensorScan, enable: $root.CurrentUserEditing()==true"></select>
+                            </div>
+                            <label class="control-label" for="inAsc">After sensor change</label>
+                            <div>
+                                <input type="checkbox" id="inAsc" data-bind="checked: $root.AfterSensorChange, enable: $root.CurrentUserEditing()==true"></select>
+                            </div>
+                            </div>
+
+
                             <div class="list-group" data-bind="visible: $root.CurrentUserEditing()==true">
                                 <div class="controls">
                                     <button id="btnSaveNewUser" class="btn btn-default btn-primary" type="button" data-bind="click: $root.CurrentUserSave"><i class="glyphicon glyphicon-floppy-disk"></i> Save changes </button>
