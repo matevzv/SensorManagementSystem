@@ -416,7 +416,18 @@ Carvic.Model.UserModel = function () {
         LoginHistory: [],
         History: []
     });
+
     self.CurrentUserBackup = {};
+
+    self.Enabled = ko.observable(false);
+    self.Server = ko.observable("");
+    self.Port = ko.observable("");
+    self.PathAfterSensorScan = ko.observable("");
+    self.PathAfterNodeChange = ko.observable("");
+    self.PathAfterSensorChange = ko.observable("");
+    self.AfterNodeChange = ko.observable(false);
+    self.AfterSensorScan = ko.observable(false);
+    self.AfterSensorChange = ko.observable(false);
 
     self.EditUserPwd1 = ko.observable("");
     self.EditUserPwd2 = ko.observable("");
@@ -436,6 +447,40 @@ Carvic.Model.UserModel = function () {
         Status: ko.observable(""),
         Type: ko.observable("")
     });
+
+    self.ChangeNotify = function () {
+        var query = {
+            enabled: self.Enabled(),
+            server: self.Server(),
+            port: self.Port(),
+            path_after_sensor_scan: self.PathAfterSensorScan(),
+            path_after_node_change: self.PathAfterNodeChange(),
+            path_after_sensor_change: self.PathAfterSensorChange(),
+            after_node_change: self.AfterNodeChange(),
+            after_sensor_scan: self.AfterSensorScan(),
+            after_sensor_change: self.AfterSensorChange()
+        };
+        Carvic.Utils.Post({ action: "change_notify", data: query }, function (data) {
+            alert("Notify changed successfully");
+        });
+        
+    };
+
+    self.Load = function (username) {
+        var query = { username: username };
+        Carvic.Utils.Post({ action: "get_notify", data: query }, function (data) {
+            var obj = data;
+            self.Enabled(obj.enabled);
+            self.Server(obj.server);
+            self.Port(obj.port);
+            self.PathAfterSensorScan(obj.path_after_sensor_scan);
+            self.PathAfterNodeChange(obj.path_after_node_change);
+            self.PathAfterSensorChange(obj.path_after_sensor_change);
+            self.AfterNodeChange(obj.after_node_change);
+            self.AfterSensorScan(obj.after_sensor_scan);
+            self.AfterSensorChange(obj.after_sensor_change);
+        });
+    };
     
     self.getUserTypes = function (callback) {
         var d = {}
@@ -494,6 +539,28 @@ Carvic.Model.UserModel = function () {
     } 
     
     self.CurrentUserSave = function () {
+        if(!/^[0-9]*$/.test(self.Port())) {
+            alert("Only numbers in port section");
+            return;
+        }
+        if(self.Port() < 0 || self.Port() > 65535) {
+            alert("Port number must be between 0 and 65535");
+            return;
+        }
+        var query = {
+            username: self.CurrentUser().Username(),
+            enabled: self.Enabled(),
+            server: self.Server(),
+            port: self.Port(),
+            path_after_sensor_scan: self.PathAfterSensorScan(),
+            path_after_node_change: self.PathAfterNodeChange(),
+            path_after_sensor_change: self.PathAfterSensorChange(),
+            after_node_change: self.AfterNodeChange(),
+            after_sensor_scan: self.AfterSensorScan(),
+            after_sensor_change: self.AfterSensorChange()
+        };
+        Carvic.Utils.Post({ action: "change_notify", data: query }, function (data) {
+        });
 
         var errors = [];
         Carvic.Utils.CheckIfEmpty(self.CurrentUserEdit().FullName(), "Full name cannot be empty", errors);
@@ -647,6 +714,7 @@ Carvic.Model.UserModel = function () {
         self.ShowChanges(true);
     }
     self.getUserTypes( function() {
+        self.Load(Carvic.Utils.GetUrlParam("u"));
         self.getUserStatuses( function() {
             var id = Carvic.Utils.GetUrlParam("u");
             if (id)
@@ -654,7 +722,7 @@ Carvic.Model.UserModel = function () {
             else
                 Carvic.Model.User.LoadUser(5);
         });
-    });
+    })
 };
 
 ////////////////////////////////////////////////////////////////////
@@ -2617,9 +2685,9 @@ Carvic.InitUserList = function () {
 }
 
 Carvic.InitSingleUser = function () {
-    Carvic.Model.User = new Carvic.Model.UserModel();
-    Carvic.Utils.SetCurrentUser(Carvic.Model.User);
-}
+     Carvic.Model.User = new Carvic.Model.UserModel();
+     Carvic.Utils.SetCurrentUser(Carvic.Model.User);
+ }
 
 Carvic.InitComponentList = function () {
     Carvic.Model.Components = new Carvic.Model.ComponentsModel();
