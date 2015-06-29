@@ -1556,14 +1556,14 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
         if (d1 && d1 != "") {
           query.from = Carvic.Utils.ParseDate(d1).toISOString();
         } else {
-          alert("No begin date specified!");
+          alert("No begin date set!");
           return;
         }
         var d2 = self.To();
         if (d2 && d2 != "") {
           query.to = Carvic.Utils.ParseDate(d2).toISOString();
         } else {
-          alert("No end date specified!");
+          alert("No end date set!");
           return;
         }
         if (d2 && d2 != "") query.to = Carvic.Utils.ParseDate(d2).toISOString();
@@ -1582,13 +1582,13 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
             }
         };
         Carvic.Utils.Post(req, function(data) {
-            //console.log(JSON.stringify(data));
-            if (data.hasOwnProperty('error')) alert("No data!");
             var blob=new Blob([JSON.stringify(data)]);
             var link=document.createElement('a');
             link.href=window.URL.createObjectURL(blob);
             link.download=self.ID;
             link.click();
+        }, function(err) {
+            alert("No data!");
         });
     };
 

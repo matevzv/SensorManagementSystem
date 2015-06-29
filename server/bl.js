@@ -668,13 +668,13 @@ exports.get_node_history = function (req, callback) {
                     item.user_full_name = item.user;
                 }
             });
-            callback(null, data);
+            callback(err, data);
         }
     });
 };
 
 exports.download_measurements = function (req, callback) {
-    db.download_measurements(req, callback)
+    db.download_measurements(req, callback);
 };
 
 exports.get_all_node_statuses = function (res, callback) {

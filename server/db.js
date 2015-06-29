@@ -696,7 +696,7 @@ function download_measurements(req, callback) {
         else if (res.length == 0)
             callback({ error: "No measurements found.", status: 404 });
         else
-            callback(null, res);
+            callback(err, res);
     });
 };
 
