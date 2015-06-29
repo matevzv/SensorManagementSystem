@@ -153,7 +153,7 @@ function fill_dummy_data(callback) {
 /////////////////////////////////////////////////////////////////////////////////
 function init(options, callback) {
 
-    db = mongojs.connect(options.database.url, collections);
+    db = mongojs(options.database.url, collections);
     console.log("Connected to database " + options.database.url);
 
     // set up unique constraints
