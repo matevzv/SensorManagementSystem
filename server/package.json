@@ -19,10 +19,10 @@
   ],
   "dependencies": {
     "async": "*",
-    "body-parser": "^1.9.2",
-    "express": "^4.10.1",
+    "body-parser": "*",
+    "express": "*",
     "marked": "*",
-    "mongojs": "^0.15.1",
+    "mongojs": "*",
     "express-session": "*",
     "basic-auth-connect": "*",
     "serve-favicon": "*",
