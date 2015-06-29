@@ -13,7 +13,8 @@ var favicon = require('serve-favicon');
 var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var redis = require("redis");
-var crypto = require("crypto");
+//var crypto = require("crypto");
+//var db = require("./db");
 
 ///////////////////////////////////////////////////////////////////////////
 // Module variables
@@ -61,16 +62,17 @@ function log_url(req, res, next) {
 };
 
 function preprocess_api_calls(req, res, next) {
-    if (req.url.indexOf("/api/measurements/") == 0) {
+    if (req.url.indexOf("/api") == 0) {
         // rest-like url parser
-        var tmp_url = req.url.substr(17);
+        var tmp_url = req.url;
         req.body = xutil.parse_rest_request(tmp_url);
         req.body.action = "rest";
 
         //check token
         if(req.headers.authorization != null) {
             bl.get_users_token(req.headers.authorization, function(data) {
-                if (data[0] == null) res.json('Error: Specified token is not valid');
+                if(data.error) res.status(data.status).json(data.error)
+                else if (data[0] == null) res.status(401).json({ error: 'Specified token is not valid' });
                 else {
                     req.session.is_authenticated = true;
                     req.session.user = data[0].username;
@@ -78,9 +80,9 @@ function preprocess_api_calls(req, res, next) {
                 }
             });
         } else {
-            res.json("Error: Missing authentication token");
+            res.status(401).json("Error: Missing authentication token");
         }
-    } else if ((req.url.indexOf("/api/") == 0))  {
+    } /*else if ((req.url.indexOf("/api/") == 0))  {
         // rest-like url parser
         var tmp_url = req.url.substr(4);
         req.body = xutil.parse_rest_request(tmp_url);
@@ -95,7 +97,7 @@ function preprocess_api_calls(req, res, next) {
             req.session.user = req.remoteUser;
             next();
         });
-    } else if (req.url === "/handler" || req.url.indexOf("/handler?") === 0) {
+    }*/ else if (req.url === "/handler" || req.url.indexOf("/handler?") === 0) {
         json_parser(req, res, next);
     } else {
         body_parser(req, res, next);
@@ -161,15 +163,14 @@ function run() {
     app.use(morgan('dev'));
     app.use(cookieParser());    
     app.use(session({ secret: 'jcvsnasdovhjdsfanbdwkjv', saveUninitialized: true,
-                 resave: true, store: new MongoStore({ db: db_url , auto_reconnect: true, safe: true}) }));
+                 resave: true, store: new MongoStore({ db: db_url , autoReconnect: true, safe: true}) }));
     app.use(log_url);
     app.use(static_file_handler2);
     app.use(preprocess_api_calls);
     app.use(json_parser);
     app.use(body_parser);
 
-    // routes 
-
+    // routes
     app.get('/', function (req, res) {
         res.setHeader("Content-Type", "text/html");
         res.end(root_content);
@@ -209,43 +210,196 @@ function run() {
         res.setHeader("Content-Type", "text/html");
         res.end(help_content);
     });
-    app.post('/handler', ensure_authenticated, main_handler);    
-    app.route('/api/measurements/:measurement_id')
+    app.post('/handler', ensure_authenticated, main_handler);
+    
+    app.route('/api')
         .get(function(req, res) {
-            bl.get_sensor_measurement(req.params.measurement_id, function(callback) {
-                res.json(callback);
-            })
+            var response = {
+                "collections": [
+                    {
+                        "name": "nodes",
+                        "href": "/nodes"
+                    },
+                    {
+                        "name": "clusters",
+                        "href": "/clusters"
+                    },
+                    {
+                        "name": "sensors",
+                        "href": "/sensors"
+                    },
+                    {
+                        "name": "measurements",
+                        "href": "/measurements"
+                    }
+                ]
+            }
+            res.json(response);
         })
-        .put(function(req, res) {
-            bl.update_sensor_measurement(req, function(callback) {
-                res.json(callback);
-            })
-        })
-        .delete(function(req, res) {
-            bl.delete_sensor_measurement(req.params.measurement_id, function(callback) {
-                res.json(callback);
-            })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET').json( req.method + ' method is not supported.' );
         });
+
     app.route('/api/measurements')
+        .get(function(req, res) {
+            bl.get_all_measurements(req, function(callback) {
+                if (callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback);
+            });
+        })
         .post(function(req, res) {
             if (!req.body.ts) {
                 req.body.ts = new Date();
             }
-            bl.add_sensor_measurement(req.body, function(err) {
-                if(err) res.send(err);
-                else res.json( 'Successfully added the following measurement.' + 'Sensor: ' + req.body.sensor + ', node: ' + req.body.node + ', timestamp: ' + req.body.ts + ', sys_data: ' + req.body.sys_data + ", value: " + req.body.value );
+            bl.add_sensor_measurement(req.body, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.status(callback.status).json(callback.message);
             });
         })
-        .get(function(req, res) {
-            bl.get_all_sensor_history(function(err, measurements) {
-                if(err)
-                    res.send(err);
-                res.json(measurements);
-            });
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,POST').json( req.method + ' method is not supported.' );
         });
-
+    app.route('/api/measurements/:measurement_id')
+        .get(function(req, res) {
+            bl.get_sensor_measurement(req.params.measurement_id, function(callback) {
+                if (callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback);
+            })
+        })
+        .put(function(req, res) {
+            bl.update_sensor_measurement(req, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
+            })
+        })
+        .delete(function(req, res) {
+            bl.delete_sensor_measurement(req.params.measurement_id, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
+            })
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,PUT,DELETE').json( req.method + ' method is not supported.' );
+        });
+    app.route('/api/nodes')
+        .get(function(req, res) {
+            bl.api_get_nodes(req, function(callback) {
+                if (callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback);
+            });
+        })
+        .post(function(req, res) {
+            bl.api_add_node(req.body, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.status(callback.status).json(callback.message);
+            })
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,POST').json( req.method + ' method is not supported.' );
+        });
+    app.route('/api/nodes/:node_id')
+        .get(function(req, res) {
+            bl.api_get_node(req.params.node_id, function (callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback);
+            })
+        })
+        .put(function(req, res) {
+            bl.api_update_node(req, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
+            })
+        })
+        .delete(function(req, res) {
+            bl.api_delete_node(req.params.node_id, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
+            })
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,PUT,DELETE').json( req.method + ' method is not supported.' );
+        });
+    app.route('/api/clusters')
+        .get(function(req, res) {
+            bl.api_get_clusters(function (err, clusters) {
+                if (err) return res.json(err);
+                res.json(clusters);
+            });
+        })
+        .post(function(req, res) {
+            bl.api_add_cluster(req.body, function(callback) {
+                if(callback) res.status(callback.status).json(callback.message);
+                else res.status(201).json( 'Successfully added the measurement.' );
+            });
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,POST').json( req.method + ' method is not supported.' );
+        });
+    app.route('/api/clusters/:cluster_id')
+        .get(function(req, res) {
+            bl.api_get_cluster(req.params.cluster_id, function (callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback);
+            })
+        })
+        .put(function(req, res) {
+            bl.api_update_cluster(req, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
+            })
+        })
+        .delete(function(req, res) {
+            bl.api_delete_cluster(req.params.cluster_id, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
+            })
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,PUT,DELETE').json( req.method + ' method is not supported.' );
+        });
+    app.route('/api/sensors')
+        .get(function(req, res) {
+            bl.get_sensors(req, function (callback) {
+                if (callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback);
+            });
+        })
+        .post(function(req, res) {
+            bl.add_sensor(req.body, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.status(callback.status).json(callback.message)
+            });
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,POST').json( req.method + ' method is not supported.' );
+        });
+    app.route('/api/sensors/:sensor_id')
+        .get(function(req, res) {
+            bl.get_sensor(req.params.sensor_id, function(callback) {
+                if (callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback);
+            })
+        })
+        .put(function(req, res) {
+            bl.update_sensor(req, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
+            })
+        })
+        .delete(function(req, res) {
+            bl.delete_sensor(req.params.sensor_id, function(callback) {
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.json(callback.message);
+            })
+        })
+        .all(function(req, res) {
+            res.status(405).header('Access-Control-Allow-Methods', 'GET,PUT,DELETE').json( req.method + ' method is not supported.' );
+        });
     app.get('/api/*', main_handler);
     app.post('/api/*', main_handler);
+    app.use(function(err, req, res, next) {
+        res.status(404).json("The requested resource is not available");
+    });
     // ok, start the server
     app.listen(port);
     

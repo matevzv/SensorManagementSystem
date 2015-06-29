@@ -26,7 +26,7 @@ var collection_components = "components";
 var collection_clusters = "clusters";
 var collection_nodes = "nodes";
 var collection_history = "history";
-var collection_sensor_history = "sensor_history";
+var collection_measurements = "measurements";
 var collection_component_types = "component_types";
 var collection_cluster_types = "cluster_types";
 var collection_component_statuses = "component_statuses";
@@ -34,6 +34,7 @@ var collection_node_roles = "node_roles";
 var collection_node_statuses = "node_statuses";
 var collection_user_statuses = "user_statuses";
 var collection_user_types = "user_types";
+var collection_sensors = "sensors";
 
 var collections = [
     collection_users,
@@ -43,14 +44,15 @@ var collections = [
     collection_clusters,
     collection_nodes,
     collection_history,
-    collection_sensor_history,
+    collection_measurements,
     collection_component_types,
     collection_cluster_types,
     collection_component_statuses,
     collection_node_roles,
     collection_node_statuses,
     collection_user_statuses,
-    collection_user_types
+    collection_user_types,
+    collection_sensors
 ];
 
 
@@ -120,7 +122,7 @@ function fill_dummy_data(callback) {
     loop(data.components, collection_components);
     loop(data.clusters, collection_clusters);
     loop(data.nodes, collection_nodes);
-    loop(data.sensor_history, collection_sensor_history);
+    loop(data.measurements, collection_measurements);
     loop(data.users, collection_users, true);
     loop(data.logins, collection_logins);
     loop(data.history, collection_history);
@@ -131,6 +133,7 @@ function fill_dummy_data(callback) {
     loop(data.node_statuses, collection_node_statuses);
     loop(data.user_statuses, collection_user_statuses);
     loop(data.user_types, collection_user_types);
+    loop(data.sensors, collection_sensors);
     
 
     var calls = [];
@@ -165,7 +168,7 @@ function init(options, callback) {
     db[collection_history].ensureIndex({ user: 1, ts: -1 });
     db[collection_history].ensureIndex({ node: 1, ts: -1 });
     db[collection_history].ensureIndex({ ts: -1 });
-    db[collection_sensor_history].ensureIndex({ sensor: 1, ts: -1 });
+    db[collection_measurements].ensureIndex({ sensor: 1, ts: -1 });
 
     // make correction of corrupted data
     db[collection_users].update({ type: null }, { $set: { type: "normal"} });
@@ -218,12 +221,38 @@ function add_cluster(rec, callback) {
     });
 };
 
-function update_cluster(id, rec, callback) {
-    var query = { id: id };
-    db[collection_clusters].update(query, { $set: rec }, null, function (err, res) {
-        callback(err);
+function api_add_cluster(rec, callback) {
+    db[collection_clusters].insert(rec, function (err, res) {
+        if (err) return callback(err);
+        else callback({ message: 'Cluster successfully added!', status: 201 });
     });
+}
+
+function update_cluster(id, rec, callback) {
+    var query = { id: id };    
+    if(Object.keys(rec).length > 0) {
+        db[collection_clusters].update(query, { $set: rec }, null, function (err, res) {
+            if (err) return callback(err);
+            else if (res.n)
+                callback({ message: 'Cluster successfully updated!' });
+            else    
+                callback({ message: 'Cluster not found!' });
+        });
+    } else {
+        callback({ message: 'No changes to the cluster were made!' });
+    }
 };
+
+function api_update_cluster(rec, callback) {
+    if (rec.params.cluster_id.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Cluster ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_clusters].update( { _id: mongojs.ObjectId(rec.params.cluster_id) }, { $set: rec.body }, function (err, res) {
+        if (err) return callback({ status: 500 });
+		else if (res.n)
+            callback({ message: 'Cluster successfully updated!' });
+        else
+			callback({ error: 'Cluster ID not found!', status: 404 });
+    });
+}
 
 function get_all_cluster_types(callback){
     db[collection_cluster_types].find({}, { _id: 0 }).toArray(function (err, docs) {
@@ -235,6 +264,17 @@ function get_all_cluster_types(callback){
 function delete_cluster(id, callback) {
     db[collection_clusters].remove({ id: id }, callback);
 };
+
+function api_delete_cluster(rec, callback) {
+    if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Cluster ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_clusters].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+        if (err) return callback(err);
+        else if (res.n)
+            callback({ message: 'Cluster successfully deleted!' });
+        else
+            callback({ error: 'Cluster ID not found!', status: 404 });
+    });
+}
 
 function get_cluster(id, callback) {
     var query = { id: id };
@@ -249,6 +289,17 @@ function get_cluster(id, callback) {
     });
 };
 
+
+function api_get_cluster(rec, callback) {
+    if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Cluster ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_clusters].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+        if (err) return callback(err);
+		else if (res.length == 0)
+            callback({ error: "Cluster ID not found.", status: 404 }); //??
+        else
+			callback(res);
+    });
+}
 
 function get_clusters(query, callback) {
     db[collection_clusters].find(query, function (err, docs) {
@@ -393,7 +444,7 @@ function update_node(id, rec, callback) {
 function delete_node(id, callback) {
     db[collection_nodes].remove({ id: id }, function (err) {
         if (err) return callback(err);
-        db[collection_sensor_history].remove({ node: id }, callback);
+        db[collection_measurements].remove({ node: id }, callback);
     });
 };
 
@@ -403,12 +454,57 @@ function get_node(id, callback) {
         if (err) {
             callback(err);
         } else if (!docs || docs.length === 0) {
-            callback(new Error("Node with specified id not found: " + id));
+            callback( { error: "Node with specified id not found!" } );
         } else {
             callback(null, docs[0]);
         }
     });
 };
+
+function api_get_nodes(req, callback) {
+    var query = {};
+    if (req.query.cluster_id) query.cluster_id = req.query.cluster_id;
+    db[collection_nodes].find(query).sort({ ts: -1 }).toArray(function (err, res) {
+        if (err) return callback(err);
+		else if (res.length == 0)
+            callback({ error: "No nodes found.", status: 404 });
+        else
+			callback(res);
+    });
+};
+
+function api_get_node(rec, callback) {
+    if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Node ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_nodes].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+        if (err) return callback(err);
+		else if (res.length == 0)
+            callback({ error: "Node ID not found.", status: 404 });
+        else
+			callback(res);
+    });
+};
+
+function api_update_node(rec, callback) {
+    if (rec.params.node_id.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Node ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_nodes].update( { _id: mongojs.ObjectId(rec.params.node_id) }, { $set: rec.body }, function (err, res) {
+        if (err) return callback({ status: 500 });
+		else if (res.n)
+            callback({ message: 'Node successfully updated!' });
+        else
+			callback({ error: 'Node ID not found!', status: 404 });
+    });
+}
+
+function api_delete_node(rec, callback) {
+    if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Node ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_nodes].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+        if (err) return callback(err);
+        else if (res.n)
+            callback({ message: 'Node successfully deleted!' });
+        else
+            callback({ error: 'Node ID not found!', status: 404 });
+    });
+}
 
 function get_node_history(id, callback) {
     var query = { node: id };
@@ -472,42 +568,114 @@ function get_node_clusters(callback) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-
-function get_sensor(node_id, id, callback) {
-    get_node(node_id, function (err, data) {
-        if (err) {
-            callback(err);
-        } else {
-            for (var i = 0; i < data.sensors.length; i++) {
-                if (data.sensors[i].id === id) {
-                    callback(null, node.sensors[i]);
-                    return;
-                }
-            }
-            callback(new Error("Sensor with specified ID not found: node=" + node_id + ", id=" + id));
-        }
+function get_sensors(req, callback) {
+    var query = {};
+    if (req.query.node_id) query.node_id = req.query.node_id;
+    db[collection_sensors].find(query).sort({ ts: -1 }).toArray(function (err, res) {
+        if (err) return callback(err);
+		else if (res.length == 0)
+            callback({ error: "No measurements found.", status: 404 });
+        else
+			callback(res);
     });
 };
+
+function get_sensor(rec, callback) {
+    if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Sensor ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else {
+        db[collection_sensors].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+            if (err) return callback(err);
+            else if (res.length == 0)
+                callback({ error: "Sensor ID not found.", status: 404 });
+            else {
+                callback(res);
+            }
+        });
+    }
+}
+
+function add_sensor(rec, callback) {
+    if (rec.id == null || rec.type == null || rec.quantity == null || rec.unit == null || rec.node_id == null) {
+        callback({ error: "Incomplete request body. Must include 'id', 'quantity', 'unit', 'type' and 'node_id' fields.", status: 400 });
+    } else {
+        db[collection_sensors].insert(rec, function (err, res) {
+            if (err) return callback({ error: "Sensor could not be added" + err, status: 500 });
+            else callback({ message: 'Sensor successfully added!', status: 201 });
+        });
+    }
+}
+
+function update_sensor(rec, callback) {
+    if (rec.params.sensor_id.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Sensor ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_sensors].update( { _id: mongojs.ObjectId(rec.params.sensor_id) }, { $set: rec.body }, function (err, res) {
+        if (err) return callback({ status: 500 });
+		else if (res.n)
+            callback({ message: 'Sensor successfully updated!' });
+        else
+			callback({ error: 'Sensor ID not found!', status: 404 });
+    });
+}
+
+function delete_sensor(rec, callback) {
+    if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Sensor ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_sensors].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+        if (err) return callback(err);
+        else if (res.n)
+            callback({ message: 'Sensor successfully deleted!' });
+        else
+            callback({ error: 'Sensor ID not found!', status: 404 });
+    });
+}
 
 function get_sensors_for_node(node_id, callback) {
-    get_node(node_id, function (err, node) {
+    /*get_node(node_id, function (err, node) {
         if (err) return callback(err);
         callback(null, node.sensors);
-    });
-};
-
-function get_sensor_history(node_id, id, callback) {
-    var query = { sensor: id, node: node_id };
-    db[collection_sensor_history].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
+    });*/
+    var query = { node: node_id };
+    db[collection_sensors].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
         if (err) return callback(err);
         callback(null, docs);
     });
 };
 
-function get_all_sensor_history(callback) {
-    db[collection_sensor_history].find().sort({ ts: -1 }).toArray(function (err, docs) {
+function get_sensors_for_node2(node_id, callback) {
+    var query = { node_id: node_id };
+    db[collection_sensors].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
         if (err) return callback(err);
-        callback(docs);
+        callback(null, docs);
+    });
+};
+
+function get_sensor_history(node_id, id, callback) {
+    var query = { sensor: id, node: node_id };
+    db[collection_measurements].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
+};
+
+function get_all_measurements(req, callback) {
+    var query = {};
+    if (req.query.node_id) query.node_id = req.query.node_id;
+    if (req.query.node) query.node = Number(req.query.node);
+    if (req.query.sensor) query.sensor = req.query.sensor;
+    if (req.query.sensor_id) query.sensor_id = req.query.sensor_id;
+    if (req.query.from || req.query.to) {
+        query.ts = {};
+        if (req.query.from) {
+            query.ts.$gte = new Date(req.query.from);
+        }
+        if (req.query.to) {
+            query.ts.$lte = new Date(req.query.to);
+        }
+    }
+    db[collection_measurements].find(query).sort({ ts: -1 }).toArray(function (err, res) {
+        if (err) return callback(err);
+		else if (res.length == 0)
+            callback({ error: "No measurements found.", status: 404 });
+        else
+			callback(res);
     });
 };
 
@@ -519,42 +687,46 @@ function update_sensors_for_node(node_id, sensors, callback) {
 };
 
 function add_sensor_measurement(rec, callback) {
-    db[collection_sensor_history].insert(rec, function (err, res) {
-        if (err) return callback(err);
-        else callback({ message: 'Measurement successfully added!' });
-    });
+    if (rec.sensor_id == null || rec.node_id == null || rec.value == null) {
+        callback({ error: "Incomplete request body. Must include 'sensor_id', 'node_id'' and 'value' fields.", status: 400 });
+    } else {
+        db[collection_measurements].insert(rec, function (err, res) {
+            if (err) return callback(err);
+            else callback({ message: 'Measurement successfully added!', status: 201 });
+        });
+    }
 }
 
 function get_sensor_measurement(rec, callback) {
-    if (rec.length != 24) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters" });
-    else db[collection_sensor_history].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+    if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_measurements].find( { _id: mongojs.ObjectId(rec) }, function (err, res) {
         if (err) return callback(err);
 		else if (res.length == 0)
-            callback({ message: 'Measurement not found!' });
+            callback({ error: "Measurement ID not found.", status: 404 }); //??
         else
 			callback(res);
     });
 }
 
 function update_sensor_measurement(rec, callback) {
-    if (rec.params.measurement_id.length != 24) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters" });
-    else db[collection_sensor_history].update( { _id: mongojs.ObjectId(rec.params.measurement_id) }, { $set: rec.body }, function (err, res) {
-        if (err) return callback(err);
+    if (rec.params.measurement_id.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_measurements].update( { _id: mongojs.ObjectId(rec.params.measurement_id) }, { $set: rec.body }, function (err, res) {
+        if (err) return callback({ status: 500 });
 		else if (res.n)
             callback({ message: 'Measurement successfully updated!' });
         else
-			callback({ message: 'Measurement not found!' });
+			callback({ error: 'Measurement not found!', status: 404 });
     });
 }
 
 function delete_sensor_measurement(rec, callback) {
-    if (rec.length != 24) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters" });
-    else db[collection_sensor_history].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
+    if (rec.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Measurement ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
+    else db[collection_measurements].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
         if (err) return callback(err);
         else if (res.n)
-				callback({ message: 'Measurement successfully deleted!' });
-			else
-				callback({ message: 'Measurement not found!' });
+            callback({ message: 'Measurement successfully deleted!' });
+        else
+            callback({ error: 'Measurement ID not found!', status: 404 });
     });
 }
 
@@ -576,8 +748,8 @@ function new_user(rec, callback) {
 
 function update_user(username, rec, callback) {
     var query = { username: username };
-    db[collection_users].update(query, { $set: rec }, null, function (err, res) {
-        callback(err, {});
+    db[collection_users].update(query, { $set: rec }, null, function (err) {
+        callback(err);
     });
 };
 
@@ -638,7 +810,7 @@ function get_users_token(req, callback) {
         if (err) {
             callback(err);
         } else if (!docs || docs.length === 0) {
-            callback(new Error("Specified token is not valid: " + req));
+            callback({ error: "Specified token is not valid.", status: 401 });
         } else {
             callback(docs);
         }
@@ -869,7 +1041,7 @@ function archive_single_tab(col_name, query, fname, callback) {
 
 function archive_sensors(file_name, callback) {
     if (archive_dt_measurement != null) {
-        archive_single_tab(collection_sensor_history, { ts: { $lt: archive_dt_measurement} }, file_name + "_sensor_history", callback);
+        archive_single_tab(collection_measurements, { ts: { $lt: archive_dt_measurement} }, file_name + "_measurements", callback);
     } else {
         callback();
     }
@@ -892,7 +1064,7 @@ function archive_scans(file_name, callback) {
         archive_single_tab(
             collection_history,
             { ts: { $lt: archive_dt_scan }, code: { $in: scan_codes} },
-            file_name + "_sensor_history",
+            file_name + "_measurements",
             callback);
     } else {
         callback();
@@ -942,6 +1114,10 @@ exports.get_cluster = get_cluster;
 exports.get_clusters = get_clusters;
 exports.get_cluster_history = get_cluster_history;
 exports.get_all_cluster_types = get_all_cluster_types;
+exports.api_get_cluster = api_get_cluster;
+exports.api_add_cluster = api_add_cluster;
+exports.api_update_cluster = api_update_cluster;
+exports.api_delete_cluster = api_delete_cluster;
 
 exports.add_component = add_component;
 exports.add_component_type = add_component_type;
@@ -964,6 +1140,10 @@ exports.add_node = add_node;
 exports.update_node = update_node;
 exports.delete_node = delete_node;
 exports.get_node = get_node;
+exports.api_get_nodes = api_get_nodes;
+exports.api_get_node = api_get_node;
+exports.api_update_node = api_update_node;
+exports.api_delete_node = api_delete_node;
 exports.get_node_history = get_node_history;
 exports.get_nodes = get_nodes;
 exports.get_nodes2 = get_nodes2;
@@ -972,19 +1152,21 @@ exports.get_node_clusters = get_node_clusters;
 exports.get_all_node_statuses = get_all_node_statuses;
 exports.get_all_node_roles = get_all_node_roles;
 
+exports.get_sensors = get_sensors;
 exports.get_sensor = get_sensor;
 exports.get_sensors_for_node = get_sensors_for_node;
+exports.get_sensors_for_node2 = get_sensors_for_node2;
 exports.get_sensor_history = get_sensor_history;
-exports.get_all_sensor_history = get_all_sensor_history;
+exports.get_all_measurements = get_all_measurements;
 exports.update_sensors_for_node = update_sensors_for_node;
 exports.add_sensor_measurement = add_sensor_measurement;
 exports.get_sensor_measurement = get_sensor_measurement;
 exports.update_sensor_measurement = update_sensor_measurement;
 exports.delete_sensor_measurement = delete_sensor_measurement;
 
-//exports.add_sensor = add_sensor;
-//exports.update_sensor = update_sensor;
-//exports.remove_sensor = remove_sensor;
+exports.add_sensor = add_sensor;
+exports.update_sensor = update_sensor;
+exports.delete_sensor = delete_sensor;
 
 exports.new_user = new_user;
 exports.update_user = update_user;

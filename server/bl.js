@@ -251,12 +251,10 @@ exports.get_cluster_stats = function (req, callback) {
 };
 
 exports.change_pwd = function (req, callback) {
-    var username = req.session.user;
-
+    var username = req.data.username;
     if (req.data.username) {
         if (!is_user_admin(req.session.user))
             return callback(new Error("Current user (" + req.session.user + ") is not admin and cannot change other user's password."));
-        username = req.data.username;
     }
     if (req.data.pwd1 !== req.data.pwd2)
         return callback(new Error("Entered passwords don't match"));
@@ -265,20 +263,14 @@ exports.change_pwd = function (req, callback) {
     var rec = {
         pwd_hash: utils_hash.create_pwd_hash(req.data.pwd1)
     };
-    db.update_user(username, rec, function (err, data2) {
-        callback(err, {});
+    db.update_user(username, rec, function (err) {
+        callback(err);
     });
 };
 
 exports.change_notify = function (req, callback) {
     var rec = req.data;
-    if(!/^[0-9]*$/.test(rec.port)) {
-        return callback(new Error("Only numbers in port section"));
-    }
-    if(rec.port < 0 || rec.port > 65535) {
-        return callback(new Error("Port number must be between 0 and 65535"));
-    }
-    db.update_notify(req.session.user, rec, function (err, data2) {
+    db.update_notify(rec.username, rec, function (err, data2) {
         var h = {
             node: null,
             user: req.session.user,
@@ -307,7 +299,7 @@ exports.change_my_full_name = function (req, callback) {
     var rec = {
         full_name: req.data.full_name
     };
-    db.update_user(req.session.user, rec, function (err, data2) {
+    db.update_user(req.session.user, rec, function (res) {
         var h = {
             node: null,
             user: req.session.user,
@@ -409,10 +401,40 @@ exports.update_user = function (req, callback) {
         for (var i in rec2) {
             changes.push("" + i + " [" + data[i] + " -> " + rec2[i] + "]");
         }
-        db.update_user(rec.username, rec2, function (err, data2) {
+        db.update_user(rec.username, rec2, function (res) {
             var h = {
                 node: null,
                 user: rec.username,
+                status: rec2.status,
+                code: "user_change",
+                ts: new Date(),
+                title: "User '" + data.full_name + "' updated",
+                description: "User '" + data.full_name + "' (" + rec.username + ") was updated - " + changes.join(", "),
+                sys_data: rec
+            };
+            db.new_history(h, callback);
+            load_username_map();
+        });
+    });
+};
+
+exports.regenerate_token = function (req, callback) {
+    var rec = req.data;
+    rec.token = crypto.randomBytes(24).toString('base64');
+    var rec2 = { token: "" };
+    xutil.override_members(rec, rec2, false);
+    xutil.remove_empty_members(rec2);
+    db.get_user(rec.username, function (err, data) {
+        if (err) return callback(err);
+        var changes = [];
+        for (var i in rec2) {
+            changes.push("" + i + " [" + data[i] + " -> " + rec2[i] + "]");
+        }
+        db.update_user(rec.username, rec2, function (res) {
+            var h = {
+                node: null,
+                user: rec.username,
+                token: rec2.token,
                 status: rec2.status,
                 code: "user_change",
                 ts: new Date(),
@@ -453,30 +475,50 @@ exports.delete_user = function (req, callback) {
 exports.add_node = function (req, callback) {
     db.get_max_node_id(function (err, max_id) {
         if (err) return callback(err);
-        
-		var rec = req.data;
-		rec.id = Number(max_id) + 1;
-		db.add_node(req.data, function (err2, data2) {
-			if (err2) return callback(err2);
-			var h = {
-				node: rec.id,
-				cluster: rec.cluster,
-				user: req.session.user,
-				status: rec.status,
-				code: "node_change",
-				ts: new Date(),
-				title: "Node '" + rec.name + "' (" + rec.id + ") created",
-				description: "Node '" + rec.name + "' (" + rec.id + ") was successfully created.",
-				sys_data: rec
-			};
+        var rec = req.data;
+        rec.id = Number(max_id) + 1;
+        console.log("this is the new maxId:", rec.id);
+        db.add_node(req.data, function (err2, data2) {
+            if (err2) return callback(err2);
+            var h = {
+                node: rec.id,
+                cluster: rec.cluster,
+                user: req.session.user,
+                status: rec.status,
+                code: "node_change",
+                ts: new Date(),
+                title: "Node '" + rec.name + "' (" + rec.id + ") created",
+                description: "Node '" + rec.name + "' (" + rec.id + ") was successfully created.",
+                sys_data: rec
+            };
+            db.new_history(h, function (err) {
+                if (err) return callback(err);
+                callback(null, { id: rec.id });
+            });
+            after_node_change(rec.id);
+            load_node_map();
+        });
+    });
+};
 
-			db.new_history(h, function (err) {
-				if (err) return callback(err);
-				callback(null, { id: rec.id });
-			});
-			after_node_change(rec.id);
-			load_node_map();
-		});
+exports.api_add_node = function (req, callback) {
+    if (req.name == null || req.cluster == null) {
+        callback({ error: "Incomplete request body. Must include 'name', 'cluster'' and ... fields.", status: 400 });
+    }
+    db.get_max_node_id(function (err, max_id) {
+        if (err) return callback(err);
+        var rec = req;
+        rec.id = Number(max_id) + 1;
+        console.log("this is the new maxId:", rec.id);
+        if (rec.status == null) rec.status = "unknown";
+        db.add_node(rec, function (err2, data2) {
+            if (err2) return callback(err2);
+            callback({ message: 'Node successfully added!', status: 201 });
+            if (notify_after_node_change) {
+                notify_after_node_change(rec.id);
+            }
+            //load_node_map();
+        });
     });
 };
 
@@ -496,6 +538,45 @@ exports.get_nodes = function (req, callback) {
         }
         callback(err, data);
     });
+};
+
+
+function load_node_map(callback) {
+    db.get_nodes({}, function (err, data) {
+        if (err) {
+            console.log("Error while loading node cache: " + err.message);
+            if (callback)
+                callback(err);
+        } else {
+            node_map = {};
+            data.forEach(function (item) {
+                node_map[item.id] = item;
+            });
+            if (callback)
+                callback(null);
+        }
+    });
+}
+
+
+exports.api_get_nodes = function (req, callback) {
+    db.api_get_nodes(req, function (nodes) {
+        if (nodes.error) return callback(nodes);
+        var res = [];
+        nodes.forEach(function (item) {
+            res.push({
+                _id: item._id,
+                name: item.name,
+                cluster_id: item.cluster_id,
+                cluster: (cluster_map[item.cluster] ? cluster_map[item.cluster].name : "")
+            });
+        });
+        callback(res);
+    });
+}
+
+exports.api_get_node = function (req, callback) {
+    db.api_get_node(req, callback)
 };
 
 exports.get_nodes2 = function (req, callback) {
@@ -563,6 +644,14 @@ exports.get_node = function (req, callback) {
         callback(err, data);
     });
 };
+
+exports.get_node_ids = function (callback) {
+    db.get_node_ids(function (err, data) {
+            if (err) return callback(err);
+            var res = { ids: data };
+            callback(null, res);
+        });
+}
 
 exports.check_component_for_multiple_nodes = function (req, callback) {
     var comp = req.data.component;
@@ -689,6 +778,10 @@ exports.update_node = function (req, callback) {
     });
 };
 
+exports.api_update_node = function (req, callback) {
+    db.api_update_node(req, callback)
+};
+
 exports.delete_node = function (req, callback) {
     if (!is_user_admin(req.session.user))
         return callback(error_not_admin(req.session.user));
@@ -722,6 +815,10 @@ exports.delete_node = function (req, callback) {
         after_node_change(node_id);
         load_node_map();
     });
+}
+
+exports.api_delete_node = function (req, callback) {
+    db.api_delete_node(req, callback)
 }
 
 //////////////////////////////////////////////////////////////////
@@ -1070,15 +1167,23 @@ exports.get_clusters = function (req, callback) {
     if (req.data.type) query.type = req.data.type;
 
     db.get_clusters(query, callback);
+ };
+
+exports.api_get_clusters = function (callback) {
+    db.get_clusters({}, callback);
 };
 
 exports.get_cluster = function (req, callback) {
     db.get_cluster(req.data.id, callback)
 };
 
+exports.api_get_cluster = function (req, callback) {
+    db.api_get_cluster(req, callback);
+};
+
 exports.update_cluster = function (req, callback) {
     var rec = req.data;
-    db.get_cluster(rec.orig_id, function (err, data) {
+    db.get_cluster(rec.id, function (err, data) {
         if (err) return callback(err);
         //console.log("#", rec, data);
 
@@ -1091,20 +1196,20 @@ exports.update_cluster = function (req, callback) {
             }
         }
         //console.log("##", rec2);
-        db.update_cluster(rec.orig_id, rec2, function (xerr) {
+        db.update_cluster(rec.id, rec2, function (xerr) {
             //console.log("###", xerr);
             if (xerr) return callback(xerr);
 
             load_cluster_map();
             var cluster_name = rec2.name || data.name;
             var h = {
-                cluster: rec.orig_id,
+                cluster: rec.id,
                 user: req.session.user,
                 status: "",
                 code: "cluster_update",
                 ts: new Date(),
-                title: "Cluster '" + cluster_name + "' (" + rec.orig_id + ") was updated",
-                description: "Cluster '" + cluster_name + "' (" + rec.orig_id + ") was updated - " + changes.join(", "),
+                title: "Cluster '" + cluster_name + "' (" + rec.id + ") was updated",
+                description: "Cluster '" + cluster_name + "' (" + rec.id + ") was updated - " + changes.join(", "),
                 sys_data: {}
             };
             exports.new_history(h, callback);
@@ -1114,12 +1219,16 @@ exports.update_cluster = function (req, callback) {
     });
 };
 
+exports.api_update_cluster = function (req, callback) {
+    db.api_update_cluster(req, callback)
+};
+
 exports.delete_cluster = function (req, callback) {
     var id = req.data.id;
     db.get_cluster(id, function (err, data) {
         if (err) return callback(err);
         db.get_nodes({ cluster: id }, function (err2, data2) {
-            if (err2) return callback(err);
+            if (err2) return callback(err2);
             if (data2.length > 0) return callback(new Error("Cannot delete cluster - nodes are assigned to it."));
             db.delete_cluster(id, function (xerr) {
                 if (xerr) return callback(xerr);
@@ -1140,6 +1249,10 @@ exports.delete_cluster = function (req, callback) {
             });
         });
     });
+};
+
+exports.api_delete_cluster = function (req, callback) {
+    db.api_delete_cluster(req, callback)
 };
 
 exports.add_cluster = function (req, callback) {
@@ -1212,6 +1325,10 @@ exports.add_cluster = function (req, callback) {
     });
 };
 
+exports.api_add_cluster = function (req, callback) {
+    db.api_add_cluster(req, callback)
+};
+
 exports.get_cluster_history = function (req, callback) {
     db.get_cluster_history(req.data.id, callback);
 };
@@ -1271,14 +1388,32 @@ exports.mark_node_scan = function (node_id, cluster_id, callback) {
 
 ///////////////////
 
+exports.get_sensors = function (req, callback) {
+    db.get_sensors(req, callback);
+};
+exports.get_sensor = function (req, callback) {
+    db.get_sensor(req, callback);
+};
+exports.add_sensor = function (req, callback) {
+    db.add_sensor(req, callback);
+}
+exports.update_sensor = function (req, callback) {
+    db.update_sensor(req, callback);
+}
+exports.delete_sensor = function (req, callback) {
+    db.delete_sensor(req, callback);
+}
 exports.get_sensors_for_node = function (req, callback) {
     db.get_sensors_for_node(req.data.node, callback)
 };
+exports.get_sensors_for_node2 = function (req, callback){
+    db.get_sensors_for_node2(req.data, callback);
+}
 exports.get_sensor_history = function (req, callback) {
     db.get_sensor_history(req.data.node, req.data.sensor, callback)
 };
-exports.get_all_sensor_history = function (callback) {
-    db.get_all_sensor_history(callback)
+exports.get_all_measurements = function (req, callback) {
+    db.get_all_measurements(req, callback)
 };
 exports.get_sensor_measurement = function (req, callback) {
     db.get_sensor_measurement(req, callback)
@@ -1315,10 +1450,13 @@ exports.new_history = function (rec, callback) {
 
 exports.add_sensor_measurement = function (rec, callback) {
     db.add_sensor_measurement(rec, function (err) {
-        if (err) return callback(err);
+         if (err) return callback(err);
+         if (notify_after_sensor_scan) {
+            notify_after_sensor_scan(rec);
+        }
         after_sensor_scan(rec);
         callback();
-    });
+     });
 }
 
 ////////////////////////
@@ -1396,50 +1534,17 @@ exports.get_history = function (req, callback) {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-exports.rest_nodeInfo = function (node_id, callback) {
-    db.get_node(node_id, function (err, data) {
-        if (err) return callback(err);
-        var res = {
-            id: data.id,
-            name: data.name,
-            cluster: data.cluster,
-            status: data.status,
-            long: data.loc_lon,
-            lat: data.loc_lat
-        };
-        callback(null, res);
+
+exports.node_data = function(req, callback) {
+    db.get_node(Number(req), function (err, data) {
+        if (err) {
+            return callback(err);
+        }
+        callback(data);
     });
 }
 
-exports.rest_nodeData = function (node_id, callback) {
-    db.get_node(node_id, function (err, data) {
-        if (err) return callback(err);
-        var res = {
-            id: data.id,
-            name: data.name,
-            cluster: data.cluster,
-            status: data.status,
-            long: data.loc_lon,
-            lat: data.loc_lat,
-            role: data.role,
-            scope: data.scope,
-            project: data.project,
-            user_comment: data.user_comment,
-            network_address: data.network_address,
-            network_address2: data.network_address2,
-            mac: data.mac,
-            serial_number: data.serial_number,
-            firmware: data.firmware,
-            bootloader: data.bootloader,
-            setup: data.setup,
-            box_label: data.box_label,
-            components: data.components
-        };
-        callback(null, res);
-    });
-}
-
-exports.rest_sensorInfo = function (node_id, callback) {
+/*exports.rest_sensorInfo = function (node_id, callback) {
     db.get_node(node_id, function (err, data) {
         if (err) return callback(err);
         var res_array = [];
@@ -1504,7 +1609,7 @@ exports.rest = function (req, callback) {
     } else {
         callback(new Error("Unsupported REST request: " + req.$url));
     }
-};
+};*/
 
 /////////////////////////////////////////////
 
