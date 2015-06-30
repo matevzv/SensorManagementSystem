@@ -1627,7 +1627,7 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
           alert("No begin date set!");
           return;
         }
-        var d2 = self.To()+ "T23:59:59.000Z";
+        var d2 = self.To() + "T23:59:59.000Z";
         if (d2 && d2 != "") {
           query.to = d2;
         } else {
