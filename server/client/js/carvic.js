@@ -1330,11 +1330,11 @@ Carvic.Model.SingleNodeModel = function () {
         self.ShowSensorChart(false);
         self.ShowDownloadSensorData(true);
         $('#begindate').datepicker({
-          format: "dd.mm.yyyy",
+          format: "yyyy-mm-dd",
           autoclose: true
         });
         $('#enddate').datepicker({
-          format: "dd.mm.yyyy",
+          format: "yyyy-mm-dd",
           autoclose: true
         });
     };
@@ -1620,21 +1620,20 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
 
     self.DownloadMeasurements = function() {
         var query = {};
-        var d1 = self.From();
+        var d1 = self.From() + "T00:00:00.000Z";
         if (d1 && d1 != "") {
-          query.from = Carvic.Utils.ParseDate(d1).toISOString();
+          query.from = d1;
         } else {
           alert("No begin date set!");
           return;
         }
-        var d2 = self.To();
+        var d2 = self.To()+ "T23:59:59.000Z";
         if (d2 && d2 != "") {
-          query.to = Carvic.Utils.ParseDate(d2).toISOString();
+          query.to = d2;
         } else {
           alert("No end date set!");
           return;
         }
-        if (d2 && d2 != "") query.to = Carvic.Utils.ParseDate(d2).toISOString();
         if (self.DownloadLimit() == "") {
           query.limit = 10000;
         } else {
