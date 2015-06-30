@@ -675,7 +675,7 @@ function get_all_measurements(req, callback) {
 
 function download_measurements(req, callback) {
     var query = {};
-    if (req.data.node_id) query.node_id = req.data.node_id;
+    if (req.data.sensor) query.sensor = req.data.sensor;
     if (req.data.from || req.data.to) {
         query.ts = {};
         if (req.data.from) {
