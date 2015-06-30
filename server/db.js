@@ -675,6 +675,7 @@ function get_all_measurements(req, callback) {
 
 function download_measurements(req, callback) {
     var query = {};
+    var excluded = { _id:0, sensor_id:0, node_id:0, node:0, sensor:0 };
     if (req.data.sensor) query.sensor = req.data.sensor;
     if (req.data.from || req.data.to) {
         query.ts = {};
@@ -685,7 +686,7 @@ function download_measurements(req, callback) {
             query.ts.$lte = req.data.to;
         }
     }
-    db[collection_measurements].find(query).limit(Number(req.data.limit)).sort({ ts: -1 }).toArray(function (err, res) {
+    db[collection_measurements].find(query, excluded).limit(Number(req.data.limit)).sort({ ts: -1 }).toArray(function (err, res) {
         if (err) return callback(err);
         else if (res.length == 0)
             callback({ error: "No measurements found.", status: 404 });
