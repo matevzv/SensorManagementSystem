@@ -514,10 +514,8 @@ exports.api_add_node = function (req, callback) {
         if (rec.status == null) rec.status = "unknown";
         db.add_node(rec, function (err2, data2) {
             if (err2) return callback(err2);
+            after_node_change(rec.id);
             callback({ message: 'Node successfully added!', status: 201 });
-            if (notify_after_node_change) {
-                notify_after_node_change(rec.id);
-            }
             //load_node_map();
         });
     });
@@ -577,7 +575,7 @@ exports.api_get_nodes = function (req, callback) {
 }
 
 exports.api_get_node = function (req, callback) {
-    db.api_get_node(req, callback)
+    db.api_get_node(req, callback);
 };
 
 exports.get_nodes2 = function (req, callback) {
@@ -780,7 +778,8 @@ exports.update_node = function (req, callback) {
 };
 
 exports.api_update_node = function (req, callback) {
-    db.api_update_node(req, callback)
+    db.api_update_node(req, callback);
+    after_node_change(req.params.node_id);
 };
 
 exports.delete_node = function (req, callback) {
@@ -819,7 +818,8 @@ exports.delete_node = function (req, callback) {
 }
 
 exports.api_delete_node = function (req, callback) {
-    db.api_delete_node(req, callback)
+    db.api_delete_node(req, callback);
+    after_node_change(req);
 }
 
 //////////////////////////////////////////////////////////////////
@@ -1229,7 +1229,7 @@ exports.update_agenda = function(req, callback) {
 }
 
 exports.api_update_cluster = function (req, callback) {
-    db.api_update_cluster(req, callback)
+    db.api_update_cluster(req, callback);
 };
 
 exports.delete_cluster = function (req, callback) {
@@ -1262,7 +1262,7 @@ exports.delete_cluster = function (req, callback) {
 };
 
 exports.api_delete_cluster = function (req, callback) {
-    db.api_delete_cluster(req, callback)
+    db.api_delete_cluster(req, callback);
 };
 
 exports.add_cluster = function (req, callback) {
@@ -1336,7 +1336,7 @@ exports.add_cluster = function (req, callback) {
 };
 
 exports.api_add_cluster = function (req, callback) {
-    db.api_add_cluster(req, callback)
+    db.api_add_cluster(req, callback);
 };
 
 exports.get_cluster_history = function (req, callback) {
@@ -1406,12 +1406,15 @@ exports.get_sensor = function (req, callback) {
 };
 exports.add_sensor = function (req, callback) {
     db.add_sensor(req, callback);
+    after_sensor_change(req.id);
 }
 exports.update_sensor = function (req, callback) {
     db.update_sensor(req, callback);
+    after_sensor_change(req.params.sensor_id);
 }
 exports.delete_sensor = function (req, callback) {
     db.delete_sensor(req, callback);
+    after_sensor_change(req);
 }
 exports.get_sensors_for_node = function (req, callback) {
     db.get_sensors_for_node(req.data.node, callback)
@@ -1460,10 +1463,7 @@ exports.new_history = function (rec, callback) {
 
 exports.add_sensor_measurement = function (rec, callback) {
     db.add_sensor_measurement(rec, function (err) {
-         if (err) return callback(err);
-         if (notify_after_sensor_scan) {
-            notify_after_sensor_scan(rec);
-        }
+        if (err) return callback(err);
         after_sensor_scan(rec);
         callback();
      });
