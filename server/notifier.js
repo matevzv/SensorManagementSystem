@@ -5,9 +5,9 @@ var http_client_lib = new require('./http_client');
 
 var db = null;
 
-function after_sensor_scan(node_id, sensor_id, options, callback) {
+function after_sensor_scan(node_id, sensor_id, measurement_ts, options, callback) {
     callback = callback || function () { };
-    bl.rest_sensorData(node_id, sensor_id, function (err, data) {
+    bl.rest_sensorData(node_id, sensor_id, measurement_ts, function (err, data) {
         if (err) {
             if (callback) return callback(err);
             return;
@@ -26,7 +26,7 @@ function after_sensor_scan(node_id, sensor_id, options, callback) {
 
 function after_node_change(node_id, options, callback) {
     callback = callback || function () { };
-    bl.rest_nodeData(node_id, function (err, data) {
+    bl.node_data(node_id, function (err, data) {
         if (err) {
             if (callback) return callback(err);
             return;

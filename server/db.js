@@ -647,6 +647,14 @@ function get_sensor_history(node_id, id, callback) {
     });
 };
 
+function get_sensor_history2(node_id, id, ts, callback) {
+    var query = { sensor: id, node: node_id, ts: ts };
+    db[collection_measurements].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
+};
+
 function get_all_measurements(req, callback) {
     var query = {};
     if (req.query.node_id) query.node_id = req.query.node_id;
@@ -679,14 +687,10 @@ function update_sensors_for_node(node_id, sensors, callback) {
 };
 
 function add_sensor_measurement(rec, callback) {
-    if (rec.sensor_id == null || rec.node_id == null || rec.value == null) {
-        callback({ error: "Incomplete request body. Must include 'sensor_id', 'node_id'' and 'value' fields.", status: 400 });
-    } else {
-        db[collection_measurements].insert(rec, function (err, res) {
-            if (err) return callback(err);
-            else callback({ message: 'Measurement successfully added!', status: 201 });
-        });
-    }
+    db[collection_measurements].insert(rec, function (err, res) {
+        if (err) return callback(err);
+        else callback({ message: 'Measurement successfully added!', status: 201 });
+    });
 }
 
 function get_sensor_measurement(rec, callback) {
@@ -1149,6 +1153,7 @@ exports.get_sensor = get_sensor;
 exports.get_sensors_for_node = get_sensors_for_node;
 exports.get_sensors_for_node2 = get_sensors_for_node2;
 exports.get_sensor_history = get_sensor_history;
+exports.get_sensor_history2 = get_sensor_history2;
 exports.get_all_measurements = get_all_measurements;
 exports.update_sensors_for_node = update_sensors_for_node;
 exports.add_sensor_measurement = add_sensor_measurement;
