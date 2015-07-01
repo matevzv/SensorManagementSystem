@@ -1613,7 +1613,7 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
         ]};
         self.sensorChart = new Chart(ctx).Line(data);
         for (i = 0; i < self.History().length; i++) {
-          self.sensorChart.addData([self.sensorData[i].value], new Date(self.sensorData[i].ts));
+          self.sensorChart.addData([self.sensorData[i].value], new Date(self.sensorData[i].ts).toISOString());
         }
       }
     };
@@ -1664,7 +1664,7 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
       for (var i = 0; i < data.length; i++) {
           var obj = data[i];
           if (self.sensorChart != null) {
-            self.sensorChart.addData([obj.value], new Date(obj.ts));
+            self.sensorChart.addData([obj.value], new Date(obj.ts).toISOString());
           }
           if (self.History().length <= 50) {
             self.History.push(ko.observable({
