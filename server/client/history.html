@@ -22,28 +22,28 @@
             $(document).ready(function () {
                 Carvic.InitHistoryList();
                 ko.applyBindings(Carvic.Model.History);
-                
+
                 $(".input")
                     .attr("data-placement", "right")
                     .tooltip();
-            
+
                 $('.typeahead').typeahead({
                     source: Carvic.Utils.ComponentLookup,
                     minLength: 3,
                     matcher: function () { return true; }
                 });
-            
+
                 $('.typeahead2').typeahead({
                     source: Carvic.Utils.ClusterLookup,
                     matcher: function () { return true; }
                 });
-                
+
                 $("input").keyup(function (event) {
                     if (event.keyCode == 13) {
                         $("#btnSearch").click();
                     }
                 });
-                
+
                 $('#inTime').datepicker({
                     format: "dd.mm.yyyy"
                 });
@@ -73,6 +73,7 @@
                             <li><a href="clusters.html"><i class="glyphicon glyphicon-th"></i> Clusters</a></li>
                             <li><a href="nodes.html"><i class="glyphicon glyphicon-map-marker"></i> Nodes</a></li>
                             <li><a href="components.html"><i class="glyphicon glyphicon-tasks"></i> Components</a></li>
+                            <li><a href="/umko"><i class="glyphicon glyphicon-link"></i> Umko</a></li>
                             <!--<li><a href="users.html"><i class="glyphicon glyphicon-user"></i> Users</a></li>-->
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
@@ -96,14 +97,14 @@
                                 <select class="input form-control" id="inCluster" data-bind="options: ClusterList, optionsText: 'title', optionsValue: 'code', optionsCaption: 'No cluster selected', value: Cluster"></select>
                             </div>
                         </div>
-                            
+
                         <div class="list-group">
                             <label class="control-label" for="inKeyword">Keywords</label>
                             <div class="controls">
                                 <input class="form-control" type="text" id="inKeywords" placeholder="Type keywords" data-bind="value: Keywords" />
                             </div>
                         </div>
-                        
+
                         <div class="list-group">
                             <label class="control-label" for="inTime">Time period</label>
                             <form class="form-inline" role="form">
@@ -119,7 +120,7 @@
                                 </div>
                             </form>
                         </div>
-                                                   
+
                     </div>
                     <div class="col-md-4">
                         <div class="list-group">
@@ -149,7 +150,7 @@
                                 <input class="form-control" type="text" id="inType" placeholder="Type Code" data-bind="value: Type" />
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
                 <div class="row form-horizontal max-width-form">
@@ -160,7 +161,7 @@
             </div>
 
             <div class="row" style="padding-bottom:  10px;">
-                <div class="col-md-12 text-light">                    
+                <div class="col-md-12 text-light">
                     <button class="btn btn-default" data-bind="click: $root.DecPage, enable: $root.DecPageEnabled"><i class="glyphicon glyphicon-arrow-left"></i>  </button>
                     Current page: <span data-bind="text: CurrPage() + 1 "></span> of <span data-bind="text: PageCount() + 1 "></span>
                     <button class="btn btn-default" data-bind="click: $root.IncPage, enable: $root.IncPageEnabled"><i class="glyphicon glyphicon-arrow-right"></i>  </button>

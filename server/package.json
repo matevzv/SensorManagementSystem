@@ -31,7 +31,8 @@
     "connect-mongo": "*",
     "socket.io": "*",
     "crypto": "*",
-    "agenda": "*"
+    "agenda": "*",
+    "node-red": "*"
   },
   "license": "GPL",
   "engines": {

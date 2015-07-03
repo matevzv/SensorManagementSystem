@@ -14,6 +14,7 @@ var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var http = require('http');
 var io = require('socket.io');
+var nodeRed = require("node-red");
 
 ///////////////////////////////////////////////////////////////////////////
 // Module variables
@@ -402,9 +403,21 @@ function run() {
     app.use(function(err, req, res, next) {
         res.status(404).json("The requested resource is not available");
     });
+
+    var redSettings = {
+      httpAdminRoot: "/umko",
+      httpNodeRoot: "/umkoapi",
+      userDir: "/home/matevz/.nodered/",
+      functionGlobalContext: { }    // enables global context
+    };
+
+    nodeRed.init(server,redSettings);
+    app.use(redSettings.httpAdminRoot,nodeRed.httpAdmin);
+    app.use(redSettings.httpNodeRoot,nodeRed.httpNode);
+
     // ok, start the server
     server.listen(port);
-
+    nodeRed.start();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
