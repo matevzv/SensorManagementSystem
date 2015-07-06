@@ -182,11 +182,22 @@ function after_node_change(id) {
     });
 }
 
+function api_after_sensor_scan(rec) {
+    rec.forEach(function (measurement) {
+        db.get_all_notify(function (err, data) {
+            data.forEach(function (item) {
+                if(item.enabled && item.after_sensor_scan)
+                    notify_after_sensor_scan(measurement.node, measurement.sensor, measurement.ts, item);
+            });
+        });
+    });
+}
+
 function after_sensor_scan(rec) {
     db.get_all_notify(function (err, data) {
         data.forEach(function (item) {
             if(item.enabled && item.after_sensor_scan)
-                notify_after_sensor_scan(rec.node, rec.sensor, item);
+                notify_after_sensor_scan(rec.node, rec.sensor, rec.ts, item);
         });
     });
 }
@@ -194,7 +205,7 @@ function after_sensor_scan(rec) {
 function after_sensor_change(id) {
     db.get_all_notify(function (err, data) {
         data.forEach(function (item) {
-            if(item.enabled && item.after_node_change)
+            if(item.enabled && item.after_sensor_change)
                 notify_after_sensor_change(id, item);
         });
     });
@@ -514,10 +525,8 @@ exports.api_add_node = function (req, callback) {
         if (rec.status == null) rec.status = "unknown";
         db.add_node(rec, function (err2, data2) {
             if (err2) return callback(err2);
+            after_node_change(rec.id);
             callback({ message: 'Node successfully added!', status: 201 });
-            if (notify_after_node_change) {
-                notify_after_node_change(rec.id);
-            }
             //load_node_map();
         });
     });
@@ -577,7 +586,7 @@ exports.api_get_nodes = function (req, callback) {
 }
 
 exports.api_get_node = function (req, callback) {
-    db.api_get_node(req, callback)
+    db.api_get_node(req, callback);
 };
 
 exports.get_nodes2 = function (req, callback) {
@@ -784,7 +793,8 @@ exports.update_node = function (req, callback) {
 };
 
 exports.api_update_node = function (req, callback) {
-    db.api_update_node(req, callback)
+    db.api_update_node(req, callback);
+    after_node_change(req.params.node_id);
 };
 
 exports.delete_node = function (req, callback) {
@@ -801,7 +811,6 @@ exports.delete_node = function (req, callback) {
         node_name = node_obj.name;
         cluster = node_obj.cluster;
     }
-
     db.delete_node(node_id, function (err) {
         if (err) return callback(err);
         var h = {
@@ -817,13 +826,12 @@ exports.delete_node = function (req, callback) {
         };
 
         db.new_history(h, callback);
-        after_node_change(node_id);
         load_node_map();
     });
 }
 
 exports.api_delete_node = function (req, callback) {
-    db.api_delete_node(req, callback)
+    db.api_delete_node(req, callback);
 }
 
 //////////////////////////////////////////////////////////////////
@@ -1233,7 +1241,7 @@ exports.update_agenda = function(req, callback) {
 }
 
 exports.api_update_cluster = function (req, callback) {
-    db.api_update_cluster(req, callback)
+    db.api_update_cluster(req, callback);
 };
 
 exports.delete_cluster = function (req, callback) {
@@ -1266,7 +1274,7 @@ exports.delete_cluster = function (req, callback) {
 };
 
 exports.api_delete_cluster = function (req, callback) {
-    db.api_delete_cluster(req, callback)
+    db.api_delete_cluster(req, callback);
 };
 
 exports.add_cluster = function (req, callback) {
@@ -1340,7 +1348,7 @@ exports.add_cluster = function (req, callback) {
 };
 
 exports.api_add_cluster = function (req, callback) {
-    db.api_add_cluster(req, callback)
+    db.api_add_cluster(req, callback);
 };
 
 exports.get_cluster_history = function (req, callback) {
@@ -1410,9 +1418,11 @@ exports.get_sensor = function (req, callback) {
 };
 exports.add_sensor = function (req, callback) {
     db.add_sensor(req, callback);
+    after_sensor_change(req.id);
 }
 exports.update_sensor = function (req, callback) {
     db.update_sensor(req, callback);
+    after_sensor_change(req.params.sensor_id);
 }
 exports.delete_sensor = function (req, callback) {
     db.delete_sensor(req, callback);
@@ -1453,7 +1463,6 @@ exports.update_sensors_for_node = function (req, callback) {
             description: "Node " + req.data.node_id + " was updated - sensors were changed",
             sys_data: req.data.sensors
         };
-
         db.new_history(h, callback);
     });
 }
@@ -1462,13 +1471,18 @@ exports.new_history = function (rec, callback) {
     db.new_history(rec, callback);
 }
 
+exports.api_add_sensor_measurement = function (rec, callback) {
+    db.add_sensor_measurement(rec, function (err) {
+        api_after_sensor_scan(rec);
+        if (err) return callback(err);
+        callback();
+     });
+}
+
 exports.add_sensor_measurement = function (rec, callback) {
     db.add_sensor_measurement(rec, function (err) {
-         if (err) return callback(err);
-         if (notify_after_sensor_scan) {
-            notify_after_sensor_scan(rec);
-        }
         after_sensor_scan(rec);
+        if (err) return callback(err);
         callback();
      });
 }
@@ -1555,11 +1569,11 @@ exports.node_data = function(req, callback) {
         if (err) {
             return callback(err);
         }
-        callback(data);
+        callback(null, data);
     });
 }
 
-/*exports.rest_sensorInfo = function (node_id, callback) {
+exports.rest_sensorInfo = function (node_id, callback) {
     db.get_node(node_id, function (err, data) {
         if (err) return callback(err);
         var res_array = [];
@@ -1576,8 +1590,8 @@ exports.node_data = function(req, callback) {
     });
 }
 
-exports.rest_sensorData = function (node_id, sensor_id, callback) {
-    db.get_sensor_history(node_id, sensor_id, function (err, data) {
+exports.rest_sensorData = function (node_id, sensor_id, measurement_ts, callback) {
+    db.get_sensor_history2(node_id, sensor_id, measurement_ts, function (err, data) {
         if (err) return callback(err);
         if (data.length === 0) return callback(null, {});
         var datax = data[0];
@@ -1591,7 +1605,7 @@ exports.rest_sensorData = function (node_id, sensor_id, callback) {
     });
 }
 
-exports.rest = function (req, callback) {
+/*exports.rest = function (req, callback) {
     if (req.v && req.node && req.$data === "connection") {
         xutil.xcall(db.get_node, Number(req.node), callback, function (data1) {
             xutil.xcall(db.get_cluster, data1.cluster, callback, function (data2) {

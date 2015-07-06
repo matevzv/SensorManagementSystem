@@ -649,6 +649,14 @@ function get_sensor_history(node_id, id, callback) {
     });
 };
 
+function get_sensor_history2(node_id, id, ts, callback) {
+    var query = { sensor: id, node: node_id, ts: ts };
+    db[collection_measurements].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
+        if (err) return callback(err);
+        callback(null, docs);
+    });
+};
+
 function get_all_measurements(req, callback) {
     var query = {};
     if (req.query.node_id) query.node_id = req.query.node_id;
@@ -1169,6 +1177,7 @@ exports.get_sensor = get_sensor;
 exports.get_sensors_for_node = get_sensors_for_node;
 exports.get_sensors_for_node2 = get_sensors_for_node2;
 exports.get_sensor_history = get_sensor_history;
+exports.get_sensor_history2 = get_sensor_history2;
 exports.get_all_measurements = get_all_measurements;
 exports.download_measurements = download_measurements;
 exports.update_sensors_for_node = update_sensors_for_node;
