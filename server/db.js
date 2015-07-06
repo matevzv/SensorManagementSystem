@@ -134,7 +134,7 @@ function fill_dummy_data(callback) {
     loop(data.user_statuses, collection_user_statuses);
     loop(data.user_types, collection_user_types);
     loop(data.sensors, collection_sensors);
-    
+
 
     var calls = [];
     inserts.forEach(function (item) {
@@ -161,7 +161,8 @@ function init(options, callback) {
     db[collection_components].ensureIndex({ id: 1 }, { unique: true, sparse: true });
     db[collection_clusters].ensureIndex({ id: 1 }, { unique: true, sparse: true });
     db[collection_nodes].ensureIndex({ id: 1 }, { unique: true, sparse: true });
-    db[collection_nodes].ensureIndex({ network_addr: 1, cluster: 2 }, { unique: true, sparse: true });
+    db[collection_nodes].ensureIndex({ name: 1 }, { unique: true, sparse: true });
+    //db[collection_nodes].ensureIndex({ network_addr: 1, cluster: 2 }, { unique: true, sparse: true });
     //db[collection_sensor_types].ensureIndex({ name: 1 }, { unique: true, sparse: true });
 
     // set up indexes
@@ -454,7 +455,7 @@ function get_node(id, callback) {
 };
 
 function api_get_nodes(req, callback) {
-    var query = {};
+    var query = req.query;
     if (req.query.cluster_id) query.cluster_id = req.query.cluster_id;
     db[collection_nodes].find(query).sort({ ts: -1 }).toArray(function (err, res) {
         if (err) return callback(err);
@@ -561,7 +562,7 @@ function get_node_clusters(callback) {
 ////////////////////////////////////////////////////////////////////////////////
 
 function get_sensors(req, callback) {
-    var query = {};
+    var query = req.query;
     if (req.query.node_id) query.node_id = req.query.node_id;
     db[collection_sensors].find(query).sort({ ts: -1 }).toArray(function (err, res) {
         if (err) return callback(err);
@@ -643,6 +644,7 @@ function get_sensor_history(node_id, id, callback) {
     var query = { sensor: id, node: node_id };
     db[collection_measurements].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
         if (err) return callback(err);
+        docs.reverse();
         callback(null, docs);
     });
 };
@@ -676,6 +678,28 @@ function get_all_measurements(req, callback) {
             callback({ error: "No measurements found.", status: 404 });
         else
 			callback(res);
+    });
+};
+
+function download_measurements(req, callback) {
+    var query = {};
+    var excluded = { _id:0, sensor_id:0, node_id:0, node:0, sensor:0 };
+    if (req.data.sensor) query.sensor = req.data.sensor;
+    if (req.data.from || req.data.to) {
+        query.ts = {};
+        if (req.data.from) {
+            query.ts.$gte = req.data.from;
+        }
+        if (req.data.to) {
+            query.ts.$lte = req.data.to;
+        }
+    }
+    db[collection_measurements].find(query, excluded).limit(Number(req.data.limit)).sort({ ts: -1 }).toArray(function (err, res) {
+        if (err) return callback(err);
+        else if (res.length == 0)
+            callback({ error: "No measurements found.", status: 404 });
+        else
+            callback(err, res);
     });
 };
 
@@ -1155,6 +1179,7 @@ exports.get_sensors_for_node2 = get_sensors_for_node2;
 exports.get_sensor_history = get_sensor_history;
 exports.get_sensor_history2 = get_sensor_history2;
 exports.get_all_measurements = get_all_measurements;
+exports.download_measurements = download_measurements;
 exports.update_sensors_for_node = update_sensors_for_node;
 exports.add_sensor_measurement = add_sensor_measurement;
 exports.get_sensor_measurement = get_sensor_measurement;

@@ -123,7 +123,7 @@ Footer
 
 .well-white {
    background: #ffffff;
-} 
+}
 
 /*-------------------------------------------------------------
 Front-page blocks
@@ -166,7 +166,7 @@ Front-page blocks
 COOKIE BOX
 ***************************/
 #cookie_box
-{ 
+{
     position: fixed;
     display: none;
     bottom: 0px;
@@ -179,7 +179,16 @@ COOKIE BOX
     color:#ffffff;
 }
     #cookie_box a:hover
-    { 
+    {
         color:#ffffff;
         text-decoration: underline
     }
+
+    /*-------------------------------------------------------------
+    Sensor chart canvas
+    -----------------------------------------------------------*/
+
+.sensor_chart {
+  width: 100% !important;
+  height: auto !important;
+}
