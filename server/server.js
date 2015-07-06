@@ -253,7 +253,7 @@ function run() {
                 req.body.ts = new Date();
             }
             io.emit(req.body[0].sensor, req.body);
-            bl.add_sensor_measurement(req.body, function(callback) {
+            bl.api_add_sensor_measurement(req.body, function(callback) {
                 if(callback.error) res.status(callback.status).json(callback.error);
                 else res.status(callback.status).json(callback.message);
             });
