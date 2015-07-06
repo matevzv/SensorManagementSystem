@@ -1459,7 +1459,6 @@ exports.update_sensors_for_node = function (req, callback) {
             description: "Node " + req.data.node_id + " was updated - sensors were changed",
             sys_data: req.data.sensors
         };
-        after_node_change(req.data.node_id);
         db.new_history(h, callback);
     });
 }
