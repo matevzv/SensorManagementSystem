@@ -12,9 +12,8 @@ var basicAuth = require('basic-auth-connect');
 var favicon = require('serve-favicon');
 var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
-var redis = require("redis");
-//var crypto = require("crypto");
-//var db = require("./db");
+var http = require('http');
+var io = require('socket.io');
 
 ///////////////////////////////////////////////////////////////////////////
 // Module variables
@@ -116,7 +115,7 @@ function main_handler(req, res, next) {
     var cmd = req.body;
     if (!cmd.action) return next(new Error("Unknown request - missing action"));
 
-    cmd.session = { // attach user stuff 
+    cmd.session = { // attach user stuff
         user: req.session.user,
         ip: req.connection.remoteAddress
     };
@@ -158,10 +157,12 @@ function run() {
 
     console.log("Running HTTP server at port " + port);
     var app = express();
-    
+    server = http.Server(app);
+    io = io.listen(server);
+
     app.use(favicon("client/img/favicon.ico"));
     app.use(morgan('dev'));
-    app.use(cookieParser());    
+    app.use(cookieParser());
     app.use(session({ secret: 'jcvsnasdovhjdsfanbdwkjv', saveUninitialized: true,
                  resave: true, store: new MongoStore({ db: db_url , autoReconnect: true, safe: true}) }));
     app.use(log_url);
@@ -211,7 +212,7 @@ function run() {
         res.end(help_content);
     });
     app.post('/handler', ensure_authenticated, main_handler);
-    
+
     app.route('/api')
         .get(function(req, res) {
             var response = {
@@ -251,6 +252,7 @@ function run() {
             if (!req.body.ts) {
                 req.body.ts = new Date();
             }
+            io.emit(req.body[0].sensor, req.body);
             bl.add_sensor_measurement(req.body, function(callback) {
                 if(callback.error) res.status(callback.status).json(callback.error);
                 else res.status(callback.status).json(callback.message);
@@ -290,8 +292,8 @@ function run() {
         })
         .post(function(req, res) {
             bl.api_add_node(req.body, function(callback) {
-                if(callback.error) res.status(callback.status).json(callback.error);
-                else res.status(callback.status).json(callback.message);
+                if(callback.error) res.json(callback.error).status(callback.status);
+                else res.json(callback.message).status(callback.status);
             })
         })
         .all(function(req, res) {
@@ -387,7 +389,7 @@ function run() {
             })
         })
         .delete(function(req, res) {
-            bl.delete_sensor(req.params.sensor_id, function(callback) {
+            bl.delete_sensor(req.params.id, function(callback) {
                 if(callback.error) res.status(callback.status).json(callback.error);
                 else res.json(callback.message);
             })
@@ -401,8 +403,8 @@ function run() {
         res.status(404).json("The requested resource is not available");
     });
     // ok, start the server
-    app.listen(port);
-    
+    server.listen(port);
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////

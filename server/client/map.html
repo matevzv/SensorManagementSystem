@@ -9,21 +9,21 @@
               margin: 0;
               padding: 0;
             }
-            
+
             #map-canvas, #map_canvas {
               height: 100%;
             }
-            
+
             @media print {
               html, body {
                 height: auto;
               }
-            
+
               #map-canvas, #map_canvas {
                 height: 650px;
               }
             }
-            
+
             #panel {
               position: absolute;
               top: 5px;
@@ -34,27 +34,27 @@
               padding: 5px;
               border: 1px solid #999;
             }
-            
+
             .map {
               line-height:1.35;
               overflow:hidden;
               white-space:nowrap;
             }
-            
+
             .gm-style-iw {
-              overflow: hidden !important; 
+              overflow: hidden !important;
               line-height: 1.35;
             }
         </style>
         <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
-        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script> 
+        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
         <script type="text/javascript" src="js/carvic.js"></script>
         </head>
         <body>
             <div class="map" id="map" style="width: 100%; height: 100%;"></div>
         <script type="text/javascript">
-       
+
         $(document).ready(function () {
             if (getParameterByName("type") == "cluster"){
                     Carvic.InitSingleCluster();
@@ -69,7 +69,7 @@
         function DisplayCluster() {
 
             // Setup the different icons and shadows
-            var iconURLPrefix = 'http://maps.google.com/mapfiles/ms/icons/';
+            var iconURLPrefix = 'https://maps.google.com/mapfiles/ms/icons/';
 
             var icons = [
               iconURLPrefix + 'red-dot.png',
@@ -167,7 +167,7 @@
                 var myLatlng = new google.maps.LatLng(lat, lon);
                 var mapOptions = { zoom: 16, center: myLatlng };
                 var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-                var marker = new google.maps.Marker({ position: myLatlng, map: map, title: title, icon: "http://maps.google.com/mapfiles/ms/icons/" + (getParameterByName("status") == "active" ? "green-dot.png" : "red-dot.png")});
+                var marker = new google.maps.Marker({ position: myLatlng, map: map, title: title, icon: "https://maps.google.com/mapfiles/ms/icons/" + (getParameterByName("status") == "active" ? "green-dot.png" : "red-dot.png")});
                 var infowindow = new google.maps.InfoWindow({
                     maxWidth: 500
                 });
@@ -178,7 +178,7 @@
                 });
             }
         }
-            
+
         function DisplayDefault() {
             var lat = 46.042193;
             var lon = 14.487761;
@@ -200,7 +200,7 @@
         function checkLength() {
             if ((new Date().getTime() - start) > 1000) {
                 DisplayDefault();
-            } else if (Carvic.Model.Cluster.Nodes().length == 0 && (new Date().getTime() - start) < 1000) { 
+            } else if (Carvic.Model.Cluster.Nodes().length == 0 && (new Date().getTime() - start) < 1000) {
                 setTimeout("checkLength();", 50);
                 return;
             } else {
