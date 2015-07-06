@@ -407,7 +407,7 @@ function run() {
     var redSettings = {
       httpAdminRoot: "/umko",
       httpNodeRoot: "/umkoapi",
-      userDir: "/home/matevz/.nodered/",
+      userDir: "/tmp/.nodered/",
       functionGlobalContext: { }    // enables global context
     };
 
