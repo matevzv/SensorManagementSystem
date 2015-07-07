@@ -18,10 +18,12 @@ var page_size_global = 15;
 
 var notify_after_node_change = null;
 var notify_after_sensor_scan = null;
+var api_notify_after_sensor_scan = null;
 var notify_after_sensor_change = null;
 
 exports.set_notify_after_node_change = function (callback) { notify_after_node_change = callback };
 exports.set_notify_after_sensor_scan = function (callback) { notify_after_sensor_scan = callback };
+exports.api_set_notify_after_sensor_scan = function (callback) { api_notify_after_sensor_scan = callback };
 exports.set_notify_after_sensor_change = function (callback) { notify_after_sensor_change = callback; }
 
 ///////////////////////////////////////////////////////////////////////
@@ -183,12 +185,10 @@ function after_node_change(id) {
 }
 
 function api_after_sensor_scan(rec) {
-    rec.forEach(function (measurement) {
-        db.get_all_notify(function (err, data) {
-            data.forEach(function (item) {
-                if(item.enabled && item.after_sensor_scan)
-                    notify_after_sensor_scan(measurement.node, measurement.sensor, measurement.ts, item);
-            });
+    db.get_all_notify(function (err, data) {
+        data.forEach(function (item) {
+            if(item.enabled && item.after_sensor_scan)
+                api_notify_after_sensor_scan(rec, item);
         });
     });
 }
