@@ -214,6 +214,7 @@ function run() {
     });
     app.post('/handler', ensure_authenticated, main_handler);
 
+
     app.route('/api')
         .get(function(req, res) {
             var response = {
@@ -403,6 +404,8 @@ function run() {
     app.use(function(err, req, res, next) {
         res.status(404).json("The requested resource is not available");
     });
+
+    app.get('/umko/*', ensure_authenticated);
 
     var redSettings = {
       httpAdminRoot: "/umko",
