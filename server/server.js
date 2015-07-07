@@ -214,7 +214,6 @@ function run() {
     });
     app.post('/handler', ensure_authenticated, main_handler);
 
-
     app.route('/api')
         .get(function(req, res) {
             var response = {
