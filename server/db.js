@@ -110,26 +110,19 @@ function clean(callback) {
 function fill_dummy_data(callback) {
     //var data = require("./db_dummy_data").get_dummy_data();
     var data = require("./import_excel_data").get_dummy_data();
+
     var inserts = [];
 
     var loop = function (arr, col) {
-                console.log(arr);
-
-        if(arr!=undefined)
-        
-        {
-            
         arr.forEach(function (item) {
-                 inserts.push({ col: col, data: item });
-        }
-    );
-    }
+            inserts.push({ col: col, data: item });
+        });
     }
 
     loop(data.components, collection_components);
     loop(data.clusters, collection_clusters);
     loop(data.nodes, collection_nodes);
-    //loop(data.measurements, collection_measurements);
+    loop(data.measurements, collection_measurements);
     loop(data.users, collection_users, true);
     loop(data.logins, collection_logins);
     loop(data.history, collection_history);
