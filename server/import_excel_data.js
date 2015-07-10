@@ -17,6 +17,7 @@ data.components = [];
 data.sensor_history = [];
 data.users = [];
 data.logins = [];
+data.measurements= [];
 data.component_types = [];
 data.cluster_types = [];
 data.component_statuses = [];
