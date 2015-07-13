@@ -21,7 +21,9 @@ https://nodejs.org/ -> select "INSTALL"
 
 ####3. Install MongoDB
 Complete manual on how to install MongoDB you can find on the link 
+  
   http://docs.mongodb.org/manual/installation/ -> select "Install on Windows"
+
 https://www.mongodb.org/downloads?_ga=1.220748696.141358494.1436366125 -> select "DOWNLOAD"
 
 
