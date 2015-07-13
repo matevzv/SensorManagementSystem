@@ -224,7 +224,7 @@ function add_cluster(rec, callback) {
 
 function api_add_cluster(rec, callback) {
     db[collection_clusters].insert(rec, function (err, res) {
-        if (err) return callback(err);
+        if (err) return callback({ error: err, status: 200 });
         else callback({ message: 'Cluster successfully added!', status: 201 });
     });
 }

@@ -330,8 +330,8 @@ function run() {
         })
         .post(function(req, res) {
             bl.api_add_cluster(req.body, function(callback) {
-                if(callback) res.status(callback.status).json(callback.message);
-                else res.status(201).json( 'Successfully added the measurement.' );
+                if(callback.error) res.status(callback.status).json(callback.error);
+                else res.status(callback.status).json(callback.message);
             });
         })
         .all(function(req, res) {
