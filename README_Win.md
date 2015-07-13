@@ -40,16 +40,19 @@ To setup the SMS platform on your computer follow steps bellow.
 To install SMS dependencies using _npm_ package manager type:
 
 Press the Win key, type cmd.exe, and press Ctrl + Shift + Enter to run the Command Prompt as Administrator.
+  
   -> npm install
 
 
 #### 3. Fill a database with the dummy data
 To insert dummy data into your database type:
+   
    ->node top.js fill_dummy_data
 
 
 #### 4. Run the SMS
  To run SMS type:
+   
    ->node top.js run 
 
 Now open your web browser and visit [http://localhost:3000](http://localhost:3000/), to login use u:_vik_  p:_vik_.
