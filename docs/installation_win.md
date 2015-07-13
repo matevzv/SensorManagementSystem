@@ -32,8 +32,14 @@ To setup the SMS platform on your computer follow steps bellow.
 
 
 #### 1. Fork and Clone SMS repository
-- Fork the  repository on GitHub. This can be done by clicking on the fork button.
-- Clone the repository to your computer (change _username_ with your Github user name).
+  -Fork the  repository on GitHub. 
+  
+This can be done by clicking on the fork button.
+  
+  -Clone the repository to your computer (change _username_ with your Github user name).
+
+This can be done by clicking on the "Clone in Desktop" button.
+ 
 
 
 #### 2. Install SMS dependencies
