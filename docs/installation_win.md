@@ -2,11 +2,11 @@ SensorManagementSystem
 ======================
 
 
-## Installation in Windows
+# Installation in Windows
 Installation was performed on Windows 8.1   
 
 
-### Prerequisites  
+## Prerequisites  
 
 SMS requires git, node.js, mongodb and npm.
 
@@ -43,7 +43,7 @@ To setup the SMS platform on your computer follow steps bellow.
   
       This can be done by clicking on the fork button.
   
-####Clone the repository to your computer (change _username_ with your Github user name).
+####Clone the repository to your computer.
   
 ######First method:
 
