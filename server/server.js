@@ -409,7 +409,7 @@ function run() {
     var redSettings = {
       httpAdminRoot: "/umko",
       httpNodeRoot: "/umkoapi",
-      userDir: "/tmp/.nodered/",
+      userDir: ".nodered/",
       functionGlobalContext: { }    // enables global context
     };
 
