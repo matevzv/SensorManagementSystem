@@ -568,7 +568,6 @@ function load_node_map(callback) {
     });
 }
 
-
 exports.api_get_nodes = function (req, callback) {
     db.api_get_nodes(req, function (nodes) {
         if (nodes.error) return callback(nodes);
@@ -576,6 +575,7 @@ exports.api_get_nodes = function (req, callback) {
         nodes.forEach(function (item) {
             res.push({
                 _id: item._id,
+                id: item.id,
                 name: item.name,
                 cluster_id: item.cluster_id,
                 cluster: (cluster_map[item.cluster] ? cluster_map[item.cluster].name : "")
@@ -1182,8 +1182,8 @@ exports.get_clusters = function (req, callback) {
     db.get_clusters(query, callback);
  };
 
-exports.api_get_clusters = function (callback) {
-    db.get_clusters({}, callback);
+exports.api_get_clusters = function (req, callback) {
+    db.get_clusters(req.query, callback);
 };
 
 exports.get_cluster = function (req, callback) {

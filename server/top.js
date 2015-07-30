@@ -108,6 +108,15 @@ db.init(options, function (err) {
                             } else {
                                 console.log("Done");
                             };
+                        } else if (options.cmd == "init") {
+                            if (db.init_sms) {
+                                db.init_sms(function () {
+                                    db.close();
+                                    console.log("Done");
+                                });
+                            } else {
+                                console.log("Done");
+                            };
                         } else if (options.cmd == "scan") {
                             var cluster_id = null;
                             if (options.argv.length >= 4) {

@@ -4,6 +4,7 @@ var mongojs = require('mongojs');
 var xutil = require('./xutil');
 var async = require("async");
 var fs = require('fs');
+var utils_hash = require("./utils_hash");
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // This is DAL module for this system
@@ -135,6 +136,59 @@ function fill_dummy_data(callback) {
     loop(data.user_types, collection_user_types);
     loop(data.sensors, collection_sensors);
 
+
+    var calls = [];
+    inserts.forEach(function (item) {
+        calls.push(function (callback2) {
+            db[item.col].insert(item.data, callback2);
+        });
+    });
+
+    async.series(calls, function (err) {
+        console.log(err);
+        console.log("Done.");
+        callback();
+    });
+}
+
+function init_sms(callback) {
+    //var data = require("./db_dummy_data").get_dummy_data();
+    var data = require("./import_excel_data").get_dummy_data();
+
+    var inserts = [];
+
+    var loop = function (arr, col) {
+        arr.forEach(function (item) {
+            inserts.push({ col: col, data: item });
+        });
+    }
+    tmpUsers = []
+    var user_template = {
+        username: "vik",
+        full_name: "Viktor Jovanoski",
+        pwd_hash: utils_hash.create_pwd_hash("vik"),
+        status: "active", // active, inactive, locked
+        last_login: new Date(),
+        last_bad_login: new Date(),
+        bad_login_cnt: 0,
+        type: "admin" // normal, admin
+    };
+    var user_str = JSON.stringify(user_template);
+
+    var new_user = JSON.parse(user_str);
+    new_user.username = "admin";
+    new_user.full_name = "admin";
+    new_user.pwd_hash = utils_hash.create_pwd_hash("admin");
+    tmpUsers.push(new_user);
+
+    loop(tmpUsers, collection_users);
+    loop(data.component_types, collection_component_types);
+    loop(data.component_statuses, collection_component_statuses);
+    loop(data.cluster_types, collection_cluster_types);
+    loop(data.node_roles, collection_node_roles);
+    loop(data.node_statuses, collection_node_statuses);
+    loop(data.user_statuses, collection_user_statuses);
+    loop(data.user_types, collection_user_types);
 
     var calls = [];
     inserts.forEach(function (item) {
@@ -951,7 +1005,7 @@ function get_max_node_id(callback) {
         } else if (docs.length > 0) {
             callback(null, docs[0].id);
         } else {
-            callback(new Error("Node list is empty"));
+            callback(null, 0);
         }
     });
 }
@@ -1121,6 +1175,7 @@ function archive(callback) {
 exports.dump = dump;
 exports.clean = clean;
 exports.fill_dummy_data = fill_dummy_data;
+exports.init_sms = init_sms;
 exports.init = init;
 exports.close = close;
 exports.archive = archive;
