@@ -511,6 +511,7 @@ function get_node(id, callback) {
 function api_get_nodes(req, callback) {
     var query = req.query;
     if (req.query.cluster_id) query.cluster_id = req.query.cluster_id;
+    if (req.query.id) query.id = parseInt(req.query.id);
     db[collection_nodes].find(query).sort({ ts: -1 }).toArray(function (err, res) {
         if (err) return callback(err);
 		else if (res.length == 0)
