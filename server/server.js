@@ -323,7 +323,7 @@ function run() {
         });
     app.route('/api/clusters')
         .get(function(req, res) {
-            bl.api_get_clusters(function (err, clusters) {
+            bl.api_get_clusters(req, function (err, clusters) {
                 if (err) return res.json(err);
                 res.json(clusters);
             });
