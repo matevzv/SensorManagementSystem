@@ -32,7 +32,7 @@
     "socket.io": "*",
     "crypto": "*",
     "agenda": "*",
-    "node-red": "*"
+    "node-red": "0.10.10"
   },
   "license": "GPL",
   "engines": {
