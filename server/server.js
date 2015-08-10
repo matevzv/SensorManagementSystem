@@ -389,7 +389,8 @@ function run() {
             })
         })
         .delete(function(req, res) {
-            bl.delete_sensor(req.params.id, function(callback) {
+            console.log(req.params)
+            bl.delete_sensor(req.params.sensor_id, function(callback) {
                 if(callback.error) res.status(callback.status).json(callback.error);
                 else res.json(callback.message);
             })
