@@ -1293,6 +1293,10 @@ Carvic.Model.SingleNodeModel = function () {
                 self.CurrentSensor(sensor);
                 self.CurrentSensor().IsActive(true);
                 self.CurrentSensor().GetHistory();
+                $('#sensorChart').remove(); // this is my <canvas> element
+                $('#chartContainer').append('<canvas class="sensor_chart" id="sensorChart"><canvas>');
+                self.CurrentSensor().sensorChart = null;
+                self.DoShowRawSensorData();
                 return;
             }
         }
