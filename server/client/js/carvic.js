@@ -1293,9 +1293,7 @@ Carvic.Model.SingleNodeModel = function () {
                 self.CurrentSensor(sensor);
                 self.CurrentSensor().IsActive(true);
                 self.CurrentSensor().GetHistory();
-                $('#sensorChart').remove(); // this is my <canvas> element
-                $('#chartContainer').append('<canvas class="sensor_chart" id="sensorChart"><canvas>');
-                self.CurrentSensor().sensorChart = null;
+                self.CurrentSensor().ClearChart();
                 self.DoShowRawSensorData();
                 return;
             }
@@ -1568,6 +1566,7 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
     self.History = ko.observableArray();
     self.sensorData = [];
     self.sensorChart = null;
+    self.measurementCount = 0;
     self.From = ko.observable("");
     self.To = ko.observable("");
     self.DownloadLimit = ko.observable("");
@@ -1621,6 +1620,13 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
         }
       }
     };
+
+    self.ClearChart = function () {
+      $('#sensorChart').remove();
+      $('#chartContainer').append('<canvas class="sensor_chart" id="sensorChart"><canvas>');
+      self.measurementCount = 0;
+      self.sensorChart = null;
+    }
 
     self.DownloadMeasurements = function() {
         var query = {};
@@ -1676,10 +1682,11 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
               Value: obj.value
             }));
           } else {
-            if (self.sensorChart != null) {
+            if (self.sensorChart != null && self.measurementCount > 50) {
               self.sensorChart.removeData();
             }
           }
+          self.measurementCount++;
         }
     });
 };
