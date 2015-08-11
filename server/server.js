@@ -408,6 +408,7 @@ function run() {
 
     var redSettings = {
       httpAdminRoot: "/umko",
+      paletteCategories: ['subflows', 'estoritve', 'input', 'output', 'function', 'social', 'storage', 'analysis', 'advanced'],
       httpNodeRoot: "/umkoapi",
       functionGlobalContext: { }    // enables global context
     };
