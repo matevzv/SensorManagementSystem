@@ -1323,6 +1323,7 @@ Carvic.Model.SingleNodeModel = function () {
         self.ShowRawSensorData(false);
         self.ShowSensorChart(true);
         self.ShowDownloadSensorData(false);
+        self.CurrentSensor().GetHistory();
         self.CurrentSensor().GetChart();
     };
 
@@ -1575,6 +1576,7 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
     }
 
     self.GetHistory = function () {
+        self.sensorData = [];
         if (self.History().length > 0)
             return;
         self.History.removeAll();
