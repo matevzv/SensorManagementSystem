@@ -1577,8 +1577,6 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
 
     self.GetHistory = function () {
         self.sensorData = [];
-        if (self.History().length > 0)
-            return;
         self.History.removeAll();
         var req = {
             action: "get_sensor_history",
