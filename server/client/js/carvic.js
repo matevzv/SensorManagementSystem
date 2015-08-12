@@ -1316,13 +1316,13 @@ Carvic.Model.SingleNodeModel = function () {
         self.ShowRawSensorData(true);
         self.ShowSensorChart(false);
         self.ShowDownloadSensorData(false);
+        self.CurrentSensor().GetHistory();
     };
 
     self.DoShowSensorChart = function () {
         self.ShowRawSensorData(false);
         self.ShowSensorChart(true);
-        self.ShowDownloadSensorData(false);
-        self.CurrentSensor().GetHistory();
+        self.ShowDownloadSensorData(false);        
         self.CurrentSensor().GetChart();
     };
 
