@@ -1293,7 +1293,6 @@ Carvic.Model.SingleNodeModel = function () {
                 self.CurrentSensor(sensor);
                 self.CurrentSensor().IsActive(true);
                 self.CurrentSensor().GetHistory();
-                self.CurrentSensor().ClearChart();
                 self.DoShowRawSensorData();
                 return;
             }
@@ -1599,6 +1598,7 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
     };
 
     self.GetChart = function () {
+      self.ClearChart();
       if (self.sensorChart == null) {
         var ctx = document.getElementById("sensorChart").getContext("2d");
         var data = {
