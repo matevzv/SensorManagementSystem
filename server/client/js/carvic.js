@@ -1292,7 +1292,6 @@ Carvic.Model.SingleNodeModel = function () {
                 }
                 self.CurrentSensor(sensor);
                 self.CurrentSensor().IsActive(true);
-                self.CurrentSensor().GetHistory();
                 self.DoShowRawSensorData();
                 return;
             }
