@@ -1322,7 +1322,7 @@ Carvic.Model.SingleNodeModel = function () {
     self.DoShowSensorChart = function () {
         self.ShowRawSensorData(false);
         self.ShowSensorChart(true);
-        self.ShowDownloadSensorData(false);        
+        self.ShowDownloadSensorData(false);
         self.CurrentSensor().GetChart();
     };
 
@@ -1669,24 +1669,25 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
     };
 
     var socket = io.connect('http://localhost:3000');
-    socket.on(self.ID, function (data) {
+    socket.on('measurements', function (data) {
       for (var i = 0; i < data.length; i++) {
-          var obj = data[i];
+        var obj = data[i];
+        if (self.ID == obj.sensor) {
           if (self.sensorChart != null) {
             self.sensorChart.addData([obj.value], obj.ts);
+            if (self.sensorChart != null && self.measurementCount > 50) {
+              self.sensorChart.removeData();
+            }
+            self.measurementCount++;
           }
           if (self.History().length <= 50) {
             self.History.push(ko.observable({
               Ts: new Date(Date.parse(obj.ts)),
               Value: obj.value
             }));
-          } else {
-            if (self.sensorChart != null && self.measurementCount > 50) {
-              self.sensorChart.removeData();
-            }
           }
-          self.measurementCount++;
         }
+      }
     });
 };
 
