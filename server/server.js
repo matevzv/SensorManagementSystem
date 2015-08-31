@@ -14,6 +14,9 @@ var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var http = require('http');
 var io = require('socket.io');
+var fs = require("fs");
+var passport = require("passport");
+var SamlStrategy = require('passport-saml').Strategy;
 
 ///////////////////////////////////////////////////////////////////////////
 // Module variables
@@ -170,6 +173,8 @@ function run() {
     app.use(preprocess_api_calls);
     app.use(json_parser);
     app.use(body_parser);
+
+    require('./config/passport.js');
 
     // routes
     app.get('/', function (req, res) {
@@ -399,9 +404,32 @@ function run() {
         });
     app.get('/api/*', main_handler);
     app.post('/api/*', main_handler);
-    app.use(function(err, req, res, next) {
-        res.status(404).json("The requested resource is not available");
+
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+    app.get('/aai',
+    passport.authenticate('config1', { failureRedirect: '/login', failureFlash: true }),
+    function(req, res) {
+      res.redirect('/login');
     });
+
+    app.get('/loginaai',
+    passport.authenticate('config2', { failureRedirect: '/login', failureFlash: true }),
+    function(req, res) {
+      res.redirect('/login');
+    });
+
+    app.post('/assert',
+    passport.authenticate('config2', { failureRedirect: '/', failureFlash: true }),
+    function(req, res) {
+      res.redirect('/admin.html');
+    });
+
+    //app.use(function(err, req, res, next) {
+      //  res.status(404).json("The requested resource is not available");
+    //});
+    
     // ok, start the server
     server.listen(port);
 
