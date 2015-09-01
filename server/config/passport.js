@@ -17,7 +17,7 @@ passport.use('config1', new SamlStrategy(
     callbackUrl: '/loginaai',
     cert: fs.readFileSync('./cert/cert.pem', 'utf-8'),
     privateCert: fs.readFileSync('./cert/key.pem', 'utf-8'),
-    additionalParams:{'entityID':'https://www.e-osu.si/metadata.xml','returnIDParam':'entityID','return':'http://e6-mvucnik.ijs.si:3000/loginaai'}
+    additionalParams:{'entityID':'https://www.e-osu.si/metadata.xml','returnIDParam':'entityID','return':'https://www.e-osu.si/loginaai'}
   },
   function(profile, done) {
     return done(null,
@@ -33,15 +33,17 @@ passport.use('config2', new SamlStrategy(
     entryPoint: 'https://idp.aai.arnes.si/simplesaml/saml2/idp/SSOService.php',
     issuer: 'https://www.e-osu.si/metadata.xml',
     callbackUrl: '/assert',
-    cert: fs.readFileSync('./cert/cert.pem', 'utf-8'),
-    privateCert: fs.readFileSync('./cert/key.pem', 'utf-8'),
+    //cert: fs.readFileSync('./cert/cert.pem', 'utf-8'),
+    //privateCert: fs.readFileSync('./cert/key.pem', 'utf-8'),
     additionalParams:{'RelayState':'cookie'}
   },
   function(profile, done) {
     return done(null,
       {
-        id : profile.uid,
-        email : profile.mail
+        userName: profile.eduPersonPrincipalName,
+        email: profile.mail[0],
+        lastName:  profile.sn,
+        firstName: profile.givenName
       });
     }
 ));

@@ -32,7 +32,7 @@
     "socket.io": "*",
     "crypto": "*",
     "agenda": "*",
-    "passport": "*",
+    "passport": "0.2.2",
     "passport-saml": "*"
   },
   "license": "GPL",

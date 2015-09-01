@@ -423,13 +423,33 @@ function run() {
     app.post('/assert',
     passport.authenticate('config2', { failureRedirect: '/', failureFlash: true }),
     function(req, res) {
-      res.redirect('/admin.html');
-    });
+      bl.get_user({ data: { username: req.session.passport.user.userName } }, function (err, data) {
+        if (err) {
+          var rnd = Math.random().toString(36).substring(7);
+          new_user = { data: {
+            username: req.session.passport.user.userName,
+            full_name: req.session.passport.user.firstName + " " +
+            req.session.passport.user.lastName,
+            type: "normal",
+            pwd1: rnd,
+            pwd2: rnd }};
+            bl.new_user(new_user, function () {
+              req.session.is_authenticated = true;
+              req.session.user = req.session.passport.user.userName;
+              res.redirect('/admin.html');
+            });
+          } else {
+            req.session.is_authenticated = true;
+            req.session.user = req.session.passport.user.userName;
+            res.redirect('/admin.html');
+          }
+        });
+      });
 
     //app.use(function(err, req, res, next) {
       //  res.status(404).json("The requested resource is not available");
     //});
-    
+
     // ok, start the server
     server.listen(port);
 
