@@ -48,7 +48,7 @@
                             <li><a href="clusters.html"><i class="glyphicon glyphicon-th"></i> Clusters</a></li>
                             <li><a href="nodes.html"><i class="glyphicon glyphicon-map-marker"></i> Nodes</a></li>
                             <li><a href="components.html"><i class="glyphicon glyphicon-tasks"></i> Components</a></li>
-                            <li id="liUsers" class="active"><a href="users.html"><i class="glyphicon glyphicon-user"></i> Users</a></li>
+                            <!--<li id="liUsers" class="active"><a href="users.html"><i class="glyphicon glyphicon-user"></i> Users</a></li>-->
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="help"><i class="glyphicon glyphicon-question-sign" title="Show help"></i> Help</a></li>
@@ -113,7 +113,7 @@
                                     <span id="inLastLogin" data-bind="text: Carvic.Utils.FormatDateTime(LastLogin)"></span>
                                 </div>
                             </div>
-                            
+
                             <div class="list-group">
                                 <label class="control-label" for="inAPIToken">API Token </label>
                                 <p><span class="bg-warning">For the purpose of authenticating you need to include this token in the header of every request you send to the API.</span></p>
@@ -134,7 +134,7 @@
                                 <div class="controls">
                                     <span data-bind="text: $root.Server, visible: $root.CurrentUserEditing()==false"></span>
                                     <input type="text" class="input form-control" id="inServer" placeholder="Insert server" data-bind="value: $root.Server, visible: $root.CurrentUserEditing()==true" name="server" />
-                                    
+
                                 </div>
                             </div>
                             <div class="list-group">
