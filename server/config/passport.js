@@ -19,8 +19,9 @@ passport.use('config1', new SamlStrategy(
   function(profile, done) {
     return done(null,
       {
-        id : profile.uid,
-        email : profile.mail
+        userName: profile.eduPersonPrincipalName,
+        lastName:  profile.sn,
+        firstName: profile.givenName
       });
     }
   ));
