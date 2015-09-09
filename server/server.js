@@ -17,6 +17,7 @@ var io = require('socket.io');
 var fs = require("fs");
 var passport = require("passport");
 var SamlStrategy = require('passport-saml').Strategy;
+var url = require('url');
 
 ///////////////////////////////////////////////////////////////////////////
 // Module variables
@@ -410,9 +411,7 @@ function run() {
 
   app.use(function(req, res, next){
     if(typeof req.query.entityID != 'undefined') {
-      idp = JSON.stringify(req.query.entityID);
-      idp = idp.substring(idp.indexOf("/") + 2);
-      idp = idp.substring(0, idp.indexOf("/"));
+      idp = url.parse(req.query.entityID).hostname;
       passport._strategies.config2._saml.options.entryPoint = 'https://' + idp + '/simplesaml/saml2/idp/SSOService.php';
     }
     next();
