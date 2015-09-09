@@ -408,6 +408,16 @@ function run() {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  app.use(function(req, res, next){
+    if(typeof req.query.entityID != 'undefined') {
+      idp = JSON.stringify(req.query.entityID);
+      idp = idp.substring(idp.indexOf("/") + 2);
+      idp = idp.substring(0, idp.indexOf("/"));
+      passport._strategies.config2._saml.options.entryPoint = 'https://' + idp + '/simplesaml/saml2/idp/SSOService.php';
+    }
+    next();
+  });
+
   app.get('/aai',
   passport.authenticate('config1', { failureRedirect: '/login', failureFlash: true }),
   function(req, res) {
