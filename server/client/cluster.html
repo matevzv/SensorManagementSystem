@@ -18,6 +18,8 @@
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
         <script type="text/javascript" src="js/carvic.js"></script>
         <script type="text/javascript" src="js/jquery-clockpicker.min.js"></script>
+        <script type="text/javascript" src="js/jquery.bootpag.js"></script>
+    <script type="text/javascript" src="js/pagination.js"></script>
         <script>
             $(document).ready(function () {
                 $(".control-label")
@@ -220,6 +222,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="page-selection-history" style="text-align: center"></div>
                     </div>
 
                     <div class="well well-small history" data-bind="visible: $root.ShowNodes()==true ">
@@ -242,6 +245,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="page-selection-nodes" style="text-align: center"></div>
                     </div>
                 </div>
             </div>
