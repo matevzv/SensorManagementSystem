@@ -1265,6 +1265,31 @@ Carvic.Model.SingleNodeModel = function () {
                     Css: (obj.code === "node_change" ? "icon-edit" : "icon-check")
                 }));
             }
+            //it starts from the page 1
+            //ten elements per page
+            paginate(0, 10);
+
+            $('#page-selection-nodeHistory').bootpag({
+
+                total: paginate(0, 10),
+                page: 1,
+                maxVisible: 3,
+                leaps: true,
+                firstLastUse: true,
+                first: 'First',
+                last: 'Last',
+                wrapClass: 'pagination',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+                //$('.history_border').html(); // or some ajax content loading...
+                paginate(num - 1, 10);
+
+            });
         });
     };
 
@@ -2496,6 +2521,31 @@ Carvic.Model.ClusterModel = function () {
                     Url: "node.html?id=" + encodeURI(obj.id)
                 }));
             }
+             //it starts from the page 1
+            //ten elements per page
+            paginate(0, 10);
+
+            $('#page-selection-nodes').bootpag({
+
+                total: paginate(0, 10),
+                page: 1,
+                maxVisible: 3,
+                leaps: true,
+                firstLastUse: true,
+                first: 'First',
+                last: 'Last',
+                wrapClass: 'pagination',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+                //$('.history_border').html(); // or some ajax content loading...
+                paginate(num - 1, 10);
+
+            });
         });
     }
 
@@ -2522,6 +2572,31 @@ Carvic.Model.ClusterModel = function () {
                     Css: (obj.code === "component_change" ? "icon-edit" : "icon-check")
                 }));
             }
+            //it starts from the page 1
+            //ten elements per page
+            paginate(0, 10);
+
+            $('#page-selection-history').bootpag({
+
+                total: paginate(0, 10),
+                page: 1,
+                maxVisible: 3,
+                leaps: true,
+                firstLastUse: true,
+                first: 'First',
+                last: 'Last',
+                wrapClass: 'pagination',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+                //$('.history_border').html(); // or some ajax content loading...
+                paginate(num - 1, 10);
+
+            });
         });
     }
 

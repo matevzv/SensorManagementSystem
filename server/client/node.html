@@ -21,6 +21,8 @@
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
         <script type="text/javascript" src="js/carvic.js"></script>
+        <script type="text/javascript" src="js/jquery.bootpag.js"></script>
+    <script type="text/javascript" src="js/pagination.js"></script>
         <script>
             $(document).ready(function () {
                 $(".control-label")
@@ -157,6 +159,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="page-selection-nodeHistory" style="text-align: center"></div>
                     </div>
 
                     <div data-bind="visible: $root.ShowSensorList()==true ">
