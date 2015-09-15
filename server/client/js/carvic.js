@@ -634,6 +634,31 @@ Carvic.Model.UserModel = function () {
                     LastAction: new Date(Date.parse(obj.last_action))
                 }));
             }
+             //it starts from the page 1
+            //30 elements per page
+            paginate(0, 30);
+
+            $('#page-selection-userLogins').bootpag({
+
+                total: paginate(0, 30),
+                page: 1,
+                maxVisible: 3,
+                leaps: true,
+                firstLastUse: true,
+                first: 'First',
+                last: 'Last',
+                wrapClass: 'pagination',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+                //$('.history_border').html(); // or some ajax content loading...
+                paginate(num - 1, 30);
+
+            });
         });
     };
 
@@ -660,6 +685,31 @@ Carvic.Model.UserModel = function () {
                     Css: (obj.code === "node_change" ? "icon-edit" : "icon-check")
                 }));
             }
+             //it starts from the page 1
+            //ten elements per page
+            paginate(0, 10);
+
+            $('#page-selection-userChanges').bootpag({
+
+                total: paginate(0, 10),
+                page: 1,
+                maxVisible: 3,
+                leaps: true,
+                firstLastUse: true,
+                first: 'First',
+                last: 'Last',
+                wrapClass: 'pagination',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+                //$('.history_border').html(); // or some ajax content loading...
+                paginate(num - 1, 10);
+
+            });
         });
     };
 
