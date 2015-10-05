@@ -31,7 +31,9 @@
     "connect-mongo": "*",
     "socket.io": "*",
     "crypto": "*",
-    "agenda": "*"
+    "agenda": "*",
+    "passport": "0.2.2",
+    "passport-saml": "*"
   },
   "license": "AGPLv3",
   "engines": {
