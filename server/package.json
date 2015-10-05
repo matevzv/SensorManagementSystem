@@ -33,7 +33,7 @@
     "crypto": "*",
     "agenda": "*"
   },
-  "license": "GPL",
+  "license": "AGPLv3",
   "engines": {
     "node": ">=0.8"
   },
