@@ -14,6 +14,7 @@ var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var http = require('http');
 var io = require('socket.io');
+var nodeRed = require("node-red");
 var fs = require("fs");
 var passport = require("passport");
 var SamlStrategy = require('passport-saml').Strategy;
@@ -459,9 +460,23 @@ function run() {
       res.status(404).json("The requested resource could not be found!");
     });
 
+    app.get('/umko/*', ensure_authenticated);
+
+    var redSettings = {
+      httpAdminRoot: "/umko",
+      paletteCategories: ['subflows', 'estoritve', 'input', 'output', 'function', 'social', 'storage', 'analysis', 'advanced'],
+      httpNodeRoot: "/umkoapi",
+      functionGlobalContext: { }    // enables global context
+    };
+
+    nodeRed.init(server,redSettings);
+    app.use(redSettings.httpAdminRoot,nodeRed.httpAdmin);
+    app.use(redSettings.httpNodeRoot,nodeRed.httpNode);
+
     // ok, start the server
     server.listen(port);
-  }
+    nodeRed.start();
+}
 
   ///////////////////////////////////////////////////////////////////////////////////
 

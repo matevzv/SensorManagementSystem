@@ -32,6 +32,7 @@
     "socket.io": "*",
     "crypto": "*",
     "agenda": "*",
+    "node-red": "0.10.10",
     "passport": "0.2.2",
     "passport-saml": "*"
   },

@@ -23,7 +23,7 @@
                         source: Carvic.Utils.ClusterLookup,
                         minLength: 2 //,
                         //matcher: function (item) {
-                        //    return (item.indexOf(this.query) >= 0); 
+                        //    return (item.indexOf(this.query) >= 0);
                         //    //return true;
                         //}*/
                     });
@@ -56,6 +56,7 @@
                             <li><a href="clusters.html"><i class="glyphicon glyphicon-th"></i> Clusters</a></li>
                             <li class="active"><a href="nodes.html"><i class="glyphicon glyphicon-map-marker"></i> Nodes</a></li>
                             <li><a href="components.html"><i class="glyphicon glyphicon-tasks"></i> Components</a></li>
+                            <li><a href="/umko"><i class="glyphicon glyphicon-link"></i> Node-RED</a></li>
                             <!--<li><a href="users.html"><i class="glyphicon glyphicon-user"></i> Users</a></li>-->
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
@@ -115,7 +116,7 @@
                                 <input class="form-control" id="inID" type="text" data-bind="value: NodeSearchId" />
                             </div>
                         </div>
-                    
+
                         <div class="list-group" data-bind="visible: AdvancedSearch() == true">
                             <label class="control-label" for="inComment"> Comment </label>
                             <div class="controls">
@@ -135,7 +136,7 @@
                             <div class="controls">
                                 <input class="form-control" id="inNetworkAddress" type="text" data-bind="value: NodeSearchNetworkAddress" />
                             </div>
-                        </div> 
+                        </div>
                     </div>
                     <div class="col-md-4">
                         <div class="list-group">
