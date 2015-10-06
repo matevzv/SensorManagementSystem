@@ -283,6 +283,9 @@ exports.change_pwd = function (req, callback) {
 exports.change_notify = function (req, callback) {
     var rec = req.data;
     db.update_notify(rec.username, rec, function (err, data2) {
+        if(err){
+            return callback(new Error("Duplicate Path after sensor scan please try another"));
+        }
         var h = {
             node: null,
             user: req.session.user,
