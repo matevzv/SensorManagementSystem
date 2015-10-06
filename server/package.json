@@ -32,9 +32,11 @@
     "socket.io": "*",
     "crypto": "*",
     "agenda": "*",
-    "node-red": "0.10.10"
+    "node-red": "0.10.10",
+    "passport": "0.2.2",
+    "passport-saml": "*"
   },
-  "license": "GPL",
+  "license": "AGPLv3",
   "engines": {
     "node": ">=0.8"
   },

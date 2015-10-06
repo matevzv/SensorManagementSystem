@@ -22,6 +22,7 @@ data.history = [];
 data.clusters = [];
 data.nodes = [];
 data.components = [];
+data.measurements = [];
 data.sensor_history = [];
 data.component_types = [];
 data.cluster_types = [];

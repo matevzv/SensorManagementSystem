@@ -108,6 +108,18 @@ db.init(options, function (err) {
                             } else {
                                 console.log("Done");
                             };
+                        } else if (options.cmd == "init") {
+                            xutil.ask("Are you sure that you want to insert start data to database? Use node top.js clean first to delete all old data.\nWARNING: This can't be undone!\nAnswer with [y/n]", /.+/, function (val) {
+                                if (val == "y" || val == "Y") {
+                                    db.init_sms(function () {
+                                        db.close();
+                                        console.log("Done");
+                                    });
+                                } else {
+                                    db.close();
+                                    console.log("Aborted");
+                                };
+                            });
                         } else if (options.cmd == "scan") {
                             var cluster_id = null;
                             if (options.argv.length >= 4) {

@@ -16,6 +16,8 @@
         <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
         <script type="text/javascript" src="js/carvic.js"></script>
+        <script type="text/javascript" src="js/jquery.bootpag.js"></script>
+        <script type="text/javascript" src="js/pagination.js"></script>
         <script>
             $(document).ready(function () {
                 $(".control-label")
@@ -49,7 +51,7 @@
                             <li><a href="nodes.html"><i class="glyphicon glyphicon-map-marker"></i> Nodes</a></li>
                             <li><a href="components.html"><i class="glyphicon glyphicon-tasks"></i> Components</a></li>
                             <li><a href="/umko"><i class="glyphicon glyphicon-link"></i> Node-RED</a></li>
-                            <li id="liUsers" class="active"><a href="users.html"><i class="glyphicon glyphicon-user"></i> Users</a></li>
+                            <!--<li id="liUsers" class="active"><a href="users.html"><i class="glyphicon glyphicon-user"></i> Users</a></li>-->
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="help"><i class="glyphicon glyphicon-question-sign" title="Show help"></i> Help</a></li>
@@ -238,7 +240,7 @@
                             </li>
                         </ul>
                     </div>
-
+                    <div class="Logins">
                     <table class="table table-hover" data-bind="visible: $root.ShowLogins()==true ">
                         <tr>
                             <th>When</th>
@@ -246,13 +248,15 @@
                             <th>Last action</th>
                         </tr>
                         <tbody data-bind="foreach: LoginHistory">
-                        <tr>
+                        <tr class='history_border'>
                             <td data-bind="text: Carvic.Utils.FormatDateTime(Ts) "></td>
                             <td data-bind="text: Ip"></td>
                             <td data-bind="text: Carvic.Utils.FormatDateTime(LastAction) "></td>
                         </tr>
                         </tbody>
                     </table>
+                    <div id="page-selection-userLogins" style="text-align: center"></div>
+                    </div>
 
                     <div class="well well-small history" data-bind="visible: $root.ShowChanges()==true ">
                         <div data-bind="foreach: $root.CurrentUser().History">
@@ -267,6 +271,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div id="page-selection-userChanges" style="text-align: center"></div>
                     </div>
 
                 </div>

@@ -634,6 +634,31 @@ Carvic.Model.UserModel = function () {
                     LastAction: new Date(Date.parse(obj.last_action))
                 }));
             }
+             //it starts from the page 1
+            //30 elements per page
+            paginate(0, 30);
+
+            $('#page-selection-userLogins').bootpag({
+
+                total: paginate(0, 30),
+                page: 1,
+                maxVisible: 3,
+                leaps: true,
+                firstLastUse: true,
+                first: 'First',
+                last: 'Last',
+                wrapClass: 'pagination',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+                //$('.history_border').html(); // or some ajax content loading...
+                paginate(num - 1, 30);
+
+            });
         });
     };
 
@@ -660,6 +685,31 @@ Carvic.Model.UserModel = function () {
                     Css: (obj.code === "node_change" ? "icon-edit" : "icon-check")
                 }));
             }
+             //it starts from the page 1
+            //ten elements per page
+            paginate(0, 10);
+
+            $('#page-selection-userChanges').bootpag({
+
+                total: paginate(0, 10),
+                page: 1,
+                maxVisible: 3,
+                leaps: true,
+                firstLastUse: true,
+                first: 'First',
+                last: 'Last',
+                wrapClass: 'pagination',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+                //$('.history_border').html(); // or some ajax content loading...
+                paginate(num - 1, 10);
+
+            });
         });
     };
 
@@ -1265,6 +1315,31 @@ Carvic.Model.SingleNodeModel = function () {
                     Css: (obj.code === "node_change" ? "icon-edit" : "icon-check")
                 }));
             }
+            //it starts from the page 1
+            //ten elements per page
+            paginate(0, 10);
+
+            $('#page-selection-nodeHistory').bootpag({
+
+                total: paginate(0, 10),
+                page: 1,
+                maxVisible: 3,
+                leaps: true,
+                firstLastUse: true,
+                first: 'First',
+                last: 'Last',
+                wrapClass: 'pagination',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+                //$('.history_border').html(); // or some ajax content loading...
+                paginate(num - 1, 10);
+
+            });
         });
     };
 
@@ -1292,7 +1367,7 @@ Carvic.Model.SingleNodeModel = function () {
                 }
                 self.CurrentSensor(sensor);
                 self.CurrentSensor().IsActive(true);
-                self.CurrentSensor().GetHistory();
+                self.DoShowRawSensorData();
                 return;
             }
         }
@@ -1316,6 +1391,7 @@ Carvic.Model.SingleNodeModel = function () {
         self.ShowRawSensorData(true);
         self.ShowSensorChart(false);
         self.ShowDownloadSensorData(false);
+        self.CurrentSensor().GetHistory();
     };
 
     self.DoShowSensorChart = function () {
@@ -1564,6 +1640,7 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
     self.History = ko.observableArray();
     self.sensorData = [];
     self.sensorChart = null;
+    self.measurementCount = 0;
     self.From = ko.observable("");
     self.To = ko.observable("");
     self.DownloadLimit = ko.observable("");
@@ -1573,8 +1650,7 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
     }
 
     self.GetHistory = function () {
-        if (self.History().length > 0)
-            return;
+        self.sensorData = [];
         self.History.removeAll();
         var req = {
             action: "get_sensor_history",
@@ -1596,6 +1672,7 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
     };
 
     self.GetChart = function () {
+      self.ClearChart();
       if (self.sensorChart == null) {
         var ctx = document.getElementById("sensorChart").getContext("2d");
         var data = {
@@ -1617,6 +1694,13 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
         }
       }
     };
+
+    self.ClearChart = function () {
+      $('#sensorChart').remove();
+      $('#chartContainer').append('<canvas class="sensor_chart" id="sensorChart"><canvas>');
+      self.measurementCount = 0;
+      self.sensorChart = null;
+    }
 
     self.DownloadMeasurements = function() {
         var query = {};
@@ -1660,23 +1744,25 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
     };
 
     var socket = io.connect('http://localhost:3000');
-    socket.on(self.ID, function (data) {
+    socket.on('measurements', function (data) {
       for (var i = 0; i < data.length; i++) {
-          var obj = data[i];
+        var obj = data[i];
+        if (self.ID == obj.sensor) {
           if (self.sensorChart != null) {
             self.sensorChart.addData([obj.value], obj.ts);
+            if (self.sensorChart != null && self.measurementCount > 50) {
+              self.sensorChart.removeData();
+            }
+            self.measurementCount++;
           }
           if (self.History().length <= 50) {
             self.History.push(ko.observable({
               Ts: new Date(Date.parse(obj.ts)),
               Value: obj.value
             }));
-          } else {
-            if (self.sensorChart != null) {
-              self.sensorChart.removeData();
-            }
           }
         }
+      }
     });
 };
 
@@ -2485,6 +2571,31 @@ Carvic.Model.ClusterModel = function () {
                     Url: "node.html?id=" + encodeURI(obj.id)
                 }));
             }
+             //it starts from the page 1
+            //ten elements per page
+            paginate(0, 10);
+
+            $('#page-selection-nodes').bootpag({
+
+                total: paginate(0, 10),
+                page: 1,
+                maxVisible: 3,
+                leaps: true,
+                firstLastUse: true,
+                first: 'First',
+                last: 'Last',
+                wrapClass: 'pagination',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+                //$('.history_border').html(); // or some ajax content loading...
+                paginate(num - 1, 10);
+
+            });
         });
     }
 
@@ -2511,6 +2622,31 @@ Carvic.Model.ClusterModel = function () {
                     Css: (obj.code === "component_change" ? "icon-edit" : "icon-check")
                 }));
             }
+            //it starts from the page 1
+            //ten elements per page
+            paginate(0, 10);
+
+            $('#page-selection-history').bootpag({
+
+                total: paginate(0, 10),
+                page: 1,
+                maxVisible: 3,
+                leaps: true,
+                firstLastUse: true,
+                first: 'First',
+                last: 'Last',
+                wrapClass: 'pagination',
+                activeClass: 'active',
+                disabledClass: 'disabled',
+                nextClass: 'next',
+                prevClass: 'prev',
+                lastClass: 'last',
+                firstClass: 'first'
+            }).on("page", function (event, num) {
+                //$('.history_border').html(); // or some ajax content loading...
+                paginate(num - 1, 10);
+
+            });
         });
     }
 

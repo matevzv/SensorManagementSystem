@@ -170,6 +170,11 @@ data.cluster_types.push({
     title: "IPv6",
     uses_gateway: false
 });
+data.cluster_types.push({
+    code: "none",
+    title: "none",
+    uses_gateway: false
+});
 /////////////////////////////////////////////////////////////////////////////////////////
 data.component_statuses.push({
     code: "ok",
