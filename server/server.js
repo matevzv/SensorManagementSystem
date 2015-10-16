@@ -258,7 +258,7 @@ function run() {
     if (!req.body.ts) {
       req.body.ts = new Date();
     }
-    io.emit(req.body[0].sensor, req.body);
+    io.emit('measurements', req.body);
     bl.api_add_sensor_measurement(req.body, function(callback) {
       if(callback.error) res.status(callback.status).json(callback.error);
       else res.status(callback.status).json(callback.message);
