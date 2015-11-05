@@ -169,7 +169,7 @@ function run() {
   app.use(morgan('dev'));
   app.use(cookieParser());
   app.use(session({ secret: 'jcvsnasdovhjdsfanbdwkjv', saveUninitialized: true,
-  resave: true, store: new MongoStore({ db: db_url , autoReconnect: true, safe: true}) }));
+  resave: true, store: new MongoStore({ url: db_url , autoReconnect: true, safe: true}) }));
   app.use(log_url);
   app.use(static_file_handler2);
   app.use(preprocess_api_calls);
