@@ -2,7 +2,7 @@
 
 var async = require("async");
 var scanner = require("./scanner");
-//var scanner = require("./scanner_mock");
+//var scanner = require("./tests/scanner_mock");
 
 ///////////////////////////////////////////////////
 

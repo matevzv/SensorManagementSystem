@@ -1,8 +1,8 @@
 // top-level code for scanning single cluster
 
 var async = require("async");
-var zb = require("./zigbee");
-var coap = require("./coap");
+var zb = require("./communication/lcsp");
+var coap = require("./communication/coap");
 
 function get_communication_object(data) {
     if (data.type === "zigbee") {

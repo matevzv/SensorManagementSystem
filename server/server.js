@@ -478,7 +478,7 @@ function run() {
 
     //prepare help file
     console.log("Caching help file...");
-    var md_content = fs.readFileSync("./docs/docs.md") + "";
+    var md_content = fs.readFileSync("../docs/docs.md") + "";
     var html_frame = fs.readFileSync("./client/help.htmlx") + "";
     var md_parser = require("marked");
     help_content = html_frame.replace("${main_content}", md_parser(md_content));

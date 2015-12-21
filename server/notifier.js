@@ -1,7 +1,7 @@
 // progressive notifications - when enables they notify external systems about events inside SMS via REST call
 
 var xutil = require('./xutil');
-var http_client_lib = new require('./http_client');
+var http_client_lib = new require('./communication/http_client');
 
 var db = null;
 
