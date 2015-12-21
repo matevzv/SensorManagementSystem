@@ -5,3 +5,4 @@
 /proto/node_modules/*
 npm-debug.log
 *~
+/server/.nodered/

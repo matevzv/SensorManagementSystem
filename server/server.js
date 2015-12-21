@@ -14,6 +14,7 @@ var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var http = require('http');
 var io = require('socket.io');
+var nodeRed = require("node-red");
 var fs = require("fs");
 var passport = require("passport");
 var SamlStrategy = require('passport-saml').Strategy;
@@ -168,7 +169,7 @@ function run() {
   app.use(morgan('dev'));
   app.use(cookieParser());
   app.use(session({ secret: 'jcvsnasdovhjdsfanbdwkjv', saveUninitialized: true,
-  resave: true, store: new MongoStore({ db: db_url , autoReconnect: true, safe: true}) }));
+  resave: true, store: new MongoStore({ url: db_url , autoReconnect: true, safe: true}) }));
   app.use(log_url);
   app.use(static_file_handler2);
   app.use(preprocess_api_calls);
@@ -258,7 +259,7 @@ function run() {
     if (!req.body.ts) {
       req.body.ts = new Date();
     }
-    io.emit(req.body[0].sensor, req.body);
+    io.emit('measurements', req.body);
     bl.api_add_sensor_measurement(req.body, function(callback) {
       if(callback.error) res.status(callback.status).json(callback.error);
       else res.status(callback.status).json(callback.message);
@@ -459,9 +460,23 @@ function run() {
       res.status(404).json("The requested resource could not be found!");
     });
 
+    app.get('/umko/*', ensure_authenticated);
+
+    var redSettings = {
+      httpAdminRoot: "/umko",
+      paletteCategories: ['subflows', 'estoritve', 'input', 'output', 'function', 'social', 'storage', 'analysis', 'advanced'],
+      httpNodeRoot: "/umkoapi",
+      functionGlobalContext: { }    // enables global context
+    };
+
+    nodeRed.init(server,redSettings);
+    app.use(redSettings.httpAdminRoot,nodeRed.httpAdmin);
+    app.use(redSettings.httpNodeRoot,nodeRed.httpNode);
+
     // ok, start the server
     server.listen(port);
-  }
+    nodeRed.start();
+}
 
   ///////////////////////////////////////////////////////////////////////////////////
 
