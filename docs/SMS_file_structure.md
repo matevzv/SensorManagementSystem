@@ -6,13 +6,14 @@ Sensor Management System
 - [Introduction](#introduction)
 - [File structure](#file-structure)
   - [docs](#docs)
-  - [proto](#proto)
   - [server](#server)
   	- [client](#client)
-  	- [docs](#server-docs)
+  	- [communication]
+  	- [config]
   	- [node_modules](#node-modules)
   	- [test](#test)
-  	- [test_data](#test-data)
+  		- [test_data](#test-data)
+
 
 # Introduction
 
@@ -24,10 +25,8 @@ Sensor Management System web application is structured into two parts: client an
 
 
 ## docs
-This folder contains various documents ranging from .xsl(x) and .doc(x) files containing data about CREW boxes and VESNA nodes (otherwise saved in database) to images and timeline from planning and developing the SMS system. This is also the location of the file "frs.md", which describes the Sensorlab project, project goals, user groups and user scenarios.
+This folder contains various files containing data about VIDEK file structure, installation guide and API.
 
-## proto
-This folder contains a prototype version of the client-side.
 
 ## server
 This folder contains folders and files currently used by the web application. Besides the server-side, as the folder name suggests, it contains the client-side of the web application. Subfolders and files are structured as follows:
@@ -134,63 +133,58 @@ This is the client-side of SMS. Different file types are placed into separate fo
 *This page gives an insight on the single selected node by listing its information, basic data, system data and installed components. There are also options to show the node's location on map, look into node's data, its history, installed sensors and an option to edit the node.*
     - <i class="icon-file"></i> **nodes.html**
 *This page lists all nodes in the database by listing their ID, name, status, cluster and attached sensors. You have an option to add a new node or search the database for existing nodes using node attributes.*
-    - <i class="icon-file"></i> **settings.html**
-*This is the personal settings page, where a user can change their full name and password.*
     - <i class="icon-file"></i> **stats.html**
 *This page is the limited version of SensorLab Dashboard (or admin.html). It gives users an insight on nodes and sensors - number of installed and number of active ones and an insight on users - number of users, number of active ones and number of users with administrator rights.*
     - <i class="icon-file"></i> **user.html**
 *This page provides information about a single chosen user by listing their username, full name, type, status, time of last login, list of all past logins and changes this user made to the SMS. An administrator can edit user's data, change user's password and delete a user.*
     - <i class="icon-file"></i> **users.html**
 *This page lists all users by listing each user's: username, full name, status, type and time of last login. There is also an option to add a new user.*
-        
-- ### server docs
-
-    - <i class="icon-file"></i> **docs_admin.md**
-    *This document provides administrator's manual. See user's manual for basic help.*
-    - <i class="icon-file"></i> **docs.md**
-    *This document provides user's and administrator's manual.*
     
+- ### communication
+*Folder containing communication protocols: coap, lcsp, http.*
+- <i class="icon-file"></i> **coap.js**
+*This code communicates with HTTP/COAP proxy.*
+- <i class="icon-file"></i> **http_client.js**
+*Functions for HTTP communication.*
+- <i class="icon-file"></i> **lcsp.js**
+*This file contains code that allows us to communicate with Zigbee cluster.*
+
+- ### config
+*Folder containing files for aai authorization.*
+
 - ### node modules
 *Folder containing Node.js files.*
 
-- ### test
-
-- ###  test data
+- ### tests
+*Folder containing tests and development files.*
+- <i class="icon-file"></i> **db_dummy_data.js**
+*dummy data,used for testing/development, inserted into database at start-up*
+*DEVELOPMENT ONLY*
+- <i class="icon-file"></i> **db_mocks.js**
+*DEVELOPMENT ONLY*
+*Mock database inside memory, probably not operational anymore*
+- <i class="icon-file"></i> **import_excell_data.js**
+*Utility functions for importing data from existing Excel files.*
+- <i class="icon-file"></i> **scanner_mock.js**
+*DEVELOPMENT/DEBUGGING ONLY*
+*The code in this file is used to skip real scan and just provide the data from the file.*
+	- ###  test data
 
 - <i class="icon-file"></i> **.gitignote**
 *Git uses this file to determine which files and directories to ignore, before you make a commit.*
 - <i class="icon-file"></i> **bl.js**
 *"Business logic" - all smart stuff is happening here, except scanning.*
-- <i class="icon-file"></i> **coap.js**
-*This code communicates with HTTP/COAP proxy.*
-- <i class="icon-file"></i> **db_dummy_data.js**
-*DEVELOPMENT ONLY*
-*dummy data,used for testing/development, inserted into database at start-up*
-- <i class="icon-file"></i> **db_mocks.js**
-*DEVELOPMENT ONLY*
-*Mock database inside memory, probably not operational anymore*
 - <i class="icon-file"></i> **db_syncer.js**
 *This code updates database data after scan produced new data*
 - <i class="icon-file"></i> **db.js**
 *This is DAL module for this system*
 *Database access in hidden inside this file, only functions are exposed (mocking is possible)*
-- <i class="icon-file"></i> **enums.js**
-*This file contains enumerations that are used by client- and servide-side code.*
-*Warning:*
-*When editing these enumerations, be sure to take backward compatibility into consideration.*
-- <i class="icon-file"></i> **http_client.js**
-*Functions for HTTP communication.*
-- <i class="icon-file"></i> **import_excell_data.js**
-*Utility functions for importing data from existing Excel files.*
 - <i class="icon-file"></i> **notifier.js**
 *Progressive notifications - when enabled, they notify external systems about events inside SMS via REST call.*
 - <i class="icon-file"></i> **parser.js**
 *Parser for Zigbee responses.*
 - <i class="icon-file"></i> **scan_coordinator.js**
  *Top level code for scanning, loops over all scanable clusters.*
-- <i class="icon-file"></i> **scanner_mock.js**
-*DEVELOPMENT/DEBUGGING ONLY*
-*The code in this file is used to skip real scan and just provide the data from the file.*
 - <i class="icon-file"></i> **scanner.js**
 *Top-level code for scanning single cluster.*
 - <i class="icon-file"></i> **server.js**
@@ -204,6 +198,3 @@ Configuration for node.js server.
 - <i class="icon-file"></i> **utils_hash.js**
 *Hashing utilities.*
 - <i class="icon-file"></i> **xutil.js**
-
-- <i class="icon-file"></i> **lcsp.js**
-*This file contains code that allows us to communicate with Zigbee cluster.*
