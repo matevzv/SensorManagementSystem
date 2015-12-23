@@ -34,20 +34,10 @@ This folder contains folders and files currently used by the web application. Be
 - ### client
 This is the client-side of SMS. Different file types are placed into separate folders:
 	- #### <i class="icon-folder-open"></i> css
-	   - <i class="icon-file"></i> **bootstrap-responsive.css**
-	   *A part of Bootstrap 2.1.1*
-   	   - <i class="icon-file"></i> **bootstrap-responsive.min.css**
-   	   *Minified version of the above file*
-	   - <i class="icon-file"></i> **bootstrap.css**
-	   *A part of Bootstrap 2.1.1*
-	   - <i class="icon-file"></i> **bootstrap.min.css**
-	   *Minified version of the above file*
 	   - <i class="icon-file"></i> **carvic.css**
 	   *Bootstrap tweaks*
-	   - <i class="icon-file"></i> **datepicker.css**
-	   *Datepicker for Bootstrap by Stefan Petre*
-	   - <i class="icon-file"></i> **font-awesome.css**
-	   *Font Awesome 3.2.0 - the iconic font designed for Bootstrap. Font Awesome gives you scalable vector icons that can instantly be customized*
+	   - <i class="icon-file"></i> **jquery-clockpicker.min.css**
+	   *clockpicker for Bootstrap*
 	   	
 	- #### <i class="icon-folder-open"></i> font
 	*Font Awesome 3.2.0 - the iconic font designed for Bootstrap. Font Awesome gives you scalable vector icons that can instantly be customized*
@@ -75,35 +65,21 @@ This is the client-side of SMS. Different file types are placed into separate fo
 	    *Includes 200 glyphs in font format from the Glyphicon Halflings set*
 	
 	- #### <i class="icon-folder-open"></i> js
-	    - <i class="icon-file"></i> **bootstrap-datepicker.js**
-	    *Datepicker for Bootstrap by Stefan Petre.*
-        *http://www.eyecon.ro/bootstrap-datepicker*
-	    - <i class="icon-file"></i> **bootstrap.js**
-	    *v2.1.1*
+	    - <i class="icon-file"></i> **bootstrap3-typeahead.js**
 	    *Bootstrap is a free collection of tools for creating websites and web applications. It contains HTML and CSS-based design templates for typography, forms, buttons, navigation and other interface components, as well as optional JavaScript extensions.*
         *http://getbootstrap.com*
-	    - <i class="icon-file"></i> **bootstrap.min.js**
-	    *Minified version of bootstrap.js*
 	    - <i class="icon-file"></i> **carvic.js**
         *JavaScript file supporting different subpages (such as admin.html, clusters.html, etc.). It contains models for: user list, user details, node search and details, single node search and details, component search and details, cluster search and details, cluster history, personal settings, refresh model. These models function by using Carvic.Utils utilities also contained in this file and knockout.js library.*
 	    - <i class="icon-file"></i> **carvic.min.js**
 	    *Minified version of carvic.js*
 	    - <i class="icon-file"></i> **compress.bat**
 	    *Batch file for creating minified versions of .js files*
-	    - <i class="icon-file"></i> **google.jsapi.js**
-	    *Google’s JS API is a tool that you can use instead of loading a separate javascript library for each of Google’s API’s. Using it, you can simply load the JSAPI and then use a fairly easy google.load call to pull in whatever library you need. This allows you to programmatically load only those libraries which your page needs, rather than the shotgun approach where you load every library every page on your site might need, whether the page being viewed needs it or not.*
-	    - <i class="icon-file"></i> **handlebars.js**
-	    *1.0.rc.1*
-	    *Handlebars provides the power necessary to let you build semantic templates effectively with no frustration.*
-        *http://handlebarsjs.com*
-        - <i class="icon-file"></i> **jquery.js**
-	    *v1.8.2*
-        *jQuery is a fast, small, and feature-rich JavaScript library. It makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy-to-use API that works across a multitude of browsers.*
-        *http://jquery.com/*
-	    - <i class="icon-file"></i> **knockout.js**
-	    *v2.2.1*
-        *Knockout is a JavaScript library that helps you to create rich, responsive display and editor user interfaces with a clean underlying data model. Any time you have sections of UI that update dynamically (e.g., changing depending on the user’s actions or when an external data source changes), KO can help you implement it more simply and maintainably.*
-        *http://knockoutjs.com*
+	    - <i class="icon-file"></i> **jquery-clockpicker.min.js**
+	    *jquery clockpicker*
+	    - <i class="icon-file"></i> **jquerybootpag.js**
+	    *jQuery plugin for dynamic pagination*
+	    - <i class="icon-file"></i> **pagination.js**
+       	
 	
     - <i class="icon-file"></i> **admin.html**
     *This page is the SensorLab Dashboard. It gives users with administrator rights an overview on the number and activity of: nodes, their attached sensors, node clusters and users. It is also the page every user with administrator rights is redirected to after login.*
