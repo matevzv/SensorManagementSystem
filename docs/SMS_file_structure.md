@@ -146,7 +146,7 @@ This is the client-side of SMS. Different file types are placed into separate fo
 	- <i class="icon-file"></i> **scanner_mock.js**
 *DEVELOPMENT/DEBUGGING ONLY*
 *The code in this file is used to skip real scan and just provide the data from the file.*
-	- ####  test data
+	- #### <i class="icon-folder-open"></i> test_data
 	*Folder containing test data.*
 
 - <i class="icon-file"></i> **.gitignote**
