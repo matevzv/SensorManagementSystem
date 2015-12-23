@@ -145,6 +145,8 @@ This is the client-side of SMS. Different file types are placed into separate fo
 *Utility functions for importing data from existing Excel files.*
 	- <i class="icon-file"></i> **scanner_mock.js**
 *DEVELOPMENT/DEBUGGING ONLY*
+	- <i class="icon-file"></i> **test.js**
+*DEVELOPMENT ONLY. Used for testing small chunks of code.*
 *The code in this file is used to skip real scan and just provide the data from the file.*
 	- #### <i class="icon-folder-open"></i> test_data
 	*Folder containing test data.*
@@ -172,8 +174,6 @@ This is the client-side of SMS. Different file types are placed into separate fo
 *Main file for Node.js server.*
 - <i class="icon-file"></i> **settings.json**
 Configuration for node.js server.
-- <i class="icon-file"></i> **test.js**
-*DEVELOPMENT ONLY. Used for testing small chunks of code.*
 - <i class="icon-file"></i> **top.js**
 *The top level code for SMS*
 - <i class="icon-file"></i> **utils_hash.js**
