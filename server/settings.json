@@ -4,7 +4,7 @@
         "use_auth": true
     },
     "database": {
-        "url": "sms"
+        "url": "mongodb://localhost:27017/sms"
     },
     "scan": {
         "node_unreachable_after" : "2 d",
