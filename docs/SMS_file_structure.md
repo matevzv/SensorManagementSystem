@@ -8,10 +8,10 @@ Sensor Management System
   - [docs](#docs)
   - [server](#server)
   	- [client](#client)
-  	- [communication]
-  	- [config]
+  	- [communication](#communication)
+  	- [config](#config)
   	- [node_modules](#node-modules)
-  	- [test](#test)
+  	- [tests](#tests)
   		- [test_data](#test-data)
 
 
@@ -142,36 +142,41 @@ This is the client-side of SMS. Different file types are placed into separate fo
     
 - ### communication
 *Folder containing communication protocols: coap, lcsp, http.*
-- <i class="icon-file"></i> **coap.js**
+	- <i class="icon-file"></i> **coap.js**
 *This code communicates with HTTP/COAP proxy.*
-- <i class="icon-file"></i> **http_client.js**
+	- <i class="icon-file"></i> **http_client.js**
 *Functions for HTTP communication.*
-- <i class="icon-file"></i> **lcsp.js**
+	- <i class="icon-file"></i> **lcsp.js**
 *This file contains code that allows us to communicate with Zigbee cluster.*
 
 - ### config
 *Folder containing files for aai authorization.*
+	- <i class="icon-file"></i> **passport.js**
+*AAI authorization*
 
 - ### node modules
 *Folder containing Node.js files.*
 
 - ### tests
 *Folder containing tests and development files.*
-- <i class="icon-file"></i> **db_dummy_data.js**
+	- <i class="icon-file"></i> **db_dummy_data.js**
 *dummy data,used for testing/development, inserted into database at start-up*
 *DEVELOPMENT ONLY*
-- <i class="icon-file"></i> **db_mocks.js**
+	- <i class="icon-file"></i> **db_mocks.js**
 *DEVELOPMENT ONLY*
 *Mock database inside memory, probably not operational anymore*
-- <i class="icon-file"></i> **import_excell_data.js**
+	- <i class="icon-file"></i> **import_excell_data.js**
 *Utility functions for importing data from existing Excel files.*
-- <i class="icon-file"></i> **scanner_mock.js**
+	- <i class="icon-file"></i> **scanner_mock.js**
 *DEVELOPMENT/DEBUGGING ONLY*
 *The code in this file is used to skip real scan and just provide the data from the file.*
-	- ###  test data
+	- ####  test data
+	*Folder containing test data.*
 
 - <i class="icon-file"></i> **.gitignote**
 *Git uses this file to determine which files and directories to ignore, before you make a commit.*
+- <i class="icon-file"></i> **agenda_server.js**
+*agenda server for scan scheduling.*
 - <i class="icon-file"></i> **bl.js**
 *"Business logic" - all smart stuff is happening here, except scanning.*
 - <i class="icon-file"></i> **db_syncer.js**
