@@ -1,7 +1,7 @@
 // the top level code for SMS
 
 var db = require("./db");
-//var db = require("./db_mocks");
+//var db = require("./tests/db_mocks");
 
 var scan_coordinator = require("./scan_coordinator");
 var agenda = require('./agenda_server');

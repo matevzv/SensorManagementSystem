@@ -109,8 +109,8 @@ function clean(callback) {
 }
 
 function fill_dummy_data(callback) {
-    //var data = require("./db_dummy_data").get_dummy_data();
-    var data = require("./import_excel_data").get_dummy_data();
+    //var data = require("./tests/db_dummy_data").get_dummy_data();
+    var data = require("./tests/import_excel_data").get_dummy_data();
 
     var inserts = [];
 
@@ -152,8 +152,8 @@ function fill_dummy_data(callback) {
 }
 
 function init_sms(callback) {
-    //var data = require("./db_dummy_data").get_dummy_data();
-    var data = require("./import_excel_data").get_dummy_data();
+    //var data = require("./tests/db_dummy_data").get_dummy_data();
+    var data = require("./tests/import_excel_data").get_dummy_data();
 
     var inserts = [];
 
