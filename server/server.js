@@ -14,10 +14,6 @@ var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var http = require('http');
 var io = require('socket.io');
-var nodeRed = require("node-red");
-var fs = require("fs");
-var passport = require("passport");
-var SamlStrategy = require('passport-saml').Strategy;
 var url = require('url');
 
 ///////////////////////////////////////////////////////////////////////////
@@ -175,8 +171,6 @@ function run() {
   app.use(preprocess_api_calls);
   app.use(json_parser);
   app.use(body_parser);
-
-  require('./config/passport.js');
 
   // routes
   app.get('/', function (req, res) {
@@ -407,75 +401,12 @@ function run() {
   app.get('/api/*', main_handler);
   app.post('/api/*', main_handler);
 
-  app.use(passport.initialize());
-  app.use(passport.session());
-
-  app.use(function(req, res, next){
-    if(typeof req.query.entityID != 'undefined') {
-      idp = url.parse(req.query.entityID).hostname;
-      passport._strategies.config2._saml.options.entryPoint = 'https://' + idp + '/simplesaml/saml2/idp/SSOService.php';
-    }
-    next();
-  });
-
-  app.get('/aai',
-  passport.authenticate('config1', { failureRedirect: '/login', failureFlash: true }),
-  function(req, res) {
-    res.redirect('/login');
-  });
-
-  app.get('/loginaai',
-  passport.authenticate('config2', { failureRedirect: '/login', failureFlash: true }),
-  function(req, res) {
-    res.redirect('/login');
-  });
-
-  app.post('/assert',
-  passport.authenticate('config2', { failureRedirect: '/', failureFlash: true }),
-  function(req, res) {
-    bl.get_user({ data: { username: req.session.passport.user.userName } }, function (err, data) {
-      if (err) {
-        var rnd = Math.random().toString(36).substring(7);
-        new_user = { data: {
-          username: req.session.passport.user.userName,
-          full_name: req.session.passport.user.firstName + " " +
-          req.session.passport.user.lastName,
-          type: "normal",
-          pwd1: rnd,
-          pwd2: rnd }};
-          bl.new_user(new_user, function () {
-            req.session.is_authenticated = true;
-            req.session.user = req.session.passport.user.userName;
-            res.redirect('/admin.html');
-          });
-        } else {
-          req.session.is_authenticated = true;
-          req.session.user = req.session.passport.user.userName;
-          res.redirect('/admin.html');
-        }
-      });
-    });
-
     app.use(function(err, req, res, next) {
       res.status(404).json("The requested resource could not be found!");
     });
 
-    app.get('/umko/*', ensure_authenticated);
-
-    var redSettings = {
-      httpAdminRoot: "/umko",
-      paletteCategories: ['subflows', 'estoritve', 'input', 'output', 'function', 'social', 'storage', 'analysis', 'advanced'],
-      httpNodeRoot: "/umkoapi",
-      functionGlobalContext: { }    // enables global context
-    };
-
-    nodeRed.init(server,redSettings);
-    app.use(redSettings.httpAdminRoot,nodeRed.httpAdmin);
-    app.use(redSettings.httpNodeRoot,nodeRed.httpNode);
-
     // ok, start the server
     server.listen(port);
-    nodeRed.start();
 }
 
   ///////////////////////////////////////////////////////////////////////////////////

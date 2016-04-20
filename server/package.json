@@ -32,10 +32,6 @@
     "socket.io": "*",
     "crypto": "*",
     "agenda": "*",
-    "node-red": "*",
-    "estoritve-node-red": "*",
-    "passport": "*",
-    "passport-saml": "*"
   },
   "license": "AGPLv3",
   "engines": {
