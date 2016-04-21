@@ -12,3 +12,8 @@ node_js:
   - "0.8"
   - "0.6"
   - "iojs"
+
+services:
+  - mongodb
+
+script: nodejs top.js
