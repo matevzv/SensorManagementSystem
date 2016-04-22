@@ -41,7 +41,6 @@ var basic_auth = basicAuth(function (user, pass, callback) {
 var static_file_handler2 = function (req, res, next) {
   var s = req.url.split("?");
   var fn = path.join(__dirname, '../public' + s[0]);
-	console.log("---------------" + fn)
 
   var ext = path.extname(s[0]).toLowerCase();
   if (ext === ".html") {
