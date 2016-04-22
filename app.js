@@ -47,8 +47,8 @@ if (options.cmd === "help") {
 } else if (options.cmd === "unit_tests") {
 
     var tester = require('./tests/cv_tester').get_tester();
-    require("./parser").unit_tests(tester);
-    require("./xutil").unit_tests(tester);
+    require("./app/parser").unit_tests(tester);
+    require("./app/xutil").unit_tests(tester);
 
 } else {
 
