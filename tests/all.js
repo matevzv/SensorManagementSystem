@@ -7,7 +7,8 @@ exports['test basic operation'] = function(assert, done) {
 
 	var options = {
 		host: 'localhost',
-		path: '/login'
+		path: '/login',
+		port: '3000'
 	}
 	var request = http.get(options, function (response) {
 		response.setEncoding('utf8')
