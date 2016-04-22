@@ -9,7 +9,7 @@
     "Matevz Vucnik <matevz.vucnik@ijs.si>"
   ],
   "scripts": {
-    "pretest": "node app.js &",
+    "start": "node app.js &",
 		"pretest": "sleep 10",
 		"test": "node tests/all.js"
   },
