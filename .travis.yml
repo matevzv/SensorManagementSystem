@@ -13,13 +13,14 @@ node_js:
   - "0.6"
   - "iojs"
 
-services:
-  - mongodb
-  
 addons:
   apt:
     sources:
-    - mongodb-3.0-precise
+      - mongodb-upstart
+      - mongodb-3.0-precise
+    packages:
+      - mongodb-org-server
+      - mongodb-org-shell
 
 before_script:
   - npm start
