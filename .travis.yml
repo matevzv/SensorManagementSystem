@@ -15,6 +15,11 @@ node_js:
 
 services:
   - mongodb
+  
+addons:
+  apt:
+    sources:
+    - mongodb-3.0-precise
 
 before_script:
   - npm start
