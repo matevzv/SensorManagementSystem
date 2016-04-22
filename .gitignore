@@ -1,8 +1,5 @@
 /archive/
-/server/archive/
-/server/logs/
-/server/node_modules/*
-/proto/node_modules/*
+/logs/
+/node_modules/*
 npm-debug.log
 *~
-/server/.nodered/

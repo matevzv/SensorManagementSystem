@@ -1,0 +1,53 @@
+{
+  "name": "sensorlab-sms",
+  "version": "0.9.2",
+  "author": "Sensorlab <sensorlab@ijs.si>",
+  "description": "Sensor management system",
+  "contributors": [
+    "Adnan Bekan <adnan.bekan@ijs.si>",
+    "Tomaz Solc <tomaz.solc@ijs.si>",
+    "Matevz Vucnik <matevz.vucnik@ijs.si>"
+  ],
+  "scripts": {
+    "start": "node app.js",
+		"test": "node tests/all.js"
+  },
+  "keywords": [
+    "sensor",
+    "sensorlab",
+    "management",
+    "system"
+  ],
+  "dependencies": {
+    "async": "*",
+    "body-parser": "*",
+    "express": "*",
+    "marked": "*",
+    "mongojs": "*",
+    "express-session": "*",
+    "basic-auth-connect": "*",
+    "serve-favicon": "*",
+    "morgan": "*",
+    "cookie-parser": "*",
+    "connect-mongo": "*",
+    "socket.io": "*",
+    "crypto": "*",
+    "agenda": "*"
+  },
+  "license": "AGPLv3",
+  "engines": {
+    "node": ">=0.8"
+  },
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sensorlab/SensorManagementSystem"
+  },
+  "bugs": {
+    "url": "https://github.com/sensorlab/SensorManagementSystem/issues"
+  },
+  "homepage": "https://github.com/sensorlab/SensorManagementSystem"
+}
