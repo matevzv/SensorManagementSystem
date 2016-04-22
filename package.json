@@ -20,6 +20,7 @@
     "system"
   ],
   "dependencies": {
+		"test": "*",
     "async": "*",
     "body-parser": "*",
     "express": "*",
