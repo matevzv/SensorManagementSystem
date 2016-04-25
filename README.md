@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/matevzv/SensorManagementSystem.svg?branch=master)](https://travis-ci.org/matevzv/SensorManagementSystem)
+[![Build Status](https://travis-ci.org/sensorlab/SensorManagementSystem.svg?branch=master)](https://travis-ci.org/sensorlab/SensorManagementSystem)
 
 SensorManagementSystem
 ======================
