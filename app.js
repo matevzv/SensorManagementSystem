@@ -40,6 +40,7 @@ if (options.cmd === "--help") {
     console.log("  archive - archives old records from the database into archive files");
     console.log("  dump - dumps database data to console");
     console.log("  clean - deletes database data");
+    console.log("  init - inserts startup data into database and creates admin user account");
     console.log("  fill_dummy_data - inserts dummy data into database");
     console.log("  unit_tests - perform unit tests");
 
