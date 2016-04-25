@@ -33,7 +33,7 @@ options.argv = process.argv;
 if (options.cmd === "help") {
 
     console.log("");
-    console.log("Usage: node top.js <cmd>");
+    console.log("Usage: node app.js <cmd>");
     console.log("");
     console.log('<cmd> is optional, by default it means "run"');
     console.log("Command can be one of the following:");
@@ -109,7 +109,7 @@ db.init(options, function (err) {
                                 console.log("Done");
                             };
                         } else if (options.cmd == "init") {
-                            xutil.ask("Are you sure that you want to insert start data to database? Use node top.js clean first to delete all old data.\nWARNING: This can't be undone!\nAnswer with [y/n]", /.+/, function (val) {
+                            xutil.ask("Are you sure that you want to insert start data to database? Use node app.js clean first to delete all old data.\nWARNING: This can't be undone!\nAnswer with [y/n]", /.+/, function (val) {
                                 if (val == "y" || val == "Y") {
                                     db.init_sms(function () {
                                         db.close();

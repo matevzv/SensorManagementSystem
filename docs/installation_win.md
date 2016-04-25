@@ -46,7 +46,7 @@ To setup the SMS platform on your computer follow steps bellow.
 
 ######First method:
 
-      This can be done by clicking on the "Clone in Desktop" button.
+      This can be done by clicking on the "Clone in Deskapp" button.
 
       The button is on the right side of the page.
 
@@ -76,12 +76,12 @@ Press the Win key, type cmd.exe, and press Ctrl + Shift + Enter to run the Comma
 ### 3. Fill a database with the dummy data
 To insert dummy data into your database type:
 
-      node top.js fill_dummy_data
+      node app.js fill_dummy_data
 
 
 ### 4. Run the SMS
  To run SMS type:
 
-      node top.js run
+      node app.js run
 
 Now open your web browser and visit [http://localhost:3000](http://localhost:3000/), to login use u:_vik_  p:_vik_.

@@ -9,26 +9,26 @@ Implementation
 The application is implemented using the following technologies:
 
 - [Node.js](http://nodejs.org/) for server-side business logic
-	- `express` for HTTP server functionality 
+	- `express` for HTTP server functionality
 - [Mongodb](http://www.mongodb.org/) for database (NoSQL type)
 - Pure HTML client with AJAX (JSON) calls to server
-	- using [JQuery](http://jquery.com/) for basic DOM manipulation, as well as for AJAX calls 
+	- using [JQuery](http://jquery.com/) for basic DOM manipulation, as well as for AJAX calls
 	- using [Bootstrap](http://getbootstrap.com/) for GUI composition and effects
-	- using [Knockout.js](http://knockoutjs.com/) for MVVM mechanism 
+	- using [Knockout.js](http://knockoutjs.com/) for MVVM mechanism
 
 ##Database collections (tables)
 
 The system uses the following collections inside Mongodb database:
 
-###clusters 
+###clusters
 
 List of clusters
 
 - **comment** - string - user comment for this cluster
-- **id** - string - ID for this cluster, unique within this database 
+- **id** - string - ID for this cluster, unique within this database
 - **last\_scan** - datetime - when was this cluster last scanned
 - **name** - name of this cluster
-- **scan** - boolean - if true then this cluster will be scanned 
+- **scan** - boolean - if true then this cluster will be scanned
 - **tag** - string - used to identify the cluster to the communicator (not unique within the database)
 - **type** - string - "Zigbee" or "ipv6" are supported
 - **url** - string - URL of communicator for this cluster (Zigbee type only)
@@ -41,10 +41,10 @@ List of registered components that can be associated with nodes
 - **type** - string - component's type (e.g. snr, snc, sne, ...)
 - **product\_number** - string - product number
 - **series** - string - series
-- **serial\_number** - string - serial\_number 
+- **serial\_number** - string - serial\_number
 - **status** - string - "ok", "error", "in\_repair"
 - **project** - string - project where this component is used
-- **commment** - string - user's comment for this component 
+- **commment** - string - user's comment for this component
 
 ###history
 
@@ -68,7 +68,7 @@ List of successful logins into the system
 - **user** - string - username of the user that has logged in successfully
 - **ts** - datetime - time stamp of the event
 - **ip** - string - IP from user logged in
-- **last\_action** - datetime - when was last activity detected for this login 
+- **last\_action** - datetime - when was last activity detected for this login
 - **terminated** - boolean flag is this login (session) is terminated and should not be used anymore
 
 ###nodes
@@ -131,20 +131,20 @@ List of users
 
 To run the system, use the following command line
 
-	node top.js
+	node app.js
 
 This will start the web server, by default running on port 3000. To see other options, run command line:
 
-	node top.js help
+	node app.js help
 
 
 To run scan of all clusters and their nodes, run:
 
-	node top.js scan
+	node app.js scan
 
 To run scan of single cluster and its nodes, run:
 
-	node top.js scan <cluster_id>
+	node app.js scan <cluster_id>
 
 ###For development only
 
@@ -152,15 +152,15 @@ The following command should only be run in development environment, since they 
 
 To clear database data (for **development purposes**), run:
 
-	node top.js clean
+	node app.js clean
 
 To fill database with dummy data (for **development purposes**), run:
 
-	node top.js fill_dummy_data
+	node app.js fill_dummy_data
 
 To dump database data to console (for **development purposes**), run:
 
-	node top.js dump
+	node app.js dump
 
 ##System settings
 
@@ -193,14 +193,14 @@ System settings are stored inside `settings.json` file. An example is given belo
 	        "path_after_sensor_scan" : "/",
 	        "path_after_node_change" : "/",
 	        "path_after_sensor_change" : "/",
-	        
+
 	        "after_node_change" : true,
 	        "after_sensor_scan" : true,
 	        "after_sensor_change" : true
 	    }
 	}
 
-Section `web` contains settings that controls the how the system runs. 
+Section `web` contains settings that controls the how the system runs.
 
 Section `database` tells the system where the `Mongodb` database resides.
 
@@ -235,7 +235,7 @@ This type of network has some specifics:
 - Communicates over "REST-like" API - not strictly REST but close enough.
 - Only one call to any function is permitted at the time
 	- This means there will often be "COMMUNICATION IN PROGRESS" errors because of concurrency collisions
-- Gateway node 
+- Gateway node
 	- must exist (it is added automatically when cluster of this type is defined)
 	- has network address 0 (system doesn't prohibit you to change it later)
 
@@ -289,7 +289,7 @@ where:
 - **id** - (optional) id of the node that we want to retrieve data for
 - **id2** - (optional) id of the sensor that we want to retrieve data for
 
-The response will contain the requested data in JSON format. See below for specific examples. 
+The response will contain the requested data in JSON format. See below for specific examples.
 
 Data items might not always follow the order that is presented here.
 
@@ -315,11 +315,11 @@ Getting basic information about specific node.
 Response example:
 
     {
-    	"id" : 152, 
-		"name" : "Test node", 
+    	"id" : 152,
+		"name" : "Test node",
 		"cluster" : "10005",
 		"status" : "active",
-		"long" : 46.660187, 
+		"long" : 46.660187,
 		"lat" : 15.958939
     }
 
@@ -333,11 +333,11 @@ Getting all information about specific node.
 Response example:
 
     {
-    	"id" : 152, 
-		"name" : "Test node", 
+    	"id" : 152,
+		"name" : "Test node",
 		"cluster" : "10005",
 		"status" : "active",
-		"long" : 46.660187, 
+		"long" : 46.660187,
 		"lat" : 15.958939,
 		"role" : "device",
 		"scope" : "",
@@ -392,7 +392,7 @@ Getting measurement data from a specific sensor on a specific node.
 Response example:
 
     {
-    	"node_id" : 152, 
+    	"node_id" : 152,
 		"sensor_id" : "SHT21-temperature",
 		"measurement" : 25.7
     }
