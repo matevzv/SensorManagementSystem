@@ -109,8 +109,7 @@ function clean(callback) {
 }
 
 function fill_dummy_data(callback) {
-    //var data = require("./tests/db_dummy_data").get_dummy_data();
-    var data = require("./tests/import_excel_data").get_dummy_data();
+    var data = require("../tests/import_excel_data").get_dummy_data();
 
     var inserts = [];
 
@@ -123,7 +122,6 @@ function fill_dummy_data(callback) {
     loop(data.components, collection_components);
     loop(data.clusters, collection_clusters);
     loop(data.nodes, collection_nodes);
-    loop(data.measurements, collection_measurements);
     loop(data.users, collection_users, true);
     loop(data.logins, collection_logins);
     loop(data.history, collection_history);
@@ -134,8 +132,6 @@ function fill_dummy_data(callback) {
     loop(data.node_statuses, collection_node_statuses);
     loop(data.user_statuses, collection_user_statuses);
     loop(data.user_types, collection_user_types);
-    loop(data.sensors, collection_sensors);
-
 
     var calls = [];
     inserts.forEach(function (item) {
@@ -146,14 +142,12 @@ function fill_dummy_data(callback) {
 
     async.series(calls, function (err) {
         console.log(err);
-        console.log("Done.");
         callback();
     });
 }
 
 function init_sms(callback) {
-    //var data = require("./tests/db_dummy_data").get_dummy_data();
-    var data = require("./tests/import_excel_data").get_dummy_data();
+    var data = require("../tests/import_excel_data").get_dummy_data();
 
     var inserts = [];
 
@@ -164,9 +158,9 @@ function init_sms(callback) {
     }
     tmpUsers = []
     var user_template = {
-        username: "vik",
-        full_name: "Viktor Jovanoski",
-        pwd_hash: utils_hash.create_pwd_hash("vik"),
+        username: "admin",
+        full_name: "Admin Administrator",
+        pwd_hash: utils_hash.create_pwd_hash("admin"),
         status: "active", // active, inactive, locked
         last_login: new Date(),
         last_bad_login: new Date(),
@@ -176,9 +170,6 @@ function init_sms(callback) {
     var user_str = JSON.stringify(user_template);
 
     var new_user = JSON.parse(user_str);
-    new_user.username = "admin";
-    new_user.full_name = "admin";
-    new_user.pwd_hash = utils_hash.create_pwd_hash("admin");
     tmpUsers.push(new_user);
 
     loop(tmpUsers, collection_users);
@@ -199,7 +190,6 @@ function init_sms(callback) {
 
     async.series(calls, function (err) {
         console.log(err);
-        console.log("Done.");
         callback();
     });
 }

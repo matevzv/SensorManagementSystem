@@ -3,3 +3,5 @@ logs/
 node_modules/
 npm-debug.log
 *~
+tests/test_data/data_from_excel_files_out.json
+tests/test_data/data_from_excel_files_out2.json

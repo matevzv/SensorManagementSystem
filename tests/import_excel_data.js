@@ -1,8 +1,8 @@
 // Utility functions for importing data from existing Excel files
 //////////////////////////////////////////////////////////
 
-var utils_hash = require("../utils_hash");
-var xutil = require("../xutil");
+var utils_hash = require("../app/utils_hash");
+var xutil = require("../app/xutil");
 var fs = require("fs");
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -400,6 +400,3 @@ console.log("sne_ok=" + sne_ok);
 ////////////////////////////
 
 exports.get_dummy_data = function () { return data; }
-
-
-

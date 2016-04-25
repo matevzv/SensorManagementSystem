@@ -30,19 +30,18 @@ if (process.argv.length >= 3)
     options.cmd = process.argv[2];
 options.argv = process.argv;
 
-if (options.cmd === "help") {
+if (options.cmd === "--help") {
 
     console.log("");
-    console.log("Usage: node app.js <cmd>");
-    console.log("");
-    console.log('<cmd> is optional, by default it means "run"');
-    console.log("Command can be one of the following:");
-    console.log("run - runs HTTP server that serves web page");
-    console.log("archive - archives old records from the database into archive files");
-    console.log("dump - dumps database data to console");
-    console.log("clean - deletes database data");
-    console.log("fill_dummy_data - inserts dummy data into database");
-    console.log("unit_tests - perform unit tests");
+    console.log("Usage: node app.js [options]\n");
+    console.log('Default option is "run"\n');
+    console.log('Options:');
+    console.log("  run - runs HTTP server that serves web page");
+    console.log("  archive - archives old records from the database into archive files");
+    console.log("  dump - dumps database data to console");
+    console.log("  clean - deletes database data");
+    console.log("  fill_dummy_data - inserts dummy data into database");
+    console.log("  unit_tests - perform unit tests");
 
 } else if (options.cmd === "unit_tests") {
 
@@ -81,11 +80,13 @@ db.init(options, function (err) {
                             db.dump(collection_name, function () {
                                 db.close();
                                 console.log("Done");
+                                process.exit(0);
                             });
                         } else if (options.cmd == "archive") {
                             db.archive(function () {
                                 db.close();
                                 console.log("Done");
+                                process.exit(0);
                             });
                         } else if (options.cmd == "clean") {
                             xutil.ask("Are you sure that you want to delete ALL data from the database?\nWARNING: This can't be undone!\nAnswer with [y/n]", /.+/, function (val) {
@@ -93,31 +94,32 @@ db.init(options, function (err) {
                                     db.clean(function () {
                                         db.close();
                                         console.log("Done");
+                                        process.exit(0);
                                     });
                                 } else {
                                     db.close();
                                     console.log("Aborted");
+                                    process.exit(0);
                                 };
                             });
                         } else if (options.cmd == "fill_dummy_data") {
-                            if (db.fill_dummy_data) {
-                                db.fill_dummy_data(function () {
-                                    db.close();
-                                    console.log("Done");
-                                });
-                            } else {
+                            db.fill_dummy_data(function () {
+                                db.close();
                                 console.log("Done");
-                            };
+                                process.exit(0);
+                            });
                         } else if (options.cmd == "init") {
                             xutil.ask("Are you sure that you want to insert start data to database? Use node app.js clean first to delete all old data.\nWARNING: This can't be undone!\nAnswer with [y/n]", /.+/, function (val) {
                                 if (val == "y" || val == "Y") {
                                     db.init_sms(function () {
                                         db.close();
                                         console.log("Done");
+                                        process.exit(0);
                                     });
                                 } else {
                                     db.close();
                                     console.log("Aborted");
+                                    process.exit(0);
                                 };
                             });
                         } else if (options.cmd == "scan") {
@@ -129,10 +131,12 @@ db.init(options, function (err) {
                                 db.close();
                                 if (err8) throw err8;
                                 console.log("Done.");
+                                process.exit(0);
                             })
                         } else {
                             db.close();
                             console.log("Unknown command-line command: " + options.cmd);
+                            process.exit(0);
                         }
                     });
                 });
