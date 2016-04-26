@@ -33,7 +33,10 @@
     "connect-mongo": "*",
     "socket.io": "*",
     "crypto": "*",
-    "agenda": "*"
+    "agenda": "*",
+    "chai": "*",
+    "chai-http": "*",
+    "intercept-stdout": "*"
   },
   "license": "AGPLv3",
   "engines": {
