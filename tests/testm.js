@@ -1,12 +1,13 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
-var intercept = require("intercept-stdout");
 var fs = require('fs');
 
 chai.use(chaiHttp);
 
 describe('test some legacy code', function() {
   it('should not fail', function(done) {
+    var intercept = require("intercept-stdout");
+
     captured_text = "";
 
     var unhook_intercept = intercept(function(txt) {
@@ -41,25 +42,92 @@ describe('test basic operation', function() {
 });
 
 describe('test cli', function() {
-  it('should not fail', function(done) {
-    this.timeout(10000);
-    var options = ['--help', 'fill_dummy_data', 'archive',
-                    'dump', 'clean', 'init', 'clean']
-    var counter = 0;
-    for (var i in options) {
+  this.timeout(5000);
+  describe('test help', function() {
+    it('should not fail', function(done) {
       const exec = require('child_process').exec;
-      const child = exec('node app.js ' + options[i],
-                          (error, stdout, stderr) => {
-        console.log(`stdout: ${stdout}`);
-        console.log(`stderr: ${stderr}`);
-        if (error !== null) {
-          console.log(`exec error: ${error}`);
-        }
-        counter++;
-        if (counter == 7) {
-          done();
-        }
+      var cli = 'node app.js --help';
+      const child = exec(cli, (error, stdout, stderr) => {
+        chai.expect(error).to.be.a('null');
+        done();
       });
-    }
+    });
+  });
+
+  describe('test clean', function() {
+    it('should not fail', function(done) {
+      const exec = require('child_process').exec;
+      var cli = 'node app.js clean -y';
+      const child = exec(cli, (error, stdout, stderr) => {
+        chai.expect(error).to.be.a('null');
+        done();
+      });
+    });
+  });
+
+  describe('test fill dummy data', function() {
+    it('should not fail', function(done) {
+      const exec = require('child_process').exec;
+      var cli = 'node app.js fill_dummy_data';
+      const child = exec(cli, (error, stdout, stderr) => {
+        chai.expect(error).to.be.a('null');
+        done();
+      });
+    });
+  });
+
+  describe('test archive', function() {
+    it('should not fail', function(done) {
+      const exec = require('child_process').exec;
+      var cli = 'node app.js archive';
+      const child = exec(cli, (error, stdout, stderr) => {
+        chai.expect(error).to.be.a('null');
+        done();
+      });
+    });
+  });
+
+  describe('test dump', function() {
+    it('should not fail', function(done) {
+      const exec = require('child_process').exec;
+      var cli = 'node app.js dump';
+      const child = exec(cli, (error, stdout, stderr) => {
+        chai.expect(error).to.be.a('null');
+        done();
+      });
+    });
+  });
+
+  describe('test clean', function() {
+    it('should not fail', function(done) {
+      const exec = require('child_process').exec;
+      var cli = 'node app.js clean -y';
+      const child = exec(cli, (error, stdout, stderr) => {
+        chai.expect(error).to.be.a('null');
+        done();
+      });
+    });
+  });
+
+  describe('test init', function() {
+    it('should not fail', function(done) {
+      const exec = require('child_process').exec;
+      var cli = 'node app.js init -y';
+      const child = exec(cli, (error, stdout, stderr) => {
+        chai.expect(error).to.be.a('null');
+        done();
+      });
+    });
+  });
+
+  describe('test clean', function() {
+    it('should not fail', function(done) {
+      const exec = require('child_process').exec;
+      var cli = 'node app.js clean -y';
+      const child = exec(cli, (error, stdout, stderr) => {
+        chai.expect(error).to.be.a('null');
+        done();
+      });
+    });
   });
 });

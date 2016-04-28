@@ -72,7 +72,7 @@ function get_diff_fields(new_rec, old_rec) {
             found = found || (f == fields_new[j]);
         }
         if (!found) continue;
-        
+
         var is_change = false;
 
         if (is_null_or_empty(old_rec[f])) {
@@ -82,7 +82,7 @@ function get_diff_fields(new_rec, old_rec) {
                 is_change = true;
             } else {
                 is_change = (new_rec[f] !== old_rec[f]);
-            }   
+            }
         }
         if (is_change){
             res[f] = new_rec[f];
@@ -198,21 +198,24 @@ function nextTick(func) {
 }
 
 function ask(question, format, callback) {
- var stdin = process.stdin, stdout = process.stdout;
- 
- stdin.resume();
- stdout.write(question + ": ");
- 
- stdin.once('data', function(data) {
-   data = data.toString().trim();
- 
-   if (format.test(data)) {
-     callback(data);
-   } else {
-     stdout.write("It should match: "+ format +"\n");
-     ask(question, format, callback);
-   }
- });
+  if(process.argv[3] != "-y") {
+    var stdin = process.stdin, stdout = process.stdout;
+    stdin.resume();
+    stdout.write(question + ": ");
+
+    stdin.once('data', function(data) {
+     data = data.toString().trim();
+
+     if (format.test(data)) {
+       callback(data);
+     } else {
+       stdout.write("It should match: "+ format +"\n");
+       ask(question, format, callback);
+     }
+   });
+ } else {
+   callback("y");
+ }
 }
 
 /////////////////////////////////////////////////////////////
@@ -427,4 +430,3 @@ exports.unit_tests = function (test) {
 
     test.done();
 };
-
