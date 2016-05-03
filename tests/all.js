@@ -26,7 +26,7 @@ describe('test some legacy code', function() {
 });
 
 describe('test cli', function() {
-  this.timeout(5000);
+  this.timeout(10000);
 
   describe('test help', function() {
     it('should not fail', function(done) {
@@ -102,6 +102,7 @@ describe('test cli', function() {
 
 describe('test basic operation', function() {
   it('should load login page on GET', function(done) {
+    this.timeout(5000);
     var login_file = fs.readFileSync('public/login.html','utf8');
 
     chai.request('http://localhost:3000')
