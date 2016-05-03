@@ -17,6 +17,7 @@ addons:
       - mongodb-org-shell
 
 before_script:
+  - npm install -g mocha
   - node app.js test &
   - sleep 10
 
