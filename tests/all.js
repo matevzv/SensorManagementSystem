@@ -98,20 +98,20 @@ describe('test cli', function() {
       });
     });
   });
+});
 
-  describe('test basic operation', function() {
-    it('should load login page on GET', function(done) {
-      var login_file = fs.readFileSync('public/login.html','utf8');
+describe('test basic operation', function() {
+  it('should load login page on GET', function(done) {
+    var login_file = fs.readFileSync('public/login.html','utf8');
 
-      chai.request('http://localhost:3000')
-        .get('/login')
-        .end(function(err, res) {
-          chai.expect(err).to.be.null;
-          chai.expect(res).to.have.status(200);
-          chai.expect(res).to.be.html;
-          chai.expect(res.text).to.be.equal(login_file);
-          done();
-        });
-    });
+    chai.request('http://localhost:3000')
+      .get('/login')
+      .end(function(err, res) {
+        chai.expect(err).to.be.null;
+        chai.expect(res).to.have.status(200);
+        chai.expect(res).to.be.html;
+        chai.expect(res.text).to.be.equal(login_file);
+        done();
+      });
   });
 });
