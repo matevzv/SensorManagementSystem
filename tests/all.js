@@ -58,7 +58,7 @@ describe('test cli', function() {
   describe('test clean', function() {
     it('should not fail', function(done) {
       const exec = require('child_process').exec;
-      var cli = 'node app.js clean -y';
+      var cli = 'node app.js clean -t';
       const child = exec(cli, (error, stdout, stderr) => {
         chai.expect(error).to.be.a('null');
         done();
@@ -69,7 +69,7 @@ describe('test cli', function() {
   describe('test fill dummy data', function() {
     it('should not fail', function(done) {
       const exec = require('child_process').exec;
-      var cli = 'node app.js fill_dummy_data';
+      var cli = 'node app.js fill_dummy_data -t';
       const child = exec(cli, (error, stdout, stderr) => {
         chai.expect(error).to.be.a('null');
         done();
@@ -80,7 +80,7 @@ describe('test cli', function() {
   describe('test archive', function() {
     it('should not fail', function(done) {
       const exec = require('child_process').exec;
-      var cli = 'node app.js archive';
+      var cli = 'node app.js archive -t';
       const child = exec(cli, (error, stdout, stderr) => {
         chai.expect(error).to.be.a('null');
         done();
@@ -91,7 +91,7 @@ describe('test cli', function() {
   describe('test dump', function() {
     it('should not fail', function(done) {
       const exec = require('child_process').exec;
-      var cli = 'node app.js dump';
+      var cli = 'node app.js dump -t';
       const child = exec(cli, (error, stdout, stderr) => {
         chai.expect(error).to.be.a('null');
         done();
@@ -104,8 +104,8 @@ describe('test cli', function() {
       var settings_content = fs.readFileSync("config/settings.json");
       options = JSON.parse(settings_content);
       const exec = require('child_process').exec;
-      var cli = 'node app.js clean -y';
-      cli += ' && node app.js init -y';
+      var cli = 'node app.js clean -t';
+      cli += ' && node app.js init -t';
       cli += ' && mongo ' + options.database.testUrl.substring(10);
       cli += ' --eval "db.dropDatabase()"';
       const child = exec(cli, (error, stdout, stderr) => {

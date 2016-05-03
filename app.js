@@ -25,9 +25,11 @@ if (options.web && options.web.use_auth !== null) {
 options.cmd = "run"; // deafult command
 
 if (process.argv.length >= 3) {
-  if (process.argv[2] == "test") {
+  if (process.argv[2] == "-t") {
     options.database.url = options.database.testUrl;
-    options.cmd = "run";
+  } else if (process.argv[3] == "-t") {
+    options.database.url = options.database.testUrl;
+    options.cmd = process.argv[2];
   } else {
     options.cmd = process.argv[2];
   }
@@ -36,11 +38,12 @@ if (process.argv.length >= 3) {
 options.argv = process.argv;
 
 if (options.cmd === "--help") {
-    console.log("Usage: node app.js [options]\n");
+    console.log("Usage: node app.js [options] [-t]\n");
+    console.log("  -t - test mode\n");
     console.log('Default option is "run"\n');
     console.log('Options:');
+    console.log("  --help - shows this help");
     console.log("  run - runs HTTP server that serves web page");
-    console.log("  test - runs HTTP server that uses test databes");
     console.log("  archive - archives old records from the database into archive files");
     console.log("  dump - dumps database data to console");
     console.log("  clean - deletes database data");

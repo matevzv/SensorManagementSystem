@@ -198,7 +198,7 @@ function nextTick(func) {
 }
 
 function ask(question, format, callback) {
-  if(process.argv[3] != "-y") {
+  if(process.argv[3] != "-t") {
     var stdin = process.stdin, stdout = process.stdout;
     stdin.resume();
     stdout.write(question + ": ");
