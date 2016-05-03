@@ -24,23 +24,28 @@ if (options.web && options.web.use_auth !== null) {
 }
 options.cmd = "run"; // deafult command
 
-if (process.argv.length >= 3)
+if (process.argv.length >= 3) {
+  if (process.argv[2] == "test") {
+    options.database.url = options.database.testUrl;
+    options.cmd = "run";
+  } else {
     options.cmd = process.argv[2];
+  }
+}
+
 options.argv = process.argv;
 
 if (options.cmd === "--help") {
-
-    console.log("");
     console.log("Usage: node app.js [options]\n");
     console.log('Default option is "run"\n');
     console.log('Options:');
     console.log("  run - runs HTTP server that serves web page");
+    console.log("  test - runs HTTP server that uses test databes");
     console.log("  archive - archives old records from the database into archive files");
     console.log("  dump - dumps database data to console");
     console.log("  clean - deletes database data");
     console.log("  init - inserts startup data into database and creates admin user account");
     console.log("  fill_dummy_data - inserts dummy data into database");
-
 } else {
   db.init(options, function (err) {
       if (err) return console.log(err);

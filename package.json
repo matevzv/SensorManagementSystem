@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "start": "node app.js",
-		"test": "node tests/all.js"
+		"test": "mocha tests/all.js"
   },
   "keywords": [
     "sensor",
