@@ -18,7 +18,5 @@ addons:
 
 before_script:
   - npm install -g mocha
-  - node app.js -t &
-  - sleep 10
 
 script: npm test
