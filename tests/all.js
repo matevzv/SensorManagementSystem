@@ -26,35 +26,26 @@ describe('test some legacy code', function() {
 });
 
 describe('test basic operation', function() {
-  this.timeout(10000);
-  describe('run server', function() {
-    it('should run server', function(done) {
-      var util  = require('util');
-      var spawn = require('child_process').spawn;
-      var srv = spawn('node', ['app.js', '-t']);
+  it('should run server and load login page on GET', function(done) {
+    this.timeout(10000);
+    var spawn = require('child_process').spawn;
+    var srv = spawn('node', ['app.js', '-t']);
 
-      srv.stdout.on('data', function (data) {
-        if (data.indexOf("Running HTTP server") > -1) {
-          chai.expect(data.toString()).to.not.contain('Error');
-          done();
-        }
-      });
-    });
-  });
+    srv.stdout.on('data', function (data) {
+      if (data.indexOf("Running HTTP server") > -1) {
+        var login_file = fs.readFileSync('public/login.html','utf8');
 
-  describe('test server', function() {
-    it('should load login page on GET', function(done) {
-      var login_file = fs.readFileSync('public/login.html','utf8');
-
-      chai.request('http://localhost:3000')
-        .get('/login')
-        .end(function(err, res) {
-          chai.expect(err).to.be.null;
-          chai.expect(res).to.have.status(200);
-          chai.expect(res).to.be.html;
-          chai.expect(res.text).to.be.equal(login_file);
-          done();
-      });
+        chai.request('http://localhost:3000')
+          .get('/login')
+          .end(function(err, res) {
+            chai.expect(err).to.be.null;
+            chai.expect(res).to.have.status(200);
+            chai.expect(res).to.be.html;
+            chai.expect(res.text).to.be.equal(login_file);
+            srv.kill();
+            done();
+        });
+      }
     });
   });
 });

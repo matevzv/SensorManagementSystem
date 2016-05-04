@@ -156,7 +156,6 @@ function main_handler(req, res, next) {
 // main HTTP server function
 function run() {
 
-  console.log("Running HTTP server at port " + port);
   var app = express();
   server = http.Server(app);
   io = io.listen(server);
@@ -406,7 +405,9 @@ function run() {
     });
 
     // ok, start the server
-    server.listen(port);
+    server.listen(port, function() {
+      console.log("Running HTTP server on port " + port);
+    });
 }
 
   ///////////////////////////////////////////////////////////////////////////////////
