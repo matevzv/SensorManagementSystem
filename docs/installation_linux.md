@@ -1,7 +1,6 @@
 SensorManagementSystem
 ======================
 
-
 ## Installation in Linux
 Installation was performed on Ubuntu 12.04 & Ubuntu 14.04 .
 
@@ -14,25 +13,25 @@ SMS requires git, node.js, mongodb and npm.
     $ sudo apt-get install git
 
 ####2. Install node.js
-   
+
    We will cover two different methods of  how to install node.js. First is using a apt package manager and the second is using a PPA (personal package archive) .
 
 ##### Install the Distro-stable version
-   
+
 Install the Distro-stable version using apt package manager. This version of node.js is not the latest, but it should be stable.
-       
+
     $ sudo apt-get update
     $ sudo apt-get install nodejs
     $ sudo apt-get install npm
 
 ##### Install using a PPA
-    
+
 Second method is to add PPA maintained by Chris Lea. This will give you more recent versions of node.js than the official repositories.
-    
+
     $ sudo add-apt-repository ppa:chris-lea/node.js
     $ sudo apt-get update
     $ sudo apt-get install nodejs
-    
+
 ##### Test node.js
 
     $ echo -e '// Call the console.log function.\nconsole.log("Hello World");' |  tee test_node.js
@@ -45,19 +44,19 @@ As result you should get  "Hello World" .
 Import the public key
 
     $ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
-    
+
 Create a list file for MongoDB
 
     $ echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
-    
+
 Reload local package database
 
     $ sudo apt-get update
-    
+
 Install the MongoDB packages
 
     $ sudo apt-get install mongodb-org
-    
+
 Start the MongoDB
 
      $ sudo service mongod start
@@ -75,7 +74,7 @@ To setup the SMS platform on your computer follow steps bellow.
 
         $ git clone git@github.com:username/SensorManagementSystem.git
         $ cd SensorManagementSystem
-    
+
 For the further steps we assume that your cursor is pointing to the _server_ directory, to do that type:
 
     $ cd server
@@ -87,12 +86,12 @@ To install SMS dependencies using _npm_ package manager type:
 
 #### 3. Fill a database with the dummy data
 To insert dummy data into your database type:
-    
-    $ node top.js fill_dummy_data
+
+    $ node app.js fill_dummy_data
 
 #### 4. Run the SMS
  To run SMS type:
 
-    $ node top.js run
+    $ node app.js run
 
 Now open your web browser and visit [http://localhost:3000](http://localhost:3000/), to login use u:_vik_  p:_vik_.

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <style type="text/css">
+            body { padding-top: 60px }
+        </style>
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/carvic.css" rel="stylesheet">
+
+        <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+
+        <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
+        <script type="text/javascript" src="js/carvic.js"></script>
+        <script>
+            $(document).ready(function () {
+                $(".control-label")
+                    .attr("data-bind", "css: { clear_top_padding: $root.Editing() == false }");
+                Carvic.InitSingleComponentList();
+                ko.applyBindings(Carvic.Model.Component);
+                $(".input")
+                    .attr("data-placement", "right")
+                    .tooltip();
+            });
+        </script>
+        <title>Sensor Management System - component</title>
+    </head>
+    <body>
+
+
+        <div class="navbar navbar-inverse navbar-fixed-top">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                          <span class="sr-only">Toggle navigation</span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="admin.html"><img src="img/sensorlab-only-logo-white-21px.png"> SensorLab</a>
+                    </div>
+                    <div class="navbar-collapse collapse" style="top: 20">
+                        <ul class="nav navbar-nav" id="navRight">
+                            <li><a href="clusters.html"><i class="glyphicon glyphicon-th"></i> Clusters</a></li>
+                            <li><a href="nodes.html"><i class="glyphicon glyphicon-map-marker"></i> Nodes</a></li>
+                            <li class="active"><a href="components.html"><i class="glyphicon glyphicon-tasks"></i> Components</a></li>
+                            <li><a href="/munin.html"><i class="glyphicon glyphicon-dashboard"></i> Monitoring</a></li>
+                            <!--<li><a href="users.html"><i class="glyphicon glyphicon-user"></i> Users</a></li>-->
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="help"><i class="glyphicon glyphicon-question-sign" title="Show help"></i> Help</a></li>
+                            <li><a data-bind="click: $root.StdData.CurrentUserPage", style="cursor: pointer"><i class="glyphicon glyphicon-user"></i> <span data-bind="text: $root.StdData.CurrentUserFullname, attr: { title: StdData.CurrentUserTooltip }"></span></a></li>
+                            <li><a href="#" onclick="javascript: Carvic.Utils.Logout(); "><i class="glyphicon glyphicon-log-out"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+        </div>
+
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12 well">
+                    <h2><i class="glyphicon glyphicon-tasks"></i>
+                        <span data-bind="text: ID"></span></h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="well well-small form-horizontal">
+
+                        <div class="list-group">
+                            <button class="btn btn-default" data-bind="click: $root.StartEditing, visible: $root.Editing() == false"><i class="glyphicon glyphicon-edit"></i> Edit component</button>
+                                <button id="btnCancelSaveComponent" class="btn btn-default" type="button" data-bind="click: $root.CancelEditing, visible: $root.Editing() == true"><i class="glyphicon glyphicon-remove"></i> Cancel editing </button>
+                        </div>
+
+                        <div class="list-group">
+                            <label class="control-label" for="inType "> TYPE  </label>
+                            <div class="controls">
+                                <span data-bind="text: TypeStr , visible: $root.Editing() == false"></span>
+                                <select class="input form-control" id="inType" data-bind="options: ComponentTypes, value: Type, optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code', visible: $root.Editing() == true" title="Type fo this component"></select>
+                            </div>
+                        </div>
+
+                        <div class="list-group">
+                            <label class="control-label" for="inPN"> PRODUCT NUMBER </label>
+                            <div class="controls">
+                                <span data-bind="text: PN, visible: $root.Editing() == false"></span>
+                                <input class="input form-control" id="inPN" type="text" data-bind="value: PN, visible: $root.Editing() == true" title="Product number of this component, e.g.  VESNA-sne-TRX-V0.0.1" />
+                            </div>
+                        </div>
+
+                        <div class="list-group">
+                            <label class="control-label" for="inP"> PRODUCTION </label>
+                            <div class="controls">
+                                <span data-bind="text: P, visible: $root.Editing() == false"></span>
+                                <input class="input form-control" id="inP" type="text" data-bind="value: P, visible: $root.Editing() == true" title="Production (date) of this component - e.g. 260812" />
+                            </div>
+                        </div>
+
+                        <div class="list-group">
+                            <label class="control-label" for="inS"> SERIES </label>
+                            <div class="controls">
+                                <span data-bind="text: S, visible: $root.Editing() == false"></span>
+                                <input class="input form-control" id="inS" type="text" data-bind="value: S, visible: $root.Editing() == true" title="Series for this component - e.g. 01" />
+                            </div>
+                        </div>
+
+                        <div class="list-group">
+                            <label class="control-label" for="inSN"> SERIAL NUMBER </label>
+                            <div class="controls">
+                                <span data-bind="text: SN, visible: $root.Editing() == false"></span>
+                                <input class="input form-control" id="inSN" type="text" data-bind="value: SN, visible: $root.Editing() == true" title="Serial number for this component - e.g. 001" />
+                            </div>
+                        </div>
+
+                        <div class="list-group">
+                            <label class="control-label" for="inStatus "> STATUS  </label>
+                            <div class="controls">
+                                <span data-bind="text: StatusStr , visible: $root.Editing() == false"></span>
+                                <select class="input form-control" id="inStatus" data-bind="options: ComponentStatuses, value: Status,  optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code', visible: $root.Editing() == true" title="Status of this component"></select>
+                            </div>
+                        </div>
+
+                        <div class="list-group">
+                            <label class="control-label" for="inProject "> PROJECT  </label>
+                            <div class="controls">
+                                <span data-bind="text: Project , visible: $root.Editing() == false"></span>
+                                <input class="input form-control" id="inProject " type="text" data-bind="value: Project , visible: $root.Editing() == true" title="Project where this component is used - optional." />
+                            </div>
+                        </div>
+
+                        <div class="list-group">
+                            <label class="control-label" for="inComment "> COMMENT  </label>
+                            <div class="controls">
+                                <span data-bind="text: Comment , visible: $root.Editing() == false"></span>
+                                <textarea class="input form-control" id="inComment " data-bind="value: Comment , visible: $root.Editing() == true" rows="5" title="Comment for this component"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="list-group" data-bind="visible: $root.Editing() == true">
+                            <label class="control-label" for="btnSaveComponent"></label>
+                            <div class="controls">
+                                <button id="btnSaveComponent" class="btn btn-default btn-primary" type="button" data-bind="click: $root.SaveComponent"><i class="glyphicon glyphicon-floppy-disk"></i> Save changes </button>
+                                <button class="btn btn-danger" data-bind="click: $root.DeleteComponent, visible: $root.StdData.CurrentUserIsAdmin() == true"><i class="glyphicon glyphicon-trash"></i> Delete component</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="well well-small form-horizontal">
+                        <div data-bind="visible: $root.Nodes().length > 0">
+                            <h4>Used in node(s):</h4>
+                            <div data-bind="foreach: $root.Nodes">
+                                <div>
+                                    Node <a href="#" data-bind="attr: {href: Url}">
+                                        <span data-bind="text: Name"></span>
+                                    </a> (<span data-bind="text: Id"></span>),
+                                    cluster <a href="#" data-bind="attr: {href: ClusterUrl}"><span data-bind="text: ClusterName"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="well well-small history">
+                        <div data-bind="foreach: $root.History">
+                            <div class="history_border">
+                                <div class="history_icon">
+                                    <i data-bind="css: Css"></i>
+                                </div>
+                                <div class="history_t">
+                                    <div class="text-heavy" data-bind="text: Title"></div>
+                                    <div data-bind="text: Description"></div>
+                                    <div class="text-light">
+                                        <span data-bind="text: Carvic.Utils.FormatDateTime(Ts)"></span> by <span data-bind="text: User"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </body>
+</html>

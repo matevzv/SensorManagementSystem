@@ -38,7 +38,7 @@ This is the client-side of SMS. Different file types are placed into separate fo
 	   *Bootstrap tweaks*
 	   - <i class="icon-file"></i> **jquery-clockpicker.min.css**
 	   *clockpicker for Bootstrap*
-	   	
+
 	- #### <i class="icon-folder-open"></i> font
 	*Font Awesome 3.2.0 - the iconic font designed for Bootstrap. Font Awesome gives you scalable vector icons that can instantly be customized*
 	    - <i class="icon-file"></i> **fontawesome-webfont.eot**
@@ -46,7 +46,7 @@ This is the client-side of SMS. Different file types are placed into separate fo
 	    - <i class="icon-file"></i> **fontawesome-webfont.ttf**
 	    - <i class="icon-file"></i> **fontawesome-webfont.woff**
 	    - <i class="icon-file"></i> **FontAwesome.otf**
-	    	
+
 	- #### <i class="icon-folder-open"></i> img
 	    - <i class="icon-file"></i> **favicon_32.png**
 	    *32x32 SensorLab favicon*
@@ -63,7 +63,7 @@ This is the client-side of SMS. Different file types are placed into separate fo
 	    *Includes 200 glyphs in font format from the Glyphicon Halflings set, in black color*
 	    - <i class="icon-file"></i> **icons-big.png**
 	    *Includes 200 glyphs in font format from the Glyphicon Halflings set*
-	
+
 	- #### <i class="icon-folder-open"></i> js
 	    - <i class="icon-file"></i> **bootstrap3-typeahead.js**
 	    *Bootstrap is a free collection of tools for creating websites and web applications. It contains HTML and CSS-based design templates for typography, forms, buttons, navigation and other interface components, as well as optional JavaScript extensions.*
@@ -79,8 +79,8 @@ This is the client-side of SMS. Different file types are placed into separate fo
 	    - <i class="icon-file"></i> **jquerybootpag.js**
 	    *jQuery plugin for dynamic pagination*
 	    - <i class="icon-file"></i> **pagination.js**
-       	
-	
+
+
     - <i class="icon-file"></i> **admin.html**
     *This page is the SensorLab Dashboard. It gives users with administrator rights an overview on the number and activity of: nodes, their attached sensors, node clusters and users. It is also the page every user with administrator rights is redirected to after login.*
     - <i class="icon-file"></i> **cluster.html**
@@ -115,7 +115,7 @@ This is the client-side of SMS. Different file types are placed into separate fo
 *This page provides information about a single chosen user by listing their username, full name, type, status, time of last login, list of all past logins and changes this user made to the SMS. An administrator can edit user's data, change user's password and delete a user.*
     - <i class="icon-file"></i> **users.html**
 *This page lists all users by listing each user's: username, full name, status, type and time of last login. There is also an option to add a new user.*
-    
+
 - ### communication
 *Folder containing communication protocols: coap, lcsp, http.*
 	- <i class="icon-file"></i> **coap.js**
@@ -174,7 +174,7 @@ This is the client-side of SMS. Different file types are placed into separate fo
 *Main file for Node.js server.*
 - <i class="icon-file"></i> **settings.json**
 Configuration for node.js server.
-- <i class="icon-file"></i> **top.js**
+- <i class="icon-file"></i> **app.js**
 *The top level code for SMS*
 - <i class="icon-file"></i> **utils_hash.js**
 *Hashing utilities.*

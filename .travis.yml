@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+  - "6"
+  - "5"
+  - "4"
+
+addons:
+  apt:
+    sources:
+      - mongodb-upstart
+      - mongodb-3.0-precise
+    packages:
+      - mongodb-org-server
+      - mongodb-org-shell
+
+before_script:
+  - npm install -g mocha
+
+script: mocha tests/basic.js

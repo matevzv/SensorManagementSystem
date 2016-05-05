@@ -1,8 +1,7 @@
-/archive/
-/server/archive/
-/server/logs/
-/server/node_modules/*
-/proto/node_modules/*
+archive/
+logs/
+node_modules/
 npm-debug.log
 *~
-/server/.nodered/
+tests/test_data/data_from_excel_files_out.json
+tests/test_data/data_from_excel_files_out2.json

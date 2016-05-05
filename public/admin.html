@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <style type="text/css">
+            body { padding-top: 60px }
+        </style>
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/carvic.css" rel="stylesheet">
+
+        <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+
+        <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
+        <script type="text/javascript" src="js/carvic.js"></script>
+        <script>
+            $(document).ready(function () {
+                Carvic.InitStats();
+                ko.applyBindings(Carvic.Model.Stats);
+            });
+        </script>
+        <title>Sensor Management System - dashboard</title>
+    </head>
+    <body>
+
+
+        <div class="navbar navbar-inverse navbar-fixed-top">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                          <span class="sr-only">Toggle navigation</span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="admin.html"><img src="img/sensorlab-only-logo-white-21px.png"> SensorLab</a>
+                    </div>
+                    <div class="navbar-collapse collapse" style="top: 20">
+                        <ul class="nav navbar-nav" id="navRight">
+                            <li><a href="clusters.html"><i class="glyphicon glyphicon-th"></i> Clusters</a></li>
+                            <li><a href="nodes.html"><i class="glyphicon glyphicon-map-marker"></i> Nodes</a></li>
+                            <li><a href="components.html"><i class="glyphicon glyphicon-tasks"></i> Components</a></li>
+                            <li><a href="/munin.html"><i class="glyphicon glyphicon-dashboard"></i> Monitoring</a></li>
+                            <!--<li><a href="users.html"><i class="glyphicon glyphicon-user"></i> Users</a></li>-->
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="help"><i class="glyphicon glyphicon-question-sign" title="Show help"></i> Help</a></li>
+                            <li><a data-bind="click: $root.StdData.CurrentUserPage", style="cursor: pointer"><i class="glyphicon glyphicon-user"></i> <span data-bind="text: $root.StdData.CurrentUserFullname, attr: { title: StdData.CurrentUserTooltip }"></span></a></li>
+                            <li><a href="#" onclick="javascript: Carvic.Utils.Logout(); "><i class="glyphicon glyphicon-log-out"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+        </div>
+
+        <div class="container-fluid">
+
+            <div class="well">
+                <h2><i class="glyphicon glyphicon-dashboard"></i> SMS dashboard</h2>
+            </div>
+
+            <div class="row" style="padding-bottom:  10px;">
+                <div class="col-md-4">
+                    <div class="well well-white">
+                        <a class="btn btn-default pull-right" style="position: relative; top:-7px" href ="history.html">Browse</a>
+                        Browse history of nodes, clusters, users etc.
+                    </div>
+                    <div class="well well-white">
+                        <h2><i class="glyphicon glyphicon-map-marker"></i> Nodes</h2>
+                        <table class="table">
+                            <tr>
+                                <th>All nodes </th>
+                                <td>
+                                    <span data-bind="text: $root.Nodes().all"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Active</th>
+                                <td>
+                                    <span data-bind="text: Nodes().active"></span> (<span data-bind="text: Nodes().active_percent"></span> %)
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="well well-white">
+                        <h2><i class="glyphicon glyphicon-signal"></i> Sensors</h2>
+                        <table class="table">
+                            <tr>
+                                <th>All sensors </th>
+                                <td>
+                                    <span data-bind="text: Sensors().all"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Active</th>
+                                <td>
+                                    <span data-bind="text: Sensors().active"></span> (<span data-bind="text: Sensors().active_percent"></span> %)
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="well well-white">
+                        <h2><i class="glyphicon glyphicon-user"></i> Users</h2>
+                        <table class="table">
+                            <tr>
+                                <th>All users </th>
+                                <td>
+                                    <span data-bind="text: Users().all"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Active</th>
+                                <td>
+                                    <span data-bind="text: Users().active"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Admins</th>
+                                <td>
+                                    <span data-bind="text: Users().admins"></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div data-bind="foreach: $root.Clusters">
+                        <div class="well well-white">
+                            <h2><i class="glyphicon glyphicon-th"></i> <a data-bind="attr: { href: url }">  <span data-bind="text: title"></span> (<span data-bind="text: id"></span>) </a></h2>
+                            <table class="table">
+
+                                <tr>
+                                    <th>&nbsp; </th>
+                                    <th>Nodes </th>
+                                    <th>Sensors </th>
+                                </tr>
+                                <tr>
+                                    <th>All </th>
+                                    <td>
+                                        <span data-bind="text: nodes"></span>
+                                    </td>
+                                    <td>
+                                        <span data-bind="text: sensors"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Active</th>
+                                    <td>
+                                        <span data-bind="text: nodes_active"></span>
+                                    </td>
+                                    <td>
+                                        <span data-bind="text: sensors_active"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Ratio</th>
+                                    <td>
+                                        <span data-bind="text: nodes_activep"></span> %
+                                    </td>
+                                    <td>
+                                        <span data-bind="text: sensors_activep"></span> %
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

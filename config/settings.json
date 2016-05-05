@@ -1,0 +1,22 @@
+{
+    "web": {
+        "port": 3000,
+        "use_auth": true
+    },
+    "database": {
+        "url": "mongodb://localhost:27017/sms",
+        "testUrl": "mongodb://localhost:27017/smstest"
+    },
+    "scan": {
+        "node_unreachable_after" : "2 d",
+        "autodiscover": true
+    },
+    "archive": {
+        "enabled": false,
+        "dir": "./archive",
+        "format": "json",
+        "scan_history" : "20 h",
+        "edit_history" : "20 h",
+        "measurement_history": "20 h"
+    }
+}

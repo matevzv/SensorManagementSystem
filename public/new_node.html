@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <style type="text/css">
+            body { padding-top: 60px; padding-bottom: 40px; }
+        </style>
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/carvic.css" rel="stylesheet">
+
+        <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+
+        <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap3-typeahead.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
+        <script type="text/javascript" src="js/carvic.js"></script>
+        <script>
+            $(document).ready(function () {
+                Carvic.InitNewNode();
+                ko.applyBindings(Carvic.Model.NewNode);
+
+                $(".input")
+                    .attr("data-placement", "right")
+                    .tooltip();
+
+                $('.typeahead').typeahead({
+                    source: Carvic.Utils.ComponentLookup,
+                    minLength: 3,
+                    matcher: function () { return true; }
+                });
+            });
+        </script>
+        <title>Sensor Management System - node</title>
+    </head>
+    <body style="padding-bottom: 0">
+
+
+        <div class="navbar navbar-inverse navbar-fixed-top">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                          <span class="sr-only">Toggle navigation</span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                          <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="admin.html"><img src="img/sensorlab-only-logo-white-21px.png"> SensorLab</a>
+                    </div>
+                    <div class="navbar-collapse collapse" style="top: 20">
+                        <ul class="nav navbar-nav" id="navRight">
+                            <li><a href="clusters.html"><i class="glyphicon glyphicon-th"></i> Clusters</a></li>
+                            <li class="active"><a href="nodes.html"><i class="glyphicon glyphicon-map-marker"></i> Nodes</a></li>
+                            <li><a href="components.html"><i class="glyphicon glyphicon-tasks"></i> Components</a></li>
+                            <li><a href="/munin.html"><i class="glyphicon glyphicon-dashboard"></i> Monitoring</a></li>
+                            <!--<li><a href="users.html"><i class="glyphicon glyphicon-user"></i> Users</a></li>-->
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="help"><i class="glyphicon glyphicon-question-sign" title="Show help"></i> Help</a></li>
+                            <li><a data-bind="click: $root.StdData.CurrentUserPage", style="cursor: pointer"><i class="glyphicon glyphicon-user"></i> <span data-bind="text: $root.StdData.CurrentUserFullname, attr: { title: StdData.CurrentUserTooltip }"></span></a></li>
+                            <li><a href="#" onclick="javascript: Carvic.Utils.Logout(); "><i class="glyphicon glyphicon-log-out"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="well">
+                        <h2>
+                            <i class="glyphicon glyphicon-map-marker"></i> New node
+                        </h2>
+						Please enter data for new node.
+                    </div>
+                    <div class="well">
+                    <!--<div class="col-md-8">-->
+                        <div style="padding-bottom:  10px">
+                            <button class="btn btn-default" data-bind="click: LoadLastNode"><i class="glyphicon glyphicon-repeat"></i> Use last</button>
+                        </div>
+                        <div class="alert alert-info">
+                            <h4 style="padding-bottom: 10px;">Legend:</h4>
+                            <table>
+                                <tr>
+                                    <td style="text-align: right"><span class="badge alert-info">auto</span></td>
+                                    <td style="padding-left: 10px">- this field can be automatically changed during network scan. Depending on the cluster capabilities.</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: right"><span class="badge alert-warning">*</span></td>
+                                    <td style="padding-left: 10px">- this field is mandatory.</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="list-group">
+                            <label class="control-label" for="inBoxLabel">Box label</label>
+                            <div class="controls">
+                                <input class="form-control" type="text" id="inBoxLabel" placeholder="e.g. C4564" data-bind="value: NodeBoxLabel" data-placement="right" title="Enter the label from the side of the box." />
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inFirmware">
+                                <span class="badge alert-info">auto</span>
+                                <span class="badge alert-warning">*</span>
+                                Firmware
+                            </label>
+                            <div class="controls">
+                                <input class="form-control" type="text" id="inFirmware" placeholder="e.g. V1.2" data-bind="value: NodeFirmware" title="Version of firmware that is used in the node." />
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inBootloader">
+                                <span class="badge alert-info">auto</span>
+                                <span class="badge alert-warning">*</span>
+                                Bootloader
+                            </label>
+                            <div class="controls">
+                                <input class="form-control" type="text" id="inBootloader" placeholder="e.g. V12" data-bind="value: NodeBootloader" title="Bootloader version that is used in the node" />
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inName"><span class="badge alert-warning">*</span> Name</label>
+                            <div class="controls">
+                                <input class="form-control" type="text" id="inName" placeholder="Name of this node" data-bind="value: NodeName" title="Some human friendly name given to a node" />
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inNetworkId"><span class="badge alert-warning">*</span> Primary network address </label>
+                            <div class="controls">
+                                <input class="form-control" type="text" id="inNetworkAddress" placeholder="e.g. 2001:0db8:85a3:0000:0000:8a2e:0370:7334" data-bind="value: NodeNetworkAddress" title="Node's network address in a ZigBee network or IPv6. This address is used when cluster is scanned.  " />
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inNetworkId2"><span class="badge alert-warning">*</span> Alternative network address </label>
+                            <div class="controls">
+                                <input class="form-control" type="text" id="inNetworkAddress2" placeholder="Alternative network address" data-bind="value: NodeNetworkAddress2" title="Alternative network address of the node - can be IP, IPv6 or something else. " />
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inMac"><span class="badge alert-info">auto</span> MAC</label>
+                            <div class="controls">
+                                <input class="form-control" type="text" id="inMac" placeholder="MAC of this node" data-bind="value: NodeMAC" title="MAC of the node" />
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inCluster"><span class="badge alert-warning">*</span> Cluster</label>
+                            <div class="controls">
+                                <select class="form-control" id="inCluster" data-bind="options: NodeClusterList, optionsText: 'title', optionsValue: 'code', value: NodeCluster" title="Select the cluster where this node is deployed."></select>
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inRole"><span class="badge alert-warning">*</span> Role</label>
+                            <div class="controls">
+                                <select class="form-control" id="inRole" data-bind="options: NodeRoles, optionsText: 'title', optionsValue: 'code', value: NodeRole" title="Select the cluster where this node is deployed."></select>
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inLon"><span class="badge alert-info">auto</span> LON</label>
+                            <div class="controls">
+                                <input class="form-control" type="text" id="inLon" placeholder="Longitude" data-bind="value: NodeLON" title="Longitude of the installed location for this node." />
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inLat"><span class="badge alert-info">auto</span> LAT</label>
+                            <div class="controls">
+                                <input class="form-control" type="text" id="inLat" placeholder="Latitude" data-bind="value: NodeLAT" title="Latitude of the installed location for this node." />
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inLoc">Location</label>
+                            <div class="controls">
+                                <input class="form-control" type="text" id="inLoc" placeholder="Name of the place" data-bind="value: NodeLocation" title="The name of the place (village, city, etc.) where the node is installed (optional)." />
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inScope">Scope</label>
+                            <div class="controls">
+                                <input class="form-control" type="text" id="inScope" placeholder="Scope" data-bind="value: NodeScope" title="This is a text describing the node. It can also be inserted automatically based on the 'Description' metadata available on the node. Examples are 'Node for cognitive radio experimentation in ISM 868 MHz', 'Monitoring electricity consumption for Telekom base stations', etc." />
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <label class="control-label" for="inProject">Project</label>
+                            <div class="controls">
+                                <input class="form-control" type="text" id="inProject" placeholder="Project" data-bind="value: NodeProject" title="This is the name or acronym of the project that funds/uses the sensor. It can have more values as more projects can use it, for instance CREW, XXX, etc." />
+                            </div>
+                        </div>
+
+
+                        <h3>Components</h3>
+                        <div data-bind="foreach: Components">
+                            <div>
+                                <button class="btn btn-default" data-bind="click: RemoveThisComponent"><i class="glyphicon glyphicon-remove"></i></button>
+                                <a href="#" data-bind="attr: {href: Url}"><span data-bind="text: Id"></span></a>
+                                <span class="badge alert-important" data-bind="visible: AlreadyUsed()">Already used for another node(s)</span>
+                            </div>
+                        </div>
+                        <div style="padding-bottom: 20px">
+                            <div id="the-basics">
+                                <input class="typeahead form-control" type="text" data-bind="value: NodeComponentToAdd" placeholder="Add a new component" title="Enter parts of the component's ID (e.g. 'snc 002') - and select from the list of matches" />
+                            </div>
+                            <div>
+                            <button class="btn btn-default" data-bind="click: AddNewComponent"><i class="glyphicon glyphicon-plus"></i></button>
+                            </div>
+                        </div>
+                        <button class="btn btn-default btn-primary" data-bind="click: InsertNode"><i class="glyphicon glyphicon-floppy-disk"></i> Save node </button>
+                        <button class="btn btn-default" onclick="window.history.back()"><i class="glyphicon glyphicon-remove"></i> Cancel </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
