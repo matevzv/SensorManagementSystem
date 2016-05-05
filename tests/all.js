@@ -4,6 +4,8 @@ var fs = require('fs');
 
 chai.use(chaiHttp);
 
+var basic = require("./basic");
+
 describe('test some legacy code', function() {
   it('should not fail', function(done) {
     var intercept = require("intercept-stdout");
@@ -22,31 +24,6 @@ describe('test some legacy code', function() {
 
     chai.expect(captured_text).to.not.contain('fail');
     done();
-  });
-});
-
-describe('test basic operation', function() {
-  it('should run server and load login page on GET', function(done) {
-    this.timeout(10000);
-    var spawn = require('child_process').spawn;
-    var srv = spawn('node', ['app.js', '-t']);
-
-    srv.stdout.on('data', function (data) {
-      if (data.indexOf("Running HTTP server") > -1) {
-        var login_file = fs.readFileSync('public/login.html','utf8');
-
-        chai.request('http://localhost:3000')
-          .get('/login')
-          .end(function(err, res) {
-            chai.expect(err).to.be.null;
-            chai.expect(res).to.have.status(200);
-            chai.expect(res).to.be.html;
-            chai.expect(res.text).to.be.equal(login_file);
-            srv.kill();
-            done();
-        });
-      }
-    });
   });
 });
 

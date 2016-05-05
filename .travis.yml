@@ -16,4 +16,4 @@ addons:
 before_script:
   - npm install -g mocha
 
-script: npm test
+script: mocha tests/basic.js
