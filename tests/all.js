@@ -1,10 +1,5 @@
-var chai = require('chai');
-var chaiHttp = require('chai-http');
-var fs = require('fs');
-
-chai.use(chaiHttp);
-
 var basic = require("./basic");
+var chai = basic.chai;
 
 describe('test some legacy code', function() {
   it('should not fail', function(done) {
@@ -87,6 +82,7 @@ describe('test cli', function() {
 
   describe('test init', function() {
     it('should not fail', function(done) {
+      var fs = require('fs');
       var settings_content = fs.readFileSync("config/settings.json");
       options = JSON.parse(settings_content);
       const exec = require('child_process').exec;

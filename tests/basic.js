@@ -1,6 +1,5 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
-var fs = require('fs');
 
 chai.use(chaiHttp);
 
@@ -12,6 +11,7 @@ describe('test basic operation', function() {
 
     srv.stdout.on('data', function (data) {
       if (data.indexOf("Running HTTP server") > -1) {
+        var fs = require('fs');
         var login_file = fs.readFileSync('public/login.html','utf8');
         chai.request('http://localhost:3000')
           .get('/login')
@@ -36,3 +36,5 @@ describe('test basic operation', function() {
     });
   });
 });
+
+exports.chai = chai;
