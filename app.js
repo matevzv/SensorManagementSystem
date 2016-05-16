@@ -39,7 +39,8 @@ options.argv = process.argv;
 
 if (options.cmd === "--help") {
     console.log("Usage: node app.js [options] [-t]\n");
-    console.log("  -t - test mode\n");
+    console.log("  -t - test mode");
+    console.log("  -y - assume Yes to all queries and do not prompt\n");
     console.log('Default option is "run"\n');
     console.log('Options:');
     console.log("  --help - shows this help");
