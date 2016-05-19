@@ -3,6 +3,12 @@
 SensorManagementSystem
 ======================
 
+## Run in docker
+###1. Build docker container using your gmail account to send monitoring alerts
+    $ docker build --build-arg EMAIL=example@gmail.com --build-arg PASSWORD=secret -t videk .
+
+###2. Run docker container forwarding docker port 80 to your host port i.e. 3000
+    $ docker run -p 3000:80 videk
 
 ## Installation in Linux
 Installation was performed on Ubuntu 12.04 & Ubuntu 14.04 .
