@@ -57,7 +57,7 @@ RUN cd /home && \
 git clone -b docker-support https://github.com/matevzv/SensorManagementSystem.git
 WORKDIR /home/SensorManagementSystem
 RUN npm install
-RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log \--dbpath \
+RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \
 /data/db/ && nodejs app.js init -y && /usr/bin/mongod --shutdown
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
