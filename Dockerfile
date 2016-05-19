@@ -12,6 +12,7 @@ ARG PASSWORD
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install -y supervisor
+RUN apt-get install -y git
 
 # install nodejs an npm
 RUN apt-get install -y nodejs
@@ -32,9 +33,6 @@ RUN apt-get install -y spawn-fcgi
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 COPY docker/default.conf /etc/nginx/conf.d/default.conf
 
-# install git
-RUN apt-get install -y git
-
 # install munin
 RUN apt install -y munin
 RUN sed -e '/background 1/ s/^#*/# /' -i /etc/munin/munin-node.conf
@@ -42,10 +40,13 @@ RUN sed -i 's/^\(setsid \).*/\10/' /etc/munin/munin-node.conf
 RUN mkdir -p /var/run/munin
 RUN chown munin /var/run/munin
 RUN chmod 755 /var/run/munin
+RUN mkdir -p /var/cache/munin/www
+RUN chown munin /var/cache/munin/www
+RUN chmod 755 /var/cache/munin/www
 COPY docker/munin.conf /etc/munin/munin.conf
 RUN sed -i s/example@gmail.com/${EMAIL}/g /etc/munin/munin.conf
 
-# setup munin alert email
+# install email support and setup munin alert
 RUN apt-get install -y msmtp-mta
 RUN apt-get install -y mailutils
 COPY docker/msmtprc /etc/msmtprc
@@ -58,7 +59,10 @@ git clone -b docker-support https://github.com/matevzv/SensorManagementSystem.gi
 WORKDIR /home/SensorManagementSystem
 RUN npm install
 RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \
-/data/db/ && nodejs app.js init -y && /usr/bin/mongod --shutdown
+/data/db && nodejs app.js init -y && /usr/bin/mongod --shutdown
+
+# volumes
+VOLUME ["/data/db", "/var/cache/munin/www"]
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 CMD ["/usr/bin/supervisord"]
