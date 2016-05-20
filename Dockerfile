@@ -64,7 +64,7 @@ RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \
 /data/db && nodejs app.js init -y && /usr/bin/mongod --shutdown
 
 # volumes
-VOLUME ["/data/db", "/var/cache/munin/www", "/var/lib/munin"]
+VOLUME ["/data/db", "/etc/munin", "/var/lib/munin", "/var/cache/munin/www"]
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 CMD ["/usr/bin/supervisord"]
