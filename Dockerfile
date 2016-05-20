@@ -18,7 +18,6 @@ RUN apt-get install -y git
 RUN apt-get install -y nodejs
 RUN apt-get install -y npm
 RUN ln -s /usr/bin/nodejs /usr/bin/node
-RUN npm install forever -g
 
 # install mongodb
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
@@ -43,6 +42,9 @@ RUN chmod 755 /var/run/munin
 RUN mkdir -p /var/cache/munin/www
 RUN chown munin /var/cache/munin/www
 RUN chmod 755 /var/cache/munin/www
+RUN mkdir -p /var/lib/munin
+RUN chown munin /var/lib/munin
+RUN chmod 755 /var/lib/munin
 COPY docker/munin.conf /etc/munin/munin.conf
 RUN sed -i s/example@gmail.com/${EMAIL}/g /etc/munin/munin.conf
 
@@ -62,7 +64,7 @@ RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \
 /data/db && nodejs app.js init -y && /usr/bin/mongod --shutdown
 
 # volumes
-VOLUME ["/data/db", "/var/cache/munin/www"]
+VOLUME ["/data/db", "/var/cache/munin/www", "/var/lib/munin"]
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 CMD ["/usr/bin/supervisord"]
