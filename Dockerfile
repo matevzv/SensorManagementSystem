@@ -57,7 +57,7 @@ RUN sed -i s/secret/${PASSWORD}/g /etc/msmtprc
 
 # get Videk master from github
 RUN cd /home && \
-git clone -b docker-support https://github.com/matevzv/SensorManagementSystem.git
+git clone https://github.com/sensorlab/SensorManagementSystem.git
 WORKDIR /home/SensorManagementSystem
 RUN npm install
 RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \
