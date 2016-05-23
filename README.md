@@ -15,9 +15,10 @@ SensorManagementSystem
 
 ###4. Run docker container
 Forwarding docker port 80 to your host port i.e. 3000 optionally using data
-container and set your gmail account to send monitoring alerts.
-    $ docker run -p 3000:80 (--volumes-from datavidek) \
-    -e EMAIL=example@gmail.com \
+container and set your gmail account to send monitoring alerts.  
+  
+    $ docker run -p 3000:80 (--volumes-from datavidek) \  
+    -e EMAIL=example@gmail.com \  
     -e PASSWORD=secret videk
 
 ## Installation in Linux
