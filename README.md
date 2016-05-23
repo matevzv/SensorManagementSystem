@@ -7,16 +7,13 @@ SensorManagementSystem
 ###1. Build docker container yourself
     $ docker build -t videk .
 
-###2. Pull from docker hub
-    $ docker pull mateu/videk
-
-###3. Optionally create persistent data storage
+###2. Optionally create persistent data storage
     $ docker create --name datavidek videk
 
-###4. Run docker container
+###2. Run docker container
 Forwarding docker port 80 to your host port i.e. 3000 optionally using data
 container and set your gmail account to send monitoring alerts.  
-  
+
     $ docker run -p 3000:80 (--volumes-from datavidek) \  
     -e EMAIL=example@gmail.com \  
     -e PASSWORD=secret videk
