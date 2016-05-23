@@ -3,15 +3,22 @@
 SensorManagementSystem
 ======================
 
-## Run in docker
-###1. Build docker container using your gmail account to send monitoring alerts
-    $ docker build --build-arg EMAIL=example@gmail.com --build-arg PASSWORD=secret -t videk .
+## Docker support
+###1. Build docker container yourself
+    $ docker build -t videk .
 
-###2. Optionally create persistent data storage
+###2. Pull from docker hub
+    $ docker pull mateu/videk
+
+###3. Optionally create persistent data storage
     $ docker create --name datavidek videk
 
-###3. Run docker container forwarding docker port 80 to your host port i.e. 3000
-    $ docker run -p 3000:80 (--volumes-from datavidek) videk
+###4. Run docker container
+Forwarding docker port 80 to your host port i.e. 3000 optionally using data
+container and set your gmail account to send monitoring alerts.
+    $ docker run -p 3000:80 (--volumes-from datavidek) \
+    -e EMAIL=example@gmail.com \
+    -e PASSWORD=secret videk
 
 ## Installation in Linux
 Installation was performed on Ubuntu 12.04 & Ubuntu 14.04 .
