@@ -5,9 +5,6 @@ LABEL Description="This image is used to bootstrap Videk with all dependences"
 LABEL Vendor="JSI"
 LABEL Version="1.0"
 
-ARG EMAIL
-ARG PASSWORD
-
 # update packages and install some commons
 RUN apt-get update
 RUN apt-get upgrade -y
@@ -46,14 +43,11 @@ RUN mkdir -p /var/lib/munin
 RUN chown munin /var/lib/munin
 RUN chmod 755 /var/lib/munin
 COPY docker/munin.conf /etc/munin/munin.conf
-RUN sed -i s/example@gmail.com/${EMAIL}/g /etc/munin/munin.conf
 
 # install email support and setup munin alert
 RUN apt-get install -y msmtp-mta
 RUN apt-get install -y mailutils
 COPY docker/msmtprc /etc/msmtprc
-RUN sed -i s/example@gmail.com/${EMAIL}/g /etc/msmtprc
-RUN sed -i s/secret/${PASSWORD}/g /etc/msmtprc
 
 # get Videk master from github
 RUN cd /home && \
@@ -67,4 +61,7 @@ RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \
 VOLUME ["/data/db", "/etc/munin", "/var/lib/munin", "/var/cache/munin/www"]
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-CMD ["/usr/bin/supervisord"]
+COPY docker/start.sh /home/start.sh
+RUN chmod 755 /home/start.sh
+
+ENTRYPOINT ["/home/start.sh"]
