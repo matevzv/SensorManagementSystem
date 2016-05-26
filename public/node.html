@@ -440,9 +440,29 @@
                                     </div>
                                 </div>
 
+                                <div data-bind="foreach: NodeExtraFields">
+                                    <div>
+                                        <div class="list-group">
+                                            <label class="control-label" data-bind="attr: {for: Id}"><span data-bind="text: Id"></label>
+                                            <button class="btn btn-default" data-bind="visible: $root.CurrentNodeEditing() == true, click: RemoveThisField"><i class="glyphicon glyphicon-remove"></i></button>
+                                            <div class="controls">
+                                                <span data-bind="text: Value, visible: $root.CurrentNodeEditing() == false"></span>
+                                                <input class="form-control" type="text" data-bind="value: Value, visible: $root.CurrentNodeEditing() == true, attr: {for: Id, placeholder: Id}" title="This is the input for this specific extra field which describes this particular node." />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h3 data-bind="visible: $root.CurrentNodeEditing() == true">Extra fields</h3>
+                                <div style="padding-bottom: 20px" data-bind="visible: $root.CurrentNodeEditing() == true">
+                                    <div id="the-basics">
+                                        <input class="typeahead form-control" type="text" data-bind="value: NodeEditFieldToAdd" placeholder="Add a new field" title="Define a specific extra field which describes this particular node." />
+                                    </div>
+                                    <div>
+                                    <button class="btn btn-default" data-bind="click: AddNewField"><i class="glyphicon glyphicon-plus"></i></button>
+                                    </div>
+                                </div>
+
                                 <h2>Components</h2>
-
-
                                 <div data-bind="foreach: Components">
                                     <div style="padding:  5px;">
                                         <button class="btn btn-default" data-bind="visible: $root.CurrentNodeEditing() == true, click: RemoveThisComponent"><i class="glyphicon glyphicon-remove"></i></button>

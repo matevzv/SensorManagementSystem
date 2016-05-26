@@ -1043,6 +1043,7 @@ Carvic.Model.SingleNodeModel = function () {
 
     self.Sensors = ko.observableArray();
     self.Components = ko.observableArray();
+    self.NodeExtraFields = ko.observableArray();
     self.ComponentsError = ko.observable(false);
     self.NodeHistory = ko.observableArray();
     self.OriginalData = {};
@@ -1056,6 +1057,7 @@ Carvic.Model.SingleNodeModel = function () {
     self.ShowSensorChart = ko.observable(false);
     self.ShowDownloadSensorData = ko.observable(false);
     self.NodeEditComponentToAdd = ko.observable();
+    self.NodeEditFieldToAdd = ko.observable("");
 
     Chart.defaults.global.responsive = true;
     Chart.defaults.global.animation = false;
@@ -1128,6 +1130,12 @@ Carvic.Model.SingleNodeModel = function () {
             self.AddNewComponentId(cid);
         }
 
+        self.NodeExtraFields.removeAll();
+        for (var c in data.extra_fields) {
+            var cid = data.extra_fields[c];
+            self.AddNewFieldId(cid);
+        }
+
         Carvic.Utils.Post({ action: "get_sensors_for_node", data: { node: data.id} }, function (data) {
             self.Sensors.removeAll();
             for (var i = 0; i < data.length; i++) {
@@ -1196,6 +1204,31 @@ Carvic.Model.SingleNodeModel = function () {
         }
     }
 
+    self.RemoveField = function (id) {
+        self.NodeExtraFields.remove(function (item) {
+            return item.Id() == id;
+        });
+    };
+    self.AddNewFieldId = function (id) {
+        var obj = {
+            Id: ko.observable(Object.keys(id)),
+            Value: ko.observable(id[Object.keys(id)]),
+            OtherNodesCount: ko.observable(0),
+            RemoveThisField: function () { self.RemoveField(this.Id()); }
+        };
+        self.NodeExtraFields.push(obj);
+        return obj;
+    }
+    self.AddNewField = function () {
+        var id = self.NodeEditFieldToAdd();
+        if (id.length > 0) {
+            var obj = self.AddNewFieldId(id);
+
+
+            self.NodeEditFieldToAdd("");
+        }
+    }
+
     self.DeleteNode = function () {
         if (confirm("Are you sure you want to delete this node? It cannot be undone.")) {
             var req = {
@@ -1244,6 +1277,13 @@ Carvic.Model.SingleNodeModel = function () {
             return;
         }
 
+        var extraFields = [];
+        self.NodeExtraFields().forEach(function (item) {
+          var field = {};
+          field[item.Id()] = item.Value();
+          extraFields.push(field);
+        });
+
         self.CurrentNodeEditing(false);
         var req = {
             action: "update_node",
@@ -1268,6 +1308,7 @@ Carvic.Model.SingleNodeModel = function () {
                 //source: self.NodeSource(),
                 user_comment: self.NodeUserComment(),
                 box_label: self.NodeBoxLabel(),
+                extra_fields: extraFields,
                 components: components
             }
         };
@@ -1452,8 +1493,10 @@ Carvic.Model.NewNodeModel = function () {
     self.NodeBoxLabel = ko.observable("");
     self.Sensors = ko.observableArray();
     self.Components = ko.observableArray();
+    self.NodeExtraFields = ko.observableArray();
     self.NodeHistory = ko.observableArray();
     self.NodeComponentToAdd = ko.observable("");
+    self.NodeFieldToAdd = ko.observable("");
 
     //self.NodeStatusesArray = Carvic.Consts.NodeStatusesArray;
     self.NodeStatuses = ko.observableArray();
@@ -1524,6 +1567,29 @@ Carvic.Model.NewNodeModel = function () {
         }
     }
 
+    self.RemoveField = function (id) {
+        self.NodeExtraFields.remove(function (item) {
+            return item.Id() == id;
+        });
+    };
+
+    self.AddNewFieldId = function (id) {
+        var obj = {
+            Id: ko.observable(id),
+            Value: ko.observable(),
+            AlreadyUsed: ko.observable(false),
+            RemoveThisField: function () { self.RemoveField(this.Id()); }
+        };
+        self.NodeExtraFields.push(obj);
+    }
+    self.AddNewField = function () {
+        var id = self.NodeFieldToAdd();
+        if (id.length > 0) {
+            self.AddNewFieldId(id);
+            self.NodeFieldToAdd("");
+        }
+    }
+
     self.LoadLastNode = function () {
         var req = { action: "get_last_node" };
         Carvic.Utils.Post(req, function (data) {
@@ -1582,6 +1648,13 @@ Carvic.Model.NewNodeModel = function () {
             return;
         }
 
+        var extraFields = [];
+        self.NodeExtraFields().forEach(function (item) {
+            var field = {};
+            field[item.Id()] = item.Value();
+            extraFields.push(field);
+        });
+
         var req = {
             action: "add_node",
             data: {
@@ -1605,6 +1678,7 @@ Carvic.Model.NewNodeModel = function () {
                 //source: self.NodeSource(),
                 user_comment: self.NodeUserComment(),
                 box_label: self.NodeBoxLabel(),
+                extra_fields: extraFields,
                 components: components,
                 sensors: []
             }
