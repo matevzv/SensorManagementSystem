@@ -1133,7 +1133,7 @@ Carvic.Model.SingleNodeModel = function () {
         self.NodeExtraFields.removeAll();
         for (var c in data.extra_fields) {
             var cid = data.extra_fields[c];
-            self.AddNewFieldId(cid);
+            self.AddFieldId(cid);
         }
 
         Carvic.Utils.Post({ action: "get_sensors_for_node", data: { node: data.id} }, function (data) {
@@ -1209,10 +1209,20 @@ Carvic.Model.SingleNodeModel = function () {
             return item.Id() == id;
         });
     };
-    self.AddNewFieldId = function (id) {
+    self.AddFieldId = function (id) {
         var obj = {
             Id: ko.observable(Object.keys(id)),
             Value: ko.observable(id[Object.keys(id)]),
+            OtherNodesCount: ko.observable(0),
+            RemoveThisField: function () { self.RemoveField(this.Id()); }
+        };
+        self.NodeExtraFields.push(obj);
+        return obj;
+    }
+    self.AddNewFieldId = function (id) {
+        var obj = {
+            Id: ko.observable(id),
+            Value: ko.observable(),
             OtherNodesCount: ko.observable(0),
             RemoveThisField: function () { self.RemoveField(this.Id()); }
         };
@@ -1497,6 +1507,8 @@ Carvic.Model.NewNodeModel = function () {
     self.NodeHistory = ko.observableArray();
     self.NodeComponentToAdd = ko.observable("");
     self.NodeFieldToAdd = ko.observable("");
+    self.TemplateName = ko.observable("");
+    self.NodeTemplates = ko.observableArray();
 
     //self.NodeStatusesArray = Carvic.Consts.NodeStatusesArray;
     self.NodeStatuses = ko.observableArray();
@@ -1615,6 +1627,47 @@ Carvic.Model.NewNodeModel = function () {
             //self.NodeBoxLabel();
         });
     }
+
+    self.LoadNodeTemplate = function (template) {
+        var t = self.NodeTemplates.pop(template.Id);
+        console.log("select FTW: " + self.Id);
+    };
+
+    self.LoadNodeTemplates = function () {
+        self.NodeTemplates.removeAll();
+        var req = { action: "get_node_templates" };
+        Carvic.Utils.Post(req, function (data) {
+          console.log(JSON.stringify(data));
+
+          data.forEach(function(template) {
+            console.log(template.name);
+
+            var obj = {
+                Id: ko.observable(template.name),
+            };
+            self.NodeTemplates.push(obj);
+          });
+        });
+    }
+
+    self.InsertTemplate = function () {
+      var extraFields = [];
+      self.NodeExtraFields().forEach(function (item) {
+          extraFields.push(item.Id());
+      });
+      console.log(self.TemplateName());
+
+      var req = {
+          action: "add_node_template",
+          data: {
+              name: self.TemplateName(),
+              extra_fields: extraFields
+          }
+      };
+      Carvic.Utils.Post(req, function (data) {
+          console.log(data.message);
+      });
+    };
 
     self.InsertNode = function () {
         var errors = [];

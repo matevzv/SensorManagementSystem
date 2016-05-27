@@ -26,6 +26,7 @@ var collection_logins = "logins";
 var collection_components = "components";
 var collection_clusters = "clusters";
 var collection_nodes = "nodes";
+var collection_node_templates = "node_templates";
 var collection_history = "history";
 var collection_measurements = "measurements";
 var collection_component_types = "component_types";
@@ -44,6 +45,7 @@ var collections = [
     collection_components,
     collection_clusters,
     collection_nodes,
+    collection_node_templates,
     collection_history,
     collection_measurements,
     collection_component_types,
@@ -206,6 +208,7 @@ function init(options, callback) {
     db[collection_clusters].ensureIndex({ id: 1 }, { unique: true, sparse: true });
     db[collection_nodes].ensureIndex({ id: 1 }, { unique: true, sparse: true });
     db[collection_nodes].ensureIndex({ name: 1 }, { unique: true, sparse: true });
+    db[collection_node_templates].ensureIndex({ name: 1 }, { unique: true, sparse: true });
     //db[collection_nodes].ensureIndex({ network_addr: 1, cluster: 2 }, { unique: true, sparse: true });
     //db[collection_sensor_types].ensureIndex({ name: 1 }, { unique: true, sparse: true });
 
@@ -467,6 +470,12 @@ function get_components2_count(query, callback) {
 
 function add_node(rec, callback) {
     db[collection_nodes].insert(rec, function (err, res) {
+        callback(err);
+    });
+};
+
+function add_node_template(rec, callback) {
+    db[collection_node_templates].insert(rec, function (err, res) {
         callback(err, {});
     });
 };
@@ -474,7 +483,7 @@ function add_node(rec, callback) {
 function update_node(id, rec, callback) {
     var query = { id: id };
     db[collection_nodes].update(query, { $set: rec }, null, function (err, res) {
-        callback(err, {});
+        callback(err);
     });
 };
 
@@ -484,6 +493,14 @@ function delete_node(id, callback) {
         db[collection_sensors].remove({ node: id }, function () {
             db[collection_measurements].remove({ node: id }, callback);
         });
+    });
+};
+
+function get_node_templates(callback) {
+    var query = {};
+    db[collection_node_templates].find(query, function (err, docs) {
+        if (err) callback(err);
+        callback(null, docs);
     });
 };
 
@@ -1209,6 +1226,8 @@ exports.get_all_component_statuses = get_all_component_statuses;
 exports.get_node_ids = get_node_ids;
 exports.get_max_node_id = get_max_node_id;
 exports.add_node = add_node;
+exports.add_node_template = add_node_template;
+exports.get_node_templates = get_node_templates;
 exports.update_node = update_node;
 exports.delete_node = delete_node;
 exports.get_node = get_node;

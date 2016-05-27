@@ -515,6 +515,13 @@ exports.add_node = function (req, callback) {
     });
 };
 
+exports.add_node_template = function (req, callback) {
+    db.add_node_template(req.data, function (err) {
+        if (err) return callback(err);
+        callback(err, { message: 'Test!'});
+    });
+};
+
 exports.api_add_node = function (req, callback) {
     if (req.name == null || req.cluster == null) {
         callback({ error: "Incomplete request body. Must include 'name', 'cluster'' and ... fields.", status: 400 });
@@ -537,6 +544,13 @@ exports.api_add_node = function (req, callback) {
 exports.get_last_node = function (req, callback) {
     db.get_max_node_id(function (err, data) {
         db.get_node(data, callback);
+    });
+}
+
+exports.get_node_templates = function (req, callback) {
+    db.get_node_templates(function (err, data) {
+      if (err) return callback(err);
+      callback(err, data);
     });
 }
 

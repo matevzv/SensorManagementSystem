@@ -79,6 +79,30 @@
                     <!--<div class="col-md-8">-->
                         <div style="padding-bottom:  10px">
                             <button class="btn btn-default" data-bind="click: LoadLastNode"><i class="glyphicon glyphicon-repeat"></i> Use last</button>
+
+                            <button class="btn btn-default" data-bind="click: LoadNodeTemplates" data-toggle="modal" data-target="#myTemplateLoad"><i class="glyphicon glyphicon-repeat"></i> Laoad template </button>
+                            <div class="modal fade" id="myTemplateLoad" role="dialog">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Load Template</h4>
+                                  </div>
+                                  <div class="modal-body">
+                                    <div class="row">
+                                      <table class="table table-hover">
+                                        <tbody data-bind="foreach: NodeTemplates">
+                                          <tr style="cursor: pointer">
+                                            <td data-dismiss="modal" data-bind="text: Id, click: $root.LoadNodeTemplate"</td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
                         </div>
                         <div class="alert alert-info">
                             <h4 style="padding-bottom: 10px;">Legend:</h4>
@@ -224,7 +248,24 @@
                             <button class="btn btn-default" data-bind="click: AddNewComponent"><i class="glyphicon glyphicon-plus"></i></button>
                             </div>
                         </div>
-                        <button class="btn btn-default btn-primary" data-bind="click: InsertNode"><i class="glyphicon glyphicon-floppy-disk"></i> Save node </button>
+                          <button class="btn btn-default btn-primary" data-bind="click: InsertNode"><i class="glyphicon glyphicon-floppy-disk"></i> Save node </button>
+                          <button class="btn btn-default btn-primary" data-toggle="modal" data-target="#myTemplate"><i class="glyphicon glyphicon-floppy-disk"></i> Create template </button>
+                          <div class="modal fade" id="myTemplate" role="dialog">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                  <h4 class="modal-title">New Template</h4>
+                                </div>
+                                <div class="modal-body">
+                                  <input class="form-control" type="text" data-bind="textInput: TemplateName" placeholder="Template name">
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-default" data-bind="click: InsertTemplate" data-dismiss="modal"> Save </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         <button class="btn btn-default" onclick="window.history.back()"><i class="glyphicon glyphicon-remove"></i> Cancel </button>
                     </div>
                 </div>
