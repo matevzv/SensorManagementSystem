@@ -1507,6 +1507,8 @@ Carvic.Model.NewNodeModel = function () {
     self.NodeFieldToAdd = ko.observable("");
     self.TemplateName = ko.observable("");
     self.NodeTemplates = ko.observableArray();
+    self.CheckedTemplates = ko.observableArray();
+    self.TemplateSelection = ko.observable(true);
 
     //self.NodeStatusesArray = Carvic.Consts.NodeStatusesArray;
     self.NodeStatuses = ko.observableArray();
@@ -1600,6 +1602,46 @@ Carvic.Model.NewNodeModel = function () {
         }
     }
 
+    self.DeleteTemplateList = function () {
+      switch (self.CheckedTemplates().length > 0) {
+        case false:
+          alert("There are no nodes chosen to delete!");
+          break;
+        default:
+          if (confirm("You are about to delete:\n" + self.CheckedTemplates() + "\n" + "\n" + "Are you sure you want to delete these nodes?")) {
+            for (i in self.CheckedTemplates()) {
+              var req = {
+                action: "delete_template",
+                data: { name: self.CheckedTemplates()[i] }
+              };
+              Carvic.Utils.Post(req, function (data) {
+                  console.log("Template successfully deleted.")
+              });
+            }
+            self.CheckedTemplates.removeAll();
+          }
+          break;
+      }
+    };
+
+    self.ToggleAllTemplates = function () {
+        self.CheckedTemplates.removeAll();
+        for(i = 0; i < self.NodeTemplates().length; i++) {
+            self.CheckedTemplates().push((typeof self.NodeTemplates()[i].Id() != 'string') ? JSON.stringify(self.NodeTemplates()[i].Id()) : self.NodeTemplates()[i].Id());
+        }
+        return self.CheckedTemplates();
+    };
+
+    self.SelectAllTemplates = ko.dependentObservable({
+        read: function() {
+            return self.CheckedTemplates().length === self.NodeTemplates().length;
+        },
+        write: function() {
+            self.CheckedTemplates(self.CheckedTemplates().length === self.NodeTemplates().length ? [] : self.ToggleAllTemplates());
+        },
+        owner: self
+    });
+
     self.LoadLastNode = function () {
         var req = { action: "get_last_node" };
         Carvic.Utils.Post(req, function (data) {
@@ -1628,23 +1670,27 @@ Carvic.Model.NewNodeModel = function () {
 
     self.LoadNodeTemplates = function () {
         self.NodeTemplates.removeAll();
+        self.CheckedTemplates.removeAll();
         var req = { action: "get_node_templates" };
         Carvic.Utils.Post(req, function (data) {
-
+          if (data.length == 0) {
+              self.TemplateSelection(false);
+          } else {
+              self.TemplateSelection(true);
+          }
           data.forEach(function(template) {
             var obj = {
                 Id: ko.observable(template.name),
                 Fields: ko.observableArray(template.extra_fields),
-                SelectThisTemplate: function () { self.SelectTemplate(this); }
+                SelectThisTemplate: function () { self.SelectTemplate(this.Fields()); }
             };
             self.NodeTemplates.push(obj);
           });
         });
     }
 
-    self.SelectTemplate = function (template) {
+    self.SelectTemplate = function (fields) {
         self.NodeExtraFields.removeAll();
-        var fields = template.Fields();
         fields.forEach(function (item) {
             self.AddNewFieldId(item);
         });
@@ -1655,8 +1701,6 @@ Carvic.Model.NewNodeModel = function () {
       self.NodeExtraFields().forEach(function (item) {
           extraFields.push(item.Id());
       });
-      console.log(self.TemplateName());
-
       var req = {
           action: "add_node_template",
           data: {
@@ -1665,7 +1709,7 @@ Carvic.Model.NewNodeModel = function () {
           }
       };
       Carvic.Utils.Post(req, function (data) {
-          console.log(data.message);
+          //console.log(data);
       });
     };
 

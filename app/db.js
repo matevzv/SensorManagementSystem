@@ -474,12 +474,6 @@ function add_node(rec, callback) {
     });
 };
 
-function add_node_template(rec, callback) {
-    db[collection_node_templates].insert(rec, function (err, res) {
-        callback(err, {});
-    });
-};
-
 function update_node(id, rec, callback) {
     var query = { id: id };
     db[collection_nodes].update(query, { $set: rec }, null, function (err, res) {
@@ -487,12 +481,9 @@ function update_node(id, rec, callback) {
     });
 };
 
-function delete_node(id, callback) {
-    db[collection_nodes].remove({ id: id }, function (err) {
-        if (err) return callback(err);
-        db[collection_sensors].remove({ node: id }, function () {
-            db[collection_measurements].remove({ node: id }, callback);
-        });
+function add_node_template(rec, callback) {
+    db[collection_node_templates].insert(rec, function (err, res) {
+        callback(err, {});
     });
 };
 
@@ -502,6 +493,22 @@ function get_node_templates(callback) {
         if (err) callback(err);
         callback(null, docs);
     });
+};
+function delete_template(name, callback) {
+    db[collection_node_templates].remove({ name: name }, function (err) {
+        if (err) return callback(err);
+        callback(null, {});
+    });
+};
+
+
+function delete_node(id, callback) {
+  db[collection_nodes].remove({ id: id }, function (err) {
+      if (err) return callback(err);
+      db[collection_sensors].remove({ node: id }, function () {
+          db[collection_measurements].remove({ node: id }, callback);
+      });
+  });
 };
 
 function get_node(id, callback) {
@@ -1228,6 +1235,7 @@ exports.get_max_node_id = get_max_node_id;
 exports.add_node = add_node;
 exports.add_node_template = add_node_template;
 exports.get_node_templates = get_node_templates;
+exports.delete_template = delete_template;
 exports.update_node = update_node;
 exports.delete_node = delete_node;
 exports.get_node = get_node;

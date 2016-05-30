@@ -518,9 +518,20 @@ exports.add_node = function (req, callback) {
 exports.add_node_template = function (req, callback) {
     db.add_node_template(req.data, function (err) {
         if (err) return callback(err);
-        callback(err, { message: 'Test!'});
+        callback(err, {});
     });
 };
+
+exports.delete_template = function (req, callback) {
+    if (!is_user_admin(req.session.user))
+        return callback(error_not_admin(req.session.user));
+    var template_name = req.data.name;
+
+    db.delete_template(template_name, function (err) {
+        if (err) return callback(err);
+        callback(err, {});
+    });
+}
 
 exports.api_add_node = function (req, callback) {
     if (req.name == null || req.cluster == null) {
