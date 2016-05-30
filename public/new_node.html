@@ -80,13 +80,13 @@
                         <div style="padding-bottom:  10px">
                             <button class="btn btn-default" data-bind="click: LoadLastNode"><i class="glyphicon glyphicon-repeat"></i> Use last</button>
 
-                            <button class="btn btn-default" data-bind="click: LoadNodeTemplates" data-toggle="modal" data-target="#myTemplateLoad"><i class="glyphicon glyphicon-repeat"></i> Laoad template </button>
+                            <button class="btn btn-default" data-bind="click: LoadNodeTemplates" data-toggle="modal" data-target="#myTemplateLoad"><i class="glyphicon glyphicon-repeat"></i> Use template </button>
                             <div class="modal fade" id="myTemplateLoad" role="dialog">
                               <div class="modal-dialog">
                                 <div class="modal-content">
                                   <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title" data-bind="visible: $root.TemplateSelection() == true">Select Template</h4>
+                                    <h4 class="modal-title" data-bind="visible: $root.TemplateSelection() == true">Select Template.</h4>
                                     <h4 class="modal-title" data-bind="visible: $root.TemplateSelection() == false">No Templates!</h4>
                                   </div>
                                   <div class="modal-body" data-bind="visible: $root.TemplateSelection() == false"></div>
@@ -107,7 +107,7 @@
                                     </div>
                                   </div>
                                   <div class="modal-footer" data-bind="visible: $root.TemplateSelection() == true">
-                                      <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: DeleteTemplateList"> Delete Selected </button>
+                                      <button type="button" class="btn btn-default" data-bind="click: DeleteTemplateList"> Delete Selected </button>
                                   </div>
                                 </div>
                               </div>

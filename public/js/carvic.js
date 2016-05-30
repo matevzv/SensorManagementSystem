@@ -1615,6 +1615,7 @@ Carvic.Model.NewNodeModel = function () {
                 data: { name: self.CheckedTemplates()[i] }
               };
               Carvic.Utils.Post(req, function (data) {
+                  self.LoadNodeTemplates();
                   console.log("Template successfully deleted.")
               });
             }
