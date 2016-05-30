@@ -1233,8 +1233,6 @@ Carvic.Model.SingleNodeModel = function () {
         var id = self.NodeEditFieldToAdd();
         if (id.length > 0) {
             var obj = self.AddNewFieldId(id);
-
-
             self.NodeEditFieldToAdd("");
         }
     }
@@ -1546,7 +1544,7 @@ Carvic.Model.NewNodeModel = function () {
                     code: item.code
                 });
                 self.NodeRolesMap[item.code] = item;
-            });;
+            });
             if(callback) callback();
         });
     }
@@ -1628,27 +1626,29 @@ Carvic.Model.NewNodeModel = function () {
         });
     }
 
-    self.LoadNodeTemplate = function (template) {
-        var t = self.NodeTemplates.pop(template.Id);
-        console.log("select FTW: " + self.Id);
-    };
-
     self.LoadNodeTemplates = function () {
         self.NodeTemplates.removeAll();
         var req = { action: "get_node_templates" };
         Carvic.Utils.Post(req, function (data) {
-          console.log(JSON.stringify(data));
 
           data.forEach(function(template) {
-            console.log(template.name);
-
             var obj = {
                 Id: ko.observable(template.name),
+                Fields: ko.observableArray(template.extra_fields),
+                SelectThisTemplate: function () { self.SelectTemplate(this); }
             };
             self.NodeTemplates.push(obj);
           });
         });
     }
+
+    self.SelectTemplate = function (template) {
+        self.NodeExtraFields.removeAll();
+        var fields = template.Fields();
+        fields.forEach(function (item) {
+            self.AddNewFieldId(item);
+        });
+    };
 
     self.InsertTemplate = function () {
       var extraFields = [];

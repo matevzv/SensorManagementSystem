@@ -91,9 +91,9 @@
                                   <div class="modal-body">
                                     <div class="row">
                                       <table class="table table-hover">
-                                        <tbody data-bind="foreach: NodeTemplates">
+                                        <tbody data-bind="foreach: $root.NodeTemplates">
                                           <tr style="cursor: pointer">
-                                            <td data-dismiss="modal" data-bind="text: Id, click: $root.LoadNodeTemplate"</td>
+                                            <td data-dismiss="modal" data-bind="text: Id, click: SelectThisTemplate"</td>
                                           </tr>
                                         </tbody>
                                       </table>
