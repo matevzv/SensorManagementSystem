@@ -26,7 +26,6 @@ RUN mkdir -p /data/db
 # install nginx
 RUN apt-get install -y nginx
 RUN apt-get install -y spawn-fcgi
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 COPY docker/default.conf /etc/nginx/conf.d/default.conf
 
 # install munin
