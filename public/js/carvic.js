@@ -42,6 +42,11 @@ Carvic.Utils = {
             $("#navRight").append('<li><a href="users.html"><i class="glyphicon glyphicon-user"></i> Users</a></li>');
     },
 
+    AddManageLink: function () {
+        if ($("#liManage").length == 0)
+            $("#navRight").append('<li><a href="rundeck.html"><i class="glyphicon glyphicon-wrench"></i></i> Manage</a></li>');
+    },
+
     LoadClusterList: function (receiver, callback) {
         var query = {};
         Carvic.Utils.Post({ action: "get_clusters", data: query }, function (data) {
@@ -123,6 +128,7 @@ Carvic.Utils = {
             parent.StdData.CurrentUserType(data.type);
             parent.StdData.CurrentUserIsAdmin((data.type == "admin"));
             if (data.type == "admin") {
+                Carvic.Utils.AddManageLink();
                 Carvic.Utils.AddUsersLink();
             }
             parent.StdData.CurrentUserToken(data.token);
