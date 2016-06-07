@@ -49,17 +49,21 @@ RUN apt-get install -y mailutils
 COPY docker/munin/msmtprc /etc/msmtprc
 
 # install ansible
-RUN apt-get install ansible
+RUN apt-get install -y ansible
 RUN echo "[targets]" >> /etc/ansible/hosts
 RUN echo "localhost ansible_connection=local" >> /etc/ansible/hosts
 
 # install rundeck
-RUN apt-get install default-jdk
+RUN apt-get install -y default-jdk
 RUN wget download.rundeck.org/deb/rundeck-2.6.7-1-GA.deb -P /tmp
 RUN dpkg -i /tmp/rundeck-2.6.7-1-GA.deb
+#RUN chown rundeck /var/lib/rundeck
+RUN wget https://github.com/Batix/rundeck-ansible-plugin/releases/download/\
+1.2.4/ansible-plugin-1.2.4.jar -P /var/lib/rundeck/libext
 COPY docker/rundeck/rundeck-config.properties \
 /etc/rundeck/rundeck-config.properties
 COPY docker/rundeck/profile /etc/rundeck/profile
+COPY docker/rundeck/rundeckd /etc/init.d/rundeckd
 
 # install Videk master from github
 RUN cd /home && \
