@@ -48,14 +48,6 @@ RUN apt-get install -y msmtp-mta
 RUN apt-get install -y mailutils
 COPY docker/munin/msmtprc /etc/msmtprc
 
-# install Videk master from github
-RUN cd /home && \
-git clone https://github.com/sensorlab/SensorManagementSystem.git
-WORKDIR /home/SensorManagementSystem
-RUN npm install
-RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \
-/data/db && nodejs app.js init -y && /usr/bin/mongod --shutdown
-
 # install ansible
 RUN apt-get install ansible
 RUN echo "[targets]" >> /etc/ansible/hosts
@@ -68,6 +60,14 @@ RUN dpkg -i /tmp/rundeck-2.6.7-1-GA.deb
 COPY docker/rundeck/rundeck-config.properties \
 /etc/rundeck/rundeck-config.properties
 COPY docker/rundeck/profile /etc/rundeck/profile
+
+# install Videk master from github
+RUN cd /home && \
+git clone -b rundeck-integration https://github.com/matevzv/SensorManagementSystem.git
+WORKDIR /home/SensorManagementSystem
+RUN npm install
+RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \
+/data/db && nodejs app.js init -y && /usr/bin/mongod --shutdown
 
 # volumes
 VOLUME ["/data/db", "/etc/munin", "/var/lib/munin", "/var/cache/munin/www", \
