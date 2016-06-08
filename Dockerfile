@@ -50,7 +50,7 @@ COPY docker/munin/msmtprc /etc/msmtprc
 
 # install ansible
 RUN apt-get install -y ansible
-COPY docker/ansible/hosts /root/ansible/hosts
+COPY docker/ansible/hosts /etc/ansible/hosts
 
 # install rundeck
 RUN apt-get install -y default-jdk

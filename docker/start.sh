@@ -13,4 +13,10 @@ else
     sed -i s/secret/$PASSWORD/g /etc/msmtprc
 fi
 
+if [ -z "$SSH_AUTH_SOCK" ]; then
+    echo "Consider adding ssh key!"
+else
+    ssh-add -l
+fi
+
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
