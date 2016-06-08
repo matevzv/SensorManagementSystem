@@ -71,9 +71,16 @@ RUN npm install
 RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \
 /data/db && nodejs app.js init -y && /usr/bin/mongod --shutdown
 
+# ssh setup
+RUN mkdir -p /root/.ssh
+RUN chmod 700 /root/.ssh
+RUN touch /root/.ssh/config
+RUN echo "Host *" >> /root/.ssh/config
+RUN echo "    StrictHostKeyChecking no" >> /root/.ssh/config
+
 # volumes
 VOLUME ["/data/db", "/etc/munin", "/var/lib/munin", "/var/cache/munin/www", \
-"/etc/ansible", "/etc/rundeck", "/var/lib/rundeck"]
+"/etc/ansible", "/etc/rundeck", "/var/rundeck", "/var/lib/rundeck"]
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/start.sh /root/start.sh
