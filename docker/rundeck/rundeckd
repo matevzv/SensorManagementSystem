@@ -1,1 +1,9 @@
-/usr/bin/java -Djava.security.auth.login.config=/etc/rundeck/jaas-loginmodule.conf -Dloginmodule.name=RDpropertyfilelogin -Drdeck.config=/etc/rundeck -Drdeck.base=/var/lib/rundeck -Drundeck.server.configDir=/etc/rundeck -Dserver.datastore.path=/var/lib/rundeck/data -Drundeck.server.serverDir=/var/lib/rundeck -Drdeck.projects=/var/rundeck/projects -Drdeck.runlogs=/var/lib/rundeck/logs -Drundeck.config.location=/etc/rundeck/rundeck-config.properties -Dserver.web.context=/rundeck -Djava.io.tmpdir=/tmp/rundeck -Xmx1024m -Xms256m -XX:MaxPermSize=256m -server -cp /var/lib/rundeck/bootstrap/jetty-all-7.6.0.v20120127.jar:/var/lib/rundeck/bootstrap/servlet-api-2.5.jar:/var/lib/rundeck/bootstrap/rundeck-jetty-server-2.6.7.jar:/var/lib/rundeck/bootstrap/jna-3.2.2.jar:/var/lib/rundeck/bootstrap/log4j-1.2.16.jar:/var/lib/rundeck/bootstrap/not-yet-commons-ssl-0.3.11.jar:/var/lib/rundeck/bootstrap/libpam4j-1.5.jar: com.dtolabs.rundeck.RunServer /var/lib/rundeck 4440
+#!/bin/bash
+
+. /etc/rundeck/profile
+
+DAEMON="${JAVA_HOME:-/usr}/bin/java"
+DAEMON_ARGS="${RDECK_JVM} -cp ${BOOTSTRAP_CP} com.dtolabs.rundeck.RunServer /var/lib/rundeck ${RDECK_HTTP_PORT}"
+rundeckd="$DAEMON $DAEMON_ARGS"
+
+$rundeckd >> /var/log/rundeck/service.log

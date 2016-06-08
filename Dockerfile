@@ -50,8 +50,7 @@ COPY docker/munin/msmtprc /etc/msmtprc
 
 # install ansible
 RUN apt-get install -y ansible
-RUN echo "[targets]" >> /etc/ansible/hosts
-RUN echo "localhost ansible_connection=local" >> /etc/ansible/hosts
+COPY docker/ansible/hosts /root/ansible/hosts
 
 # install rundeck
 RUN apt-get install -y default-jdk
@@ -62,22 +61,22 @@ RUN wget https://github.com/Batix/rundeck-ansible-plugin/releases/download/\
 COPY docker/rundeck/rundeck-config.properties \
 /etc/rundeck/rundeck-config.properties
 COPY docker/rundeck/profile /etc/rundeck/profile
-COPY docker/rundeck/rundeckd /etc/init.d/rundeckd
+COPY docker/rundeck/rundeckd /root/rundeck/rundeckd
 
 # install Videk master from github
-RUN cd /home && \
+RUN cd /root && \
 git clone -b rundeck-integration https://github.com/matevzv/SensorManagementSystem.git
-WORKDIR /home/SensorManagementSystem
+WORKDIR /root/SensorManagementSystem
 RUN npm install
 RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \
 /data/db && nodejs app.js init -y && /usr/bin/mongod --shutdown
 
 # volumes
 VOLUME ["/data/db", "/etc/munin", "/var/lib/munin", "/var/cache/munin/www", \
-"/etc/ansible", "/etc/rundeck"]
+"/etc/ansible", "/etc/rundeck", "/var/lib/rundeck"]
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY docker/start.sh /home/start.sh
-RUN chmod 755 /home/start.sh
+COPY docker/start.sh /root/start.sh
+RUN chmod 755 /root/start.sh
 
-ENTRYPOINT ["/home/start.sh"]
+ENTRYPOINT ["/root/start.sh"]
