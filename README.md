@@ -19,7 +19,8 @@ container and host SSH setup. Finally set your gmail account to send
 monitoring alerts.  
 
     $ docker run -p 80:80 --volumes-from datavidek \  
-    --volume $SSH_AUTH_SOCK:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent \  
+    --volume $SSH_AUTH_SOCK:/ssh-agent \  
+    -e SSH_AUTH_SOCK=/ssh-agent \  
     -e EMAIL=example@gmail.com \  
     -e PASSWORD=secret videk
 
