@@ -19,4 +19,12 @@ else
     ssh-add -l
 fi
 
+if [ -z "$DOMAIN" ]; then
+    echo "Consider adding domain name, default: localhost!"
+else
+    sed -i s/'localhost:3000'/$DOMAIN/g public/js/carvic.js
+    sed -i s/'server_name localhost'/'server_name '$DOMAIN/g \
+    /etc/nginx/conf.d/default.conf
+fi
+
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
