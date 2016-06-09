@@ -15,12 +15,13 @@ SensorManagementSystem
 
 ###4. Run docker container
 Forwarding docker port 80 to your host port. Optionally using data
-container and host SSH setup. Finally set your gmail account to send
-monitoring alerts.  
+container, host SSH key and domain name setup. Finally set your gmail account
+to send monitoring alerts.  
 
     $ docker run -p 80:80 --volumes-from datavidek \  
     --volume $SSH_AUTH_SOCK:/ssh-agent \  
     -e SSH_AUTH_SOCK=/ssh-agent \  
+    -e DOMAIN=example.com \  
     -e EMAIL=example@gmail.com \  
     -e PASSWORD=secret videk
 
