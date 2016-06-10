@@ -62,6 +62,7 @@ COPY docker/rundeck/rundeck-config.properties \
 /etc/rundeck/rundeck-config.properties
 COPY docker/rundeck/profile /etc/rundeck/profile
 COPY docker/rundeck/rundeckd /root/rundeck/rundeckd
+RUN mkdir -p /playbooks
 
 # install Videk master from github
 RUN cd /root && \
@@ -80,7 +81,8 @@ RUN echo "    StrictHostKeyChecking no" >> /root/.ssh/config
 
 # volumes
 VOLUME ["/data/db", "/etc/munin", "/var/lib/munin", "/var/cache/munin/www", \
-"/etc/ansible", "/etc/rundeck", "/var/rundeck", "/var/lib/rundeck"]
+"/etc/ansible", "/etc/rundeck", "/var/rundeck", "/var/lib/rundeck", \
+"/playbooks"]
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/start.sh /root/start.sh
