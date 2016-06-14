@@ -68,40 +68,35 @@ function preprocess_api_calls(req, res, next) {
     req.body = xutil.parse_rest_request(tmp_url);
     req.body.action = "rest";
 
-    //check token
-    if(req.headers.authorization != null) {
-      bl.get_users_token(req.headers.authorization, function(data) {
-        if(data.error) res.status(data.status).json(data.error)
-        else if (data[0] == null) res.status(401).json({ error: 'Specified token is not valid' });
-        else {
-          req.session.is_authenticated = true;
-          req.session.user = data[0].username;
-          next();
-        }
-      });
-    } else {
-      res.status(401).json("Error: Missing authentication token");
-    }
-  } /*else if ((req.url.indexOf("/api/") == 0))  {
-    // rest-like url parser
-    var tmp_url = req.url.substr(4);
-    req.body = xutil.parse_rest_request(tmp_url);
-    req.body.action = "rest";
+    var source_ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress.split(":").pop();
 
-    // perform HTTP authentication
-    basic_auth(req, res, function (err) {
-    //console.log("#1", err);
-    if (err) return next(err);
-    //console.log("#2", req.remoteUser);
-    req.session.is_authenticated = true;
-    req.session.user = req.remoteUser;
-    next();
-  });
-}*/ else if (req.url === "/handler" || req.url.indexOf("/handler?") === 0) {
-json_parser(req, res, next);
-} else {
-  body_parser(req, res, next);
-}
+    if (source_ip == "127.0.0.1") {
+      // trusted local access
+      req.session.is_authenticated = true;
+      req.session.user = "local";
+      next();
+    } else {
+      // untrusted source ip
+      // check token
+      if(req.headers.authorization != null) {
+        bl.get_users_token(req.headers.authorization, function(data) {
+          if(data.error) res.status(data.status).json(data.error)
+          else if (data[0] == null) res.status(401).json({ error: 'Specified token is not valid' });
+          else {
+            req.session.is_authenticated = true;
+            req.session.user = data[0].username;
+            next();
+          }
+        });
+      } else {
+        res.status(401).json("Error: Missing authentication token");
+      }
+    }
+  } else if (req.url === "/handler" || req.url.indexOf("/handler?") === 0) {
+    json_parser(req, res, next);
+  } else {
+    body_parser(req, res, next);
+  }
 };
 
 function ensure_authenticated(req, res, next) {

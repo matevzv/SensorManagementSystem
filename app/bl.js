@@ -123,8 +123,7 @@ function load_cluster_map(callback) {
             data.forEach(function (item) {
                 cluster_map[item.id] = item;
             });
-            if (callback)
-                callback(null);
+            if (callback) callback();
         }
     });
 }
@@ -1351,7 +1350,11 @@ exports.add_cluster = function (req, callback) {
 };
 
 exports.api_add_cluster = function (req, callback) {
-    db.api_add_cluster(req, callback);
+    db.api_add_cluster(req, function(data) {
+        load_cluster_map(function() {
+            callback(data);
+        });
+    });
 };
 
 exports.get_cluster_history = function (req, callback) {
@@ -1361,8 +1364,7 @@ exports.get_cluster_history = function (req, callback) {
 exports.get_all_cluster_types = function (res, callback) {
     db.get_all_cluster_types( function(err, data) {
         if (err) return callback(err);
-        return callback(null, data)
-
+        return callback(null, data);
     });
 }
 

@@ -204,7 +204,7 @@
                         </tr>
                         <tbody data-bind="foreach: $root.SearchResult">
                         <tr style="cursor: pointer">
-                            <td><input type="checkbox" id="checkbox" style="cursor: default" data-bind="checked: $root.CheckedNodes, value: ID"></td>
+                            <td><input type="checkbox" id="checkbox" style="cursor: default" data-bind="checkedValue: ID, checked: $root.CheckedNodes"></td>
                             <td data-bind="text: ID, click: $root.ShowNodeDetails"></td>
                             <td data-bind="text: Name, click: $root.ShowNodeDetails"></td>
                             <td>

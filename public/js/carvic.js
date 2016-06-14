@@ -962,7 +962,7 @@ Carvic.Model.NodesModel = function (callback) {
     self.ToggleAll = function () {
         self.CheckedNodes.removeAll();
             for(i = 0; i < self.SearchResult().length; i++) {
-                self.CheckedNodes().push((typeof self.SearchResult()[i]().ID != 'string') ? JSON.stringify(self.SearchResult()[i]().ID) : self.SearchResult()[i]().ID);
+                self.CheckedNodes().push(self.SearchResult()[i]().ID);
             }
         return self.CheckedNodes();
     };
@@ -1982,7 +1982,7 @@ Carvic.Model.ComponentsModel = function () {
     self.ToggleAll = function () {
         self.CheckedComponents.removeAll();
             for(i = 0; i < self.SearchResult().length; i++) {
-                self.CheckedComponents().push((typeof self.SearchResult()[i]().ID() != 'string') ? JSON.stringify(self.SearchResult()[i]().ID()) : self.SearchResult()[i]().ID());
+                self.CheckedComponents().push(self.SearchResult()[i]().ID());
             }
         return self.CheckedComponents();
     };
@@ -2420,7 +2420,7 @@ Carvic.Model.ClustersModel = function () {
     self.ToggleAll = function () {
         self.CheckedClusters.removeAll();
             for(i = 0; i < self.SearchResult().length; i++) {
-                self.CheckedClusters().push((typeof self.SearchResult()[i]().Id() != 'string') ? JSON.stringify(self.SearchResult()[i]().Id()) : self.SearchResult()[i]().Id());
+                self.CheckedClusters().push(self.SearchResult()[i]().Id());
             }
         return self.CheckedClusters();
     }
