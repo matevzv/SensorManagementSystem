@@ -26,6 +26,7 @@ RUN mkdir -p /data/db
 # install nginx
 RUN apt-get install -y nginx
 RUN apt-get install -y spawn-fcgi
+RUN rm /etc/nginx/sites-enabled/default
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # install munin
@@ -68,7 +69,7 @@ RUN mkdir -p /playbooks
 RUN cd /root && \
 git clone https://github.com/matevzv/videk-hosts.git
 RUN touch /etc/cron.d/videk-hosts
-RUN echo "*/1 * * * *    /usr/bin/python /root/videk-hosts/videk-hosts.py" \
+RUN echo "*/5 * * * * root /usr/bin/python /root/videk-hosts/videk-hosts.py" \
 >> /etc/cron.d/videk-hosts
 
 # install Videk master from github
