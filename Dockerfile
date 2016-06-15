@@ -64,6 +64,13 @@ COPY docker/rundeck/profile /etc/rundeck/profile
 COPY docker/rundeck/rundeckd /root/rundeck/rundeckd
 RUN mkdir -p /playbooks
 
+# install videk cron to sync hosts
+RUN cd /root && \
+git clone https://github.com/matevzv/videk-hosts.git
+RUN touch /etc/cron.d/videk-hosts
+RUN echo "*/1 * * * *    /usr/bin/python /root/videk-hosts/videk-hosts.py" \
+>> /etc/cron.d/videk-hosts
+
 # install Videk master from github
 RUN cd /root && \
 git clone -b rundeck-integration https://github.com/matevzv/SensorManagementSystem.git
