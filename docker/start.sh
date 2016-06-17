@@ -27,4 +27,15 @@ else
     /etc/nginx/conf.d/default.conf
 fi
 
+if [ -z "$RUNDECKP" ]; then
+    echo "Consider changing the default rundeck password!"
+else
+    JAVA="${JAVA_HOME:-/usr}/bin/java"
+    PASS=`$JAVA -cp /var/lib/rundeck/bootstrap/jetty-all-7.6.0.v20120127.jar \
+    org.eclipse.jetty.util.security.Password admin $RUNDECKP 2>&1`
+    MD5=`echo "$PASS" | grep "^MD5:"`
+    sed -i s/'^admin:.*'/'admin:'$MD5',user,admin,architect,deploy,build'/g \
+    /etc/rundeck/realm.properties
+fi
+
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

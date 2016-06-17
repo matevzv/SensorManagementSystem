@@ -55,8 +55,8 @@ COPY docker/ansible/hosts /etc/ansible/hosts
 
 # install rundeck
 RUN apt-get install -y default-jdk
-RUN wget download.rundeck.org/deb/rundeck-2.6.7-1-GA.deb -P /tmp
-RUN dpkg -i /tmp/rundeck-2.6.7-1-GA.deb
+RUN wget dl.bintray.com/rundeck/rundeck-deb/rundeck-2.6.8-1-GA.deb -P /tmp
+RUN dpkg -i /tmp/rundeck-2.6.8-1-GA.deb
 RUN wget https://github.com/Batix/rundeck-ansible-plugin/releases/download/\
 1.2.4/ansible-plugin-1.2.4.jar -P /var/lib/rundeck/libext
 COPY docker/rundeck/rundeck-config.properties \
