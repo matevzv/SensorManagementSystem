@@ -948,9 +948,9 @@ Carvic.Model.NodesModel = function (callback) {
                             data: { id: self.CheckedNodes()[i] }
                         };
                         Carvic.Utils.Post(req, function (data) {
-                          self.CheckedNodes.removeAll();
-                          self.SearchResult.removeAll();
-                          self.Search();
+                            self.CheckedNodes.removeAll();
+                            self.SearchResult.removeAll();
+                            self.Search();
                        });
                     }
                 }
