@@ -937,25 +937,24 @@ Carvic.Model.NodesModel = function (callback) {
 
     self.DeleteNodeList = function () {
         switch (self.CheckedNodes().length > 0) {
-                case false:
-                    alert("There are no nodes chosen to delete!");
-                    break;
-                default:
-                    if (confirm("You are about to delete:\n" + self.CheckedNodes() + "\n" + "\n" + "Are you sure you want to delete these nodes?")) {
-                        for (i in self.CheckedNodes()) {
-                            var req = {
-                                action: "delete_node",
-                                data: { id: self.CheckedNodes()[i] }
-                            };
-                            Carvic.Utils.Post(req, function (data) {
-                                /*console.log("Node successfully deleted.")*/
-                           });
-                        }
-                        self.CheckedNodes.removeAll();
-                        self.SearchResult.removeAll();
-                        self.Search();
+            case false:
+                alert("There are no nodes chosen to delete!");
+                break;
+            default:
+                if (confirm("You are about to delete:\n" + self.CheckedNodes() + "\n" + "\n" + "Are you sure you want to delete these nodes?")) {
+                    for (i in self.CheckedNodes()) {
+                        var req = {
+                            action: "delete_node",
+                            data: { id: self.CheckedNodes()[i] }
+                        };
+                        Carvic.Utils.Post(req, function (data) {
+                          self.CheckedNodes.removeAll();
+                          self.SearchResult.removeAll();
+                          self.Search();
+                       });
                     }
-                    break;
+                }
+                break;
         }
     };
 
