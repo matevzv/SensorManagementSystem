@@ -481,7 +481,9 @@ function update_node(id, rec, callback) {
 function delete_node(id, callback) {
     db[collection_nodes].remove({ id: id }, function (err) {
         if (err) return callback(err);
-        db[collection_measurements].remove({ node: id }, callback);
+        db[collection_sensors].remove({ node: id }, function () {
+            db[collection_measurements].remove({ node: id }, callback);
+        });
     });
 };
 
@@ -502,7 +504,7 @@ function api_get_nodes(req, callback) {
     var query = req.query;
     if (req.query.cluster_id) query.cluster_id = req.query.cluster_id;
     if (req.query.id) query.id = parseInt(req.query.id);
-    db[collection_nodes].find(query).sort({ ts: -1 }).toArray(function (err, res) {
+    db[collection_nodes].find(query).toArray(function (err, res) {
         if (err) return callback(err);
 		else if (res.length == 0)
             callback({ error: "No nodes found.", status: 404 });
@@ -538,7 +540,11 @@ function api_delete_node(rec, callback) {
     else db[collection_nodes].remove( { _id: mongojs.ObjectId(rec) }, function (err, res) {
         if (err) return callback(err);
         else if (res.n)
-            callback({ message: 'Node successfully deleted!' });
+            db[collection_sensors].remove({ node_id: rec }, function () {
+                db[collection_measurements].remove({ node_id: rec }, function () {
+                    callback({ message: 'Node successfully deleted!' });
+                });
+            });
         else
             callback({ error: 'Node ID not found!', status: 404 });
     });

@@ -14,7 +14,7 @@
 
         <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
         <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
         <script type="text/javascript" src="js/carvic.js"></script>
         <script>
             $(document).ready(function () {
@@ -179,7 +179,7 @@
                         </tr>
                         <tbody data-bind="foreach: $root.SearchResult">
                             <tr style="cursor: pointer">
-                                <td><input type="checkbox" id="checkbox" style="cursor: default" data-bind="checked: $root.CheckedClusters, value: Id"></td>
+                                <td><input type="checkbox" id="checkbox" style="cursor: default" data-bind="checkedValue: Id, checked: $root.CheckedClusters"></td>
                                 <td data-bind="text: TypeStr, click: $root.ShowDetails"></td>
                                 <td data-bind="text: Id, click: $root.ShowDetails"></td>
                                 <td data-bind="text: Tag, click: $root.ShowDetails"></td>

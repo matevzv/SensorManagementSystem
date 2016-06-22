@@ -26,7 +26,8 @@ RUN mkdir -p /data/db
 # install nginx
 RUN apt-get install -y nginx
 RUN apt-get install -y spawn-fcgi
-COPY docker/default.conf /etc/nginx/conf.d/default.conf
+RUN rm /etc/nginx/sites-enabled/default
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # install munin
 RUN apt install -y munin
@@ -41,26 +42,62 @@ RUN chmod 755 /var/cache/munin/www
 RUN mkdir -p /var/lib/munin
 RUN chown munin /var/lib/munin
 RUN chmod 755 /var/lib/munin
-COPY docker/munin.conf /etc/munin/munin.conf
+COPY docker/munin/munin.conf /etc/munin/munin.conf
 
 # install email support and setup munin alert
 RUN apt-get install -y msmtp-mta
 RUN apt-get install -y mailutils
-COPY docker/msmtprc /etc/msmtprc
+COPY docker/munin/msmtprc /etc/msmtprc
 
-# get Videk master from github
-RUN cd /home && \
+# install ansible
+RUN apt-get install -y ansible
+COPY docker/ansible/hosts /etc/ansible/hosts
+
+# install rundeck
+RUN apt-get install -y default-jdk
+RUN wget dl.bintray.com/rundeck/rundeck-deb/rundeck-2.6.8-1-GA.deb -P /tmp
+RUN dpkg -i /tmp/rundeck-2.6.8-1-GA.deb
+RUN wget https://github.com/Batix/rundeck-ansible-plugin/releases/download/\
+1.2.4/ansible-plugin-1.2.4.jar -P /var/lib/rundeck/libext
+COPY docker/rundeck/rundeck-config.properties \
+/etc/rundeck/rundeck-config.properties
+COPY docker/rundeck/profile /etc/rundeck/profile
+COPY docker/rundeck/rundeckd /root/rundeck/rundeckd
+RUN mkdir -p /playbooks
+
+# install videk cron to sync hosts
+RUN apt-get install -y curl
+RUN cd /root && \
+git clone https://github.com/matevzv/videk-hosts.git
+RUN touch /etc/cron.d/videk-hosts
+RUN echo "*/5 * * * * root /usr/bin/python /root/videk-hosts/videk-hosts.py" \
+>> /etc/cron.d/videk-hosts
+RUN touch /etc/cron.d/videk-ping
+RUN echo "*/10 * * * * root /root/videk-hosts/videk-ping.sh" \
+>> /etc/cron.d/videk-ping
+
+# install Videk master from github
+RUN cd /root && \
 git clone https://github.com/sensorlab/SensorManagementSystem.git
-WORKDIR /home/SensorManagementSystem
+WORKDIR /root/SensorManagementSystem
 RUN npm install
 RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \
 /data/db && nodejs app.js init -y && /usr/bin/mongod --shutdown
 
+# ssh setup
+RUN mkdir -p /root/.ssh
+RUN chmod 700 /root/.ssh
+RUN touch /root/.ssh/config
+RUN echo "Host *" >> /root/.ssh/config
+RUN echo "    StrictHostKeyChecking no" >> /root/.ssh/config
+
 # volumes
-VOLUME ["/data/db", "/etc/munin", "/var/lib/munin", "/var/cache/munin/www"]
+VOLUME ["/data/db", "/etc/munin", "/var/lib/munin", "/var/cache/munin/www", \
+"/etc/ansible", "/etc/rundeck", "/var/rundeck", "/var/lib/rundeck", \
+"/playbooks"]
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY docker/start.sh /home/start.sh
-RUN chmod 755 /home/start.sh
+COPY docker/start.sh /root/start.sh
+RUN chmod 755 /root/start.sh
 
-ENTRYPOINT ["/home/start.sh"]
+ENTRYPOINT ["/root/start.sh"]

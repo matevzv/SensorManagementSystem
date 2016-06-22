@@ -37,9 +37,9 @@ Carvic.Utils = {
         }
     },
 
-    AddUsersLink: function () {
-        if ($("#liUsers").length == 0)
-            $("#navRight").append('<li><a href="users.html"><i class="glyphicon glyphicon-user"></i> Users</a></li>');
+    AddAdminLinks: function () {
+        $("#navRight").append('<li><a href="rundeck.html"><i class="glyphicon glyphicon-wrench"></i></i> Manage</a></li>');
+        $("#navRight").append('<li><a href="users.html"><i class="glyphicon glyphicon-user"></i> Users</a></li>');
     },
 
     LoadClusterList: function (receiver, callback) {
@@ -123,7 +123,7 @@ Carvic.Utils = {
             parent.StdData.CurrentUserType(data.type);
             parent.StdData.CurrentUserIsAdmin((data.type == "admin"));
             if (data.type == "admin") {
-                Carvic.Utils.AddUsersLink();
+                Carvic.Utils.AddAdminLinks();
             }
             parent.StdData.CurrentUserToken(data.token);
             if (callback)
@@ -937,32 +937,31 @@ Carvic.Model.NodesModel = function (callback) {
 
     self.DeleteNodeList = function () {
         switch (self.CheckedNodes().length > 0) {
-                case false:
-                    alert("There are no nodes chosen to delete!");
-                    break;
-                default:
-                    if (confirm("You are about to delete:\n" + self.CheckedNodes() + "\n" + "\n" + "Are you sure you want to delete these nodes?")) {
-                        for (i in self.CheckedNodes()) {
-                            var req = {
-                                action: "delete_node",
-                                data: { id: self.CheckedNodes()[i] }
-                            };
-                            Carvic.Utils.Post(req, function (data) {
-                                /*console.log("Node successfully deleted.")*/
-                           });
-                        }
-                        self.CheckedNodes.removeAll();
-                        self.SearchResult.removeAll();
-                        self.Search();
+            case false:
+                alert("There are no nodes chosen to delete!");
+                break;
+            default:
+                if (confirm("You are about to delete:\n" + self.CheckedNodes() + "\n" + "\n" + "Are you sure you want to delete these nodes?")) {
+                    for (i in self.CheckedNodes()) {
+                        var req = {
+                            action: "delete_node",
+                            data: { id: self.CheckedNodes()[i] }
+                        };
+                        Carvic.Utils.Post(req, function (data) {
+                            self.CheckedNodes.removeAll();
+                            self.SearchResult.removeAll();
+                            self.Search();
+                       });
                     }
-                    break;
+                }
+                break;
         }
     };
 
     self.ToggleAll = function () {
         self.CheckedNodes.removeAll();
             for(i = 0; i < self.SearchResult().length; i++) {
-                self.CheckedNodes().push((typeof self.SearchResult()[i]().ID != 'string') ? JSON.stringify(self.SearchResult()[i]().ID) : self.SearchResult()[i]().ID);
+                self.CheckedNodes().push(self.SearchResult()[i]().ID);
             }
         return self.CheckedNodes();
     };
@@ -1982,7 +1981,7 @@ Carvic.Model.ComponentsModel = function () {
     self.ToggleAll = function () {
         self.CheckedComponents.removeAll();
             for(i = 0; i < self.SearchResult().length; i++) {
-                self.CheckedComponents().push((typeof self.SearchResult()[i]().ID() != 'string') ? JSON.stringify(self.SearchResult()[i]().ID()) : self.SearchResult()[i]().ID());
+                self.CheckedComponents().push(self.SearchResult()[i]().ID());
             }
         return self.CheckedComponents();
     };
@@ -2420,7 +2419,7 @@ Carvic.Model.ClustersModel = function () {
     self.ToggleAll = function () {
         self.CheckedClusters.removeAll();
             for(i = 0; i < self.SearchResult().length; i++) {
-                self.CheckedClusters().push((typeof self.SearchResult()[i]().Id() != 'string') ? JSON.stringify(self.SearchResult()[i]().Id()) : self.SearchResult()[i]().Id());
+                self.CheckedClusters().push(self.SearchResult()[i]().Id());
             }
         return self.CheckedClusters();
     }
