@@ -110,16 +110,12 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>LON </th>
-                                <td data-bind="text: NodeLON" id="tdLon"></td>
-                            </tr>
-                            <tr>
-                                <th>LAT </th>
+                                <th>Latitude </th>
                                 <td data-bind="text: NodeLAT" id="tdLat"></td>
                             </tr>
                             <tr>
-                                <th>Last scan </th>
-                                <td data-bind="text: Carvic.Utils.FormatDateTime(NodeLastScan())" id="tdLastScan"></td>
+                                <th>Longitude </th>
+                                <td data-bind="text: NodeLON" id="tdLon"></td>
                             </tr>
                         </table>
                     </div>
@@ -284,7 +280,6 @@
                             </div>
 
                             <div class="form-horizontal">
-                                <h2>Basic data</h2>
 
                                 <div class="list-group">
                                     <label class="control-label" for="inNodeName"> <span class="badge alert-warning" data-bind="visible: $root.CurrentNodeEditing() == true">*</span> Name </label>
@@ -303,15 +298,7 @@
                                 </div>
 
                                 <div class="list-group">
-                                    <label class="control-label" for="inNodeLON"> <span class="badge alert-info">auto</span> LON </label>
-                                    <div class="controls">
-                                        <span data-bind="text: NodeLON, visible: $root.CurrentNodeEditing() == false"></span>
-                                        <input class="input form-control" id="inNodeLON" type="text" data-bind="value: NodeLON, visible: $root.CurrentNodeEditing() == true" title="Longitude of this node" />
-                                    </div>
-                                </div>
-
-                                <div class="list-group">
-                                    <label class="control-label" for="inNodeLAT"> <span class="badge alert-info">auto</span> LAT </label>
+                                    <label class="control-label" for="inNodeLAT"> <span class="badge alert-info">auto</span> Latitude </label>
                                     <div class="controls">
                                         <span data-bind="text: NodeLAT, visible: $root.CurrentNodeEditing() == false"></span>
                                         <input class="input form-control" id="inNodeLAT" type="text" data-bind="value: NodeLAT, visible: $root.CurrentNodeEditing() == true" title="Latitude of this node" />
@@ -319,10 +306,10 @@
                                 </div>
 
                                 <div class="list-group">
-                                    <label class="control-label" for="inNodeLocation"> Location </label>
+                                    <label class="control-label" for="inNodeLON"> <span class="badge alert-info">auto</span> Longitude </label>
                                     <div class="controls">
-                                        <span data-bind="text: NodeLocation, visible: $root.CurrentNodeEditing() == false"></span>
-                                        <input class="input form-control" id="inNodeLocation" type="text" data-bind="value: NodeLocation, visible: $root.CurrentNodeEditing() == true" title="Location of this node" />
+                                        <span data-bind="text: NodeLON, visible: $root.CurrentNodeEditing() == false"></span>
+                                        <input class="input form-control" id="inNodeLON" type="text" data-bind="value: NodeLON, visible: $root.CurrentNodeEditing() == true" title="Longitude of this node" />
                                     </div>
                                 </div>
 
@@ -331,112 +318,6 @@
                                     <div class="controls">
                                         <span data-bind="text: NodeStatusStr, visible: $root.CurrentNodeEditing() == false"></span>
                                         <select class="input form-control" id="inNodeStatus" data-bind="options: $root.NodeStatuses, optionsText: 'title', optionsValue: 'code', value: $root.NodeStatus, visible: $root.CurrentNodeEditing() == true" title="Status of this node"></select>
-                                    </div>
-                                </div>
-
-                                <div class="list-group">
-                                    <label class="control-label" for="inNodeRole"> Role </label>
-                                    <div class="controls">
-                                        <span data-bind="text: NodeRoleStr, visible: $root.CurrentNodeEditing() == false"></span>
-                                        <!--<input class="input" id="inNodeRole" type="text" data-bind="value: NodeRole, visible: $root.CurrentNodeEditing() == true" title="Flag if this node is a gateway or regular node" />-->
-                                        <select class="input form-control" id="inNodeRole" data-bind="options: $root.NodeRoles, optionsText: 'title', optionsValue: 'code', value: $root.NodeRole, visible: $root.CurrentNodeEditing() == true" title="Flag if this node is a gateway or regular node"></select>
-                                    </div>
-                                </div>
-
-                                <div class="list-group">
-                                    <label class="control-label" for="inNodeScope"> Scope </label>
-                                    <div class="controls">
-                                        <span data-bind="text: NodeScope, visible: $root.CurrentNodeEditing() == false"></span>
-                                        <input class="input form-control" id="inNodeScope" type="text" data-bind="value: NodeScope, visible: $root.CurrentNodeEditing() == true" title="Scope for this node" />
-                                    </div>
-                                </div>
-
-                                <div class="list-group">
-                                    <label class="control-label" for="inNodeProject"> Project </label>
-                                    <div class="controls">
-                                        <span data-bind="text: NodeProject, visible: $root.CurrentNodeEditing() == false"></span>
-                                        <input class="input form-control" id="inNodeProject" type="text" data-bind="value: NodeProject, visible: $root.CurrentNodeEditing() == true" title="Project that this node is used for" />
-                                    </div>
-                                </div>
-
-                                                                    <!--<div class="list-group">
-                                                                        <label class="control-label" for="inNodeSource"> Source </label>
-                                                                        <div class="controls">
-                                                                            <span data-bind="text: NodeSource, visible: $root.CurrentNodeEditing() == false"></span>
-                                                                            <input class="input" id="inNodeSource" type="text" data-bind="value: NodeSource, visible: $root.CurrentNodeEditing() == true" title="Source for this node" />
-                                                                        </div>
-                                                                    </div>-->
-                                <div class="list-group">
-                                    <label class="control-label" for="inNodeUserComment"> User comment </label>
-                                    <div class="controls">
-                                        <span data-bind="text: NodeUserComment, visible: $root.CurrentNodeEditing() == false"></span>
-                                        <textarea class="input form-control" id="inNodeUserComment" data-bind="value: NodeUserComment, visible: $root.CurrentNodeEditing() == true" rows="5" title="Users can manually insert some comment they find relevant."></textarea>
-                                    </div>
-                                </div>
-
-                                <h2>System data</h2>
-
-                                <div class="list-group">
-                                    <label class="control-label" for="inNodeNetworkAddress"> <span class="badge alert-warning" data-bind="visible: $root.CurrentNodeEditing() == true">*</span> Primary network address </label>
-                                    <div class="controls">
-                                        <span data-bind="text: NodeNetworkAddress, visible: $root.CurrentNodeEditing() == false"></span>
-                                        <input class="input form-control" id="inNodeNetworkAddress" type="text" data-bind="value: NodeNetworkAddress, visible: $root.CurrentNodeEditing() == true" title="Node's primary network address - depending on the cluster type this could be ID inside cluster, IP, or IPv6. This ID is used during network scan." />
-                                    </div>
-                                </div>
-
-                                <div class="list-group">
-                                    <label class="control-label" for="inNodeNetworkAddress2"> <span class="badge alert-warning" data-bind="visible: $root.CurrentNodeEditing() == true">*</span> Alternative network address </label>
-                                    <div class="controls">
-                                        <span data-bind="text: NodeNetworkAddress2, visible: $root.CurrentNodeEditing() == false"></span>
-                                        <input class="input form-control" id="inNodeNetworkAddress2" type="text" data-bind="value: NodeNetworkAddress2, visible: $root.CurrentNodeEditing() == true" title="Node's alternative network address - could be ID inside cluster, IP, IPv6 or anything else. It is not used during network scan." />
-                                    </div>
-                                </div>
-
-                                <div class="list-group">
-                                    <label class="control-label" for="inNodeMAC"> <span class="badge alert-info">auto</span> MAC </label>
-                                    <div class="controls">
-                                        <span data-bind="text: NodeMAC, visible: $root.CurrentNodeEditing() == false"></span>
-                                        <input class="input form-control" id="inNodeMAC" type="text" data-bind="value: NodeMAC, visible: $root.CurrentNodeEditing() == true" title="MAC address" />
-                                    </div>
-                                </div>
-
-                                <div class="list-group">
-                                    <label class="control-label" for="inNodeSN"> Serial number </label>
-                                    <div class="controls">
-                                        <span data-bind="text: NodeSN, visible: $root.CurrentNodeEditing() == false"></span>
-                                        <input class="input form-control" id="inNodeSN" type="text" data-bind="value: NodeSN, visible: $root.CurrentNodeEditing() == true" title="Serial number of this node - might get redundant as we also keep track of  SNC component" />
-                                    </div>
-                                </div>
-
-                                <div class="list-group">
-                                    <label class="control-label" for="inNodeFirmware"> <span class="badge alert-info">auto</span> <span class="badge alert-warning" data-bind="visible: $root.CurrentNodeEditing() == true">*</span> Firmware </label>
-                                    <div class="controls">
-                                        <span data-bind="text: NodeFirmware, visible: $root.CurrentNodeEditing() == false"></span>
-                                        <input class="input form-control" id="inNodeFirmware" type="text" data-bind="value: NodeFirmware, visible: $root.CurrentNodeEditing() == true" title="Firmware version that is installed on the node" />
-                                    </div>
-                                </div>
-
-                                <div class="list-group">
-                                    <label class="control-label" for="inNodeBootloader"> <span class="badge alert-info">auto</span> <span class="badge alert-warning" data-bind="visible: $root.CurrentNodeEditing() == true">*</span> Bootloader </label>
-                                    <div class="controls">
-                                        <span data-bind="text: NodeBootloader, visible: $root.CurrentNodeEditing() == false"></span>
-                                        <input class="input form-control" id="inNodeBootloader" type="text" data-bind="value: NodeBootloader, visible: $root.CurrentNodeEditing() == true" title="Bootloader for this node" />
-                                    </div>
-                                </div>
-
-                                <div class="list-group">
-                                    <label class="control-label" for="inNodeSetup"> Setup </label>
-                                    <div class="controls">
-                                        <span data-bind="text: NodeSetup, visible: $root.CurrentNodeEditing() == false"></span>
-                                        <input class="input form-control" id="inNodeSetup" type="text" data-bind="value: NodeSetup, visible: $root.CurrentNodeEditing() == true" title="This refers to the situation of the nodes, whether it's mounted or is in the office for repair, etc." />
-                                    </div>
-                                </div>
-
-                                <div class="list-group">
-                                    <label class="control-label" for="inNodeBoxLabel"> Box-label </label>
-                                    <div class="controls">
-                                        <span data-bind="text: NodeBoxLabel, visible: $root.CurrentNodeEditing() == false"></span>
-                                        <input class="input form-control" id="inNodeBoxLabel" type="text" data-bind="value: NodeBoxLabel, visible: $root.CurrentNodeEditing() == true" title="Box-label for this node" />
                                     </div>
                                 </div>
 

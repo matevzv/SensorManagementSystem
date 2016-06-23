@@ -129,53 +129,9 @@
                         </div>
 
                         <div class="list-group">
-                            <label class="control-label" for="inBoxLabel">Box label</label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inBoxLabel" placeholder="e.g. C4564" data-bind="value: NodeBoxLabel" data-placement="right" title="Enter the label from the side of the box." />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inFirmware">
-                                <span class="badge alert-info">auto</span>
-                                <span class="badge alert-warning">*</span>
-                                Firmware
-                            </label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inFirmware" placeholder="e.g. V1.2" data-bind="value: NodeFirmware" title="Version of firmware that is used in the node." />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inBootloader">
-                                <span class="badge alert-info">auto</span>
-                                <span class="badge alert-warning">*</span>
-                                Bootloader
-                            </label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inBootloader" placeholder="e.g. V12" data-bind="value: NodeBootloader" title="Bootloader version that is used in the node" />
-                            </div>
-                        </div>
-                        <div class="list-group">
                             <label class="control-label" for="inName"><span class="badge alert-warning">*</span> Name</label>
                             <div class="controls">
                                 <input class="form-control" type="text" id="inName" placeholder="Name of this node" data-bind="value: NodeName" title="Some human friendly name given to a node" />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inNetworkId"><span class="badge alert-warning">*</span> Primary network address </label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inNetworkAddress" placeholder="e.g. 2001:0db8:85a3:0000:0000:8a2e:0370:7334" data-bind="value: NodeNetworkAddress" title="Node's network address in a ZigBee network or IPv6. This address is used when cluster is scanned.  " />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inNetworkId2"><span class="badge alert-warning">*</span> Alternative network address </label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inNetworkAddress2" placeholder="Alternative network address" data-bind="value: NodeNetworkAddress2" title="Alternative network address of the node - can be IP, IPv6 or something else. " />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inMac"><span class="badge alert-info">auto</span> MAC</label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inMac" placeholder="MAC of this node" data-bind="value: NodeMAC" title="MAC of the node" />
                             </div>
                         </div>
                         <div class="list-group">
@@ -185,39 +141,15 @@
                             </div>
                         </div>
                         <div class="list-group">
-                            <label class="control-label" for="inRole"><span class="badge alert-warning">*</span> Role</label>
-                            <div class="controls">
-                                <select class="form-control" id="inRole" data-bind="options: NodeRoles, optionsText: 'title', optionsValue: 'code', value: NodeRole" title="Select the cluster where this node is deployed."></select>
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inLon"><span class="badge alert-info">auto</span> LON</label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inLon" placeholder="Longitude" data-bind="value: NodeLON" title="Longitude of the installed location for this node." />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inLat"><span class="badge alert-info">auto</span> LAT</label>
+                            <label class="control-label" for="inLat"><span class="badge alert-info">auto</span> Latitude</label>
                             <div class="controls">
                                 <input class="form-control" type="text" id="inLat" placeholder="Latitude" data-bind="value: NodeLAT" title="Latitude of the installed location for this node." />
                             </div>
                         </div>
                         <div class="list-group">
-                            <label class="control-label" for="inLoc">Location</label>
+                            <label class="control-label" for="inLon"><span class="badge alert-info">auto</span> Longitude</label>
                             <div class="controls">
-                                <input class="form-control" type="text" id="inLoc" placeholder="Name of the place" data-bind="value: NodeLocation" title="The name of the place (village, city, etc.) where the node is installed (optional)." />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inScope">Scope</label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inScope" placeholder="Scope" data-bind="value: NodeScope" title="This is a text describing the node. It can also be inserted automatically based on the 'Description' metadata available on the node. Examples are 'Node for cognitive radio experimentation in ISM 868 MHz', 'Monitoring electricity consumption for Telekom base stations', etc." />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inProject">Project</label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inProject" placeholder="Project" data-bind="value: NodeProject" title="This is the name or acronym of the project that funds/uses the sensor. It can have more values as more projects can use it, for instance CREW, XXX, etc." />
+                                <input class="form-control" type="text" id="inLon" placeholder="Longitude" data-bind="value: NodeLON" title="Longitude of the installed location for this node." />
                             </div>
                         </div>
 
