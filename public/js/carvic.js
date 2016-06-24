@@ -880,33 +880,24 @@ Carvic.Model.NodesModel = function (callback) {
             self.PageCount(Math.floor(data.count / data.page_size));
             self.UpdatePageButtons();
             for (var i = 0; i < data.records.length; i++) {
-                var obj = data.records[i];
-                var sensors = [];
+                let obj = data.records[i];
+                let sensors = [];
                 Carvic.Utils.Post({ action: "get_sensors_for_node2", data: obj._id}, function (sensor_data) {
                     sensor_data.forEach(function (item) {
-                        sensors.push(item.quantity + " (" + item.type + ")");
+                        sensors.push(item.quantity);
                     });
+                    self.SearchResult.push(ko.observable({
+                        ID: obj.id,
+                        Name: obj.name,
+                        Status: ko.observable(obj.status),
+                        StatusStr: ko.observable(self.NodeStatusesMap[obj.status].title),
+                        Cluster: obj.cluster,
+                        ClusterName: obj.cluster_name,
+                        LON: obj.loc_lon,
+                        LAT: obj.loc_lat,
+                        Sensors: sensors.join(", ")
+                    }));
                 });
-                if (typeof obj.sensors !== 'undefined') {
-                    obj.sensors.forEach(function (item) {
-                        sensors.push(item.quantity + " (" + item.type + ")");
-                    });
-                }
-                console.log("typeof obj.status:", (typeof obj.status));
-                if (typeof obj.status === 'undefined') obj.status = "Unknown";
-                //console.log("obj.status:", self.NodeStatusesMap[obj.status].title);
-                self.SearchResult.push(ko.observable({
-                    ID: obj.id,
-                    Name: obj.name,
-                    Status: ko.observable(obj.status),
-                    StatusStr: ko.observable(self.NodeStatusesMap[obj.status].title),
-                    Cluster: obj.cluster,
-                    ClusterName: obj.cluster_name,
-                    LON: obj.loc_lon,
-                    LAT: obj.loc_lat,
-                    //Css: (obj.status == "ok" ? "success" : "")
-                    Sensors: sensors.join(", ")
-                }));
             }
         });
     };
