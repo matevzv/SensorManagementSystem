@@ -58,7 +58,7 @@ RUN apt-get install -y default-jdk
 RUN wget dl.bintray.com/rundeck/rundeck-deb/rundeck-2.6.8-1-GA.deb -P /tmp
 RUN dpkg -i /tmp/rundeck-2.6.8-1-GA.deb
 RUN wget https://github.com/Batix/rundeck-ansible-plugin/releases/\
-download/1.3.0/ansible-plugin-1.3.0.jar -P /var/lib/rundeck/libext
+download/1.3.2/ansible-plugin-1.3.2.jar -P /var/lib/rundeck/libext
 COPY docker/rundeck/rundeck-config.properties \
 /etc/rundeck/rundeck-config.properties
 COPY docker/rundeck/profile /etc/rundeck/profile
@@ -78,7 +78,7 @@ RUN echo "*/10 * * * * root /root/videk-hosts/videk-ping.sh" \
 
 # install Videk master from github
 RUN cd /root && \
-git clone https://github.com/sensorlab/SensorManagementSystem.git
+git clone -b dynamic-nodes https://github.com/matevzv/SensorManagementSystem.git
 WORKDIR /root/SensorManagementSystem
 RUN npm install
 RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \
