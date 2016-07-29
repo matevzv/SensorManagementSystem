@@ -43,7 +43,7 @@ fi
 if [ -z "$ANSIBLE_USER" ]; then
     echo "Ansible user missing!"
 else
-    sed -i '/#inventory/i remote_user = '"$ANSIBLE_USER" \
+    sed -i 's/.*remote_user.*/remote_user = '"$ANSIBLE_USER"'/' \
     /etc/ansible/ansible.cfg
 fi
 
