@@ -8,6 +8,7 @@ LABEL Version="1.0"
 # update packages and install some commons
 RUN apt-get update
 RUN apt-get upgrade -y
+RUN apt-get install -y apt-utils
 RUN apt-get install -y supervisor
 RUN apt-get install -y git
 
