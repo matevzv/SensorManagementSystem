@@ -15,7 +15,7 @@
         <script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.min.js"></script>
         <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="js/bootstrap3-typeahead.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.1.0/knockout-min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
         <script type="text/javascript" src="js/carvic.js"></script>
         <script>
             $(document).ready(function () {
@@ -73,12 +73,46 @@
                         <h2>
                             <i class="glyphicon glyphicon-map-marker"></i> New node
                         </h2>
-						Please enter data for new node.
+                        Please enter data for new node.
                     </div>
                     <div class="well">
                     <!--<div class="col-md-8">-->
                         <div style="padding-bottom:  10px">
                             <button class="btn btn-default" data-bind="click: LoadLastNode"><i class="glyphicon glyphicon-repeat"></i> Use last</button>
+
+                            <button class="btn btn-default" data-bind="click: LoadNodeTemplates" data-toggle="modal" data-target="#myTemplateLoad"><i class="glyphicon glyphicon-repeat"></i> Use template </button>
+                            <div class="modal fade" id="myTemplateLoad" role="dialog">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title" data-bind="visible: $root.TemplateSelection() == true">Select Template.</h4>
+                                    <h4 class="modal-title" data-bind="visible: $root.TemplateSelection() == false">No Templates!</h4>
+                                  </div>
+                                  <div class="modal-body" data-bind="visible: $root.TemplateSelection() == false"></div>
+                                  <div class="modal-body" data-bind="visible: $root.TemplateSelection() == true">
+                                    <div class="row">
+                                      <table class="table table-hover">
+                                        <tr>
+                                            <th><input type="checkbox" id="checkAll" style="cursor: default" data-bind="checked: $root.SelectAllTemplates"></th>
+                                            <th>Name</th>
+                                        </tr>
+                                        <tbody data-bind="foreach: $root.NodeTemplates">
+                                          <tr style="cursor: pointer">
+                                            <td><input type="checkbox" id="checkbox" style="cursor: default" data-bind="checked: $root.CheckedTemplates, value: Id"></td>
+                                            <td data-dismiss="modal" data-bind="text: Id, click: SelectThisTemplate"></td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer" data-bind="visible: $root.CheckedTemplates().length > 0">
+                                      <button type="button" class="btn btn-default" data-bind="click: DeleteTemplateList"> Delete Selected </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
                         </div>
                         <div class="alert alert-info">
                             <h4 style="padding-bottom: 10px;">Legend:</h4>
@@ -95,53 +129,9 @@
                         </div>
 
                         <div class="list-group">
-                            <label class="control-label" for="inBoxLabel">Box label</label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inBoxLabel" placeholder="e.g. C4564" data-bind="value: NodeBoxLabel" data-placement="right" title="Enter the label from the side of the box." />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inFirmware">
-                                <span class="badge alert-info">auto</span>
-                                <span class="badge alert-warning">*</span>
-                                Firmware
-                            </label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inFirmware" placeholder="e.g. V1.2" data-bind="value: NodeFirmware" title="Version of firmware that is used in the node." />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inBootloader">
-                                <span class="badge alert-info">auto</span>
-                                <span class="badge alert-warning">*</span>
-                                Bootloader
-                            </label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inBootloader" placeholder="e.g. V12" data-bind="value: NodeBootloader" title="Bootloader version that is used in the node" />
-                            </div>
-                        </div>
-                        <div class="list-group">
                             <label class="control-label" for="inName"><span class="badge alert-warning">*</span> Name</label>
                             <div class="controls">
                                 <input class="form-control" type="text" id="inName" placeholder="Name of this node" data-bind="value: NodeName" title="Some human friendly name given to a node" />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inNetworkId"><span class="badge alert-warning">*</span> Primary network address </label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inNetworkAddress" placeholder="e.g. 2001:0db8:85a3:0000:0000:8a2e:0370:7334" data-bind="value: NodeNetworkAddress" title="Node's network address in a ZigBee network or IPv6. This address is used when cluster is scanned.  " />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inNetworkId2"><span class="badge alert-warning">*</span> Alternative network address </label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inNetworkAddress2" placeholder="Alternative network address" data-bind="value: NodeNetworkAddress2" title="Alternative network address of the node - can be IP, IPv6 or something else. " />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inMac"><span class="badge alert-info">auto</span> MAC</label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inMac" placeholder="MAC of this node" data-bind="value: NodeMAC" title="MAC of the node" />
                             </div>
                         </div>
                         <div class="list-group">
@@ -151,49 +141,45 @@
                             </div>
                         </div>
                         <div class="list-group">
-                            <label class="control-label" for="inRole"><span class="badge alert-warning">*</span> Role</label>
-                            <div class="controls">
-                                <select class="form-control" id="inRole" data-bind="options: NodeRoles, optionsText: 'title', optionsValue: 'code', value: NodeRole" title="Select the cluster where this node is deployed."></select>
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inLon"><span class="badge alert-info">auto</span> LON</label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inLon" placeholder="Longitude" data-bind="value: NodeLON" title="Longitude of the installed location for this node." />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inLat"><span class="badge alert-info">auto</span> LAT</label>
+                            <label class="control-label" for="inLat"><span class="badge alert-info">auto</span> Latitude</label>
                             <div class="controls">
                                 <input class="form-control" type="text" id="inLat" placeholder="Latitude" data-bind="value: NodeLAT" title="Latitude of the installed location for this node." />
                             </div>
                         </div>
                         <div class="list-group">
-                            <label class="control-label" for="inLoc">Location</label>
+                            <label class="control-label" for="inLon"><span class="badge alert-info">auto</span> Longitude</label>
                             <div class="controls">
-                                <input class="form-control" type="text" id="inLoc" placeholder="Name of the place" data-bind="value: NodeLocation" title="The name of the place (village, city, etc.) where the node is installed (optional)." />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inScope">Scope</label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inScope" placeholder="Scope" data-bind="value: NodeScope" title="This is a text describing the node. It can also be inserted automatically based on the 'Description' metadata available on the node. Examples are 'Node for cognitive radio experimentation in ISM 868 MHz', 'Monitoring electricity consumption for Telekom base stations', etc." />
-                            </div>
-                        </div>
-                        <div class="list-group">
-                            <label class="control-label" for="inProject">Project</label>
-                            <div class="controls">
-                                <input class="form-control" type="text" id="inProject" placeholder="Project" data-bind="value: NodeProject" title="This is the name or acronym of the project that funds/uses the sensor. It can have more values as more projects can use it, for instance CREW, XXX, etc." />
+                                <input class="form-control" type="text" id="inLon" placeholder="Longitude" data-bind="value: NodeLON" title="Longitude of the installed location for this node." />
                             </div>
                         </div>
 
+                        <div data-bind="foreach: NodeExtraFields">
+                            <div>
+                                <div class="list-group">
+                                    <label class="control-label" data-bind="attr: {for: Id}"><span data-bind="text: Id"></label>
+                                    <button class="btn btn-default" data-bind="click: RemoveThisField"><i class="glyphicon glyphicon-remove"></i></button>
+                                    <div class="controls">
+                                        <input class="form-control" type="text" data-bind="textInput: Value, attr: {id: Id, placeholder: Id}" title="This is the input for this specific extra field which describes this particular node." />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h3>Extra fields</h3>
+                        <div style="padding-bottom: 20px">
+                            <div id="the-basics">
+                                <input class="typeahead form-control" type="text" data-bind="value: NodeFieldToAdd" placeholder="Add a new field" title="Define a specific extra field which describes this particular node." />
+                            </div>
+                            <div>
+                            <button class="btn btn-default" data-bind="click: AddNewField"><i class="glyphicon glyphicon-plus"></i></button>
+                            </div>
+                        </div>
 
                         <h3>Components</h3>
                         <div data-bind="foreach: Components">
                             <div>
                                 <button class="btn btn-default" data-bind="click: RemoveThisComponent"><i class="glyphicon glyphicon-remove"></i></button>
                                 <a href="#" data-bind="attr: {href: Url}"><span data-bind="text: Id"></span></a>
-                                <span class="badge alert-important" data-bind="visible: AlreadyUsed()">Already used for another node(s)</span>
+                                <span class="badge alert-important" data-bind="visible: AlreadyUsed()">Already used for another node</span>
                             </div>
                         </div>
                         <div style="padding-bottom: 20px">
@@ -204,7 +190,24 @@
                             <button class="btn btn-default" data-bind="click: AddNewComponent"><i class="glyphicon glyphicon-plus"></i></button>
                             </div>
                         </div>
-                        <button class="btn btn-default btn-primary" data-bind="click: InsertNode"><i class="glyphicon glyphicon-floppy-disk"></i> Save node </button>
+                          <button class="btn btn-default btn-primary" data-bind="click: InsertNode"><i class="glyphicon glyphicon-floppy-disk"></i> Save node </button>
+                          <button class="btn btn-default btn-primary" data-toggle="modal" data-target="#myTemplate"><i class="glyphicon glyphicon-floppy-disk"></i> Create template </button>
+                          <div class="modal fade" id="myTemplate" role="dialog">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                  <h4 class="modal-title">New Template</h4>
+                                </div>
+                                <div class="modal-body">
+                                  <input class="form-control" type="text" data-bind="textInput: TemplateName" placeholder="Template name">
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-default" data-bind="click: InsertTemplate" data-dismiss="modal"> Save </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         <button class="btn btn-default" onclick="window.history.back()"><i class="glyphicon glyphicon-remove"></i> Cancel </button>
                     </div>
                 </div>

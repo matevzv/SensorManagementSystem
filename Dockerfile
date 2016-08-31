@@ -8,6 +8,7 @@ LABEL Version="1.0"
 # update packages and install some commons
 RUN apt-get update
 RUN apt-get upgrade -y
+RUN apt-get install -y apt-utils
 RUN apt-get install -y supervisor
 RUN apt-get install -y git
 
@@ -18,7 +19,7 @@ RUN ln -s /usr/bin/nodejs /usr/bin/node
 
 # install mongodb
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
-RUN echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.2 \
+RUN echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 \
 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.2.list
 RUN apt-get update && apt-get install -y mongodb-org
 RUN mkdir -p /data/db
@@ -55,10 +56,11 @@ COPY docker/ansible/hosts /etc/ansible/hosts
 
 # install rundeck
 RUN apt-get install -y default-jdk
-RUN wget dl.bintray.com/rundeck/rundeck-deb/rundeck-2.6.8-1-GA.deb -P /tmp
-RUN dpkg -i /tmp/rundeck-2.6.8-1-GA.deb
-RUN wget https://github.com/Batix/rundeck-ansible-plugin/releases/download/\
-1.2.4/ansible-plugin-1.2.4.jar -P /var/lib/rundeck/libext
+RUN wget http://dl.bintray.com/rundeck/rundeck-deb/rundeck-2.6.9-1-GA.deb \
+-P /tmp
+RUN dpkg -i /tmp/rundeck-2.6.9-1-GA.deb
+RUN wget https://github.com/Batix/rundeck-ansible-plugin/releases/\
+download/1.3.2/ansible-plugin-1.3.2.jar -P /var/lib/rundeck/libext
 COPY docker/rundeck/rundeck-config.properties \
 /etc/rundeck/rundeck-config.properties
 COPY docker/rundeck/profile /etc/rundeck/profile

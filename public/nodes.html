@@ -73,7 +73,7 @@
             <div class="well">
                 <h2><i class="glyphicon glyphicon-map-marker"></i> Nodes</h2>
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <div class="list-group">
                             <label class="control-label" for="inName"> Name </label>
                             <div class="controls">
@@ -82,45 +82,18 @@
                         </div>
 
                         <div class="list-group" data-bind="visible: AdvancedSearch() == true">
-                            <label class="control-label" for="inScope"> Scope </label>
-                            <div class="controls">
-                                <input class="form-control" id="inScope" type="text" data-bind="value: NodeSearchScope" />
-                            </div>
-                        </div>
-
-                        <div class="list-group" data-bind="visible: AdvancedSearch() == true">
-                            <label class="control-label" for="inProject"> Project </label>
-                            <div class="controls">
-                                <input class="form-control" id="inProject" type="text" data-bind="value: NodeSearchProject" />
-                            </div>
-                        </div>
-
-                        <div class="list-group" data-bind="visible: AdvancedSearch() == true">
-                            <label class="control-label" for="inSetup"> Setup </label>
-                            <div class="controls">
-                                <input class="form-control" id="inSetup" type="text" data-bind="value: NodeSearchSetup" />
-                            </div>
-                        </div>
-
-                        <div class="list-group" data-bind="visible: AdvancedSearch() == true">
-                            <label class="control-label" for="inBoxLabel"> Box label </label>
-                            <div class="controls">
-                                <input class="form-control" id="inBoxLabel" type="text" data-bind="value: NodeSearchBoxLabel" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="list-group">
                             <label class="control-label" for="inID"> ID </label>
                             <div class="controls">
                                 <input class="form-control" id="inID" type="text" data-bind="value: NodeSearchId" />
                             </div>
                         </div>
+                    </div>
 
-                        <div class="list-group" data-bind="visible: AdvancedSearch() == true">
-                            <label class="control-label" for="inComment"> Comment </label>
+                    <div class="col-md-2">
+                        <div class="list-group">
+                            <label class="control-label" for="inCluster"> Cluster </label>
                             <div class="controls">
-                                <input class="form-control" id="inComment" type="text" data-bind="value: NodeSearchComment" />
+                                <select class="input form-control" id="inCluster" data-bind="options: NodeSearchClusterList, optionsText: 'title', optionsValue: 'code', optionsCaption: 'No cluster selected', value: NodeSearchCluster"></select>
                             </div>
                         </div>
 
@@ -128,43 +101,6 @@
                             <label class="control-label" for="inStatus"> Status </label>
                             <div class="controls">
                                 <select class="form-control" id="inStatus" data-bind="options: NodeStatuses, value: NodeSearchStatus,  optionsCaption: 'Choose ...', optionsText: 'title', optionsValue: 'code'"></select>
-                            </div>
-                        </div>
-
-                        <div class="list-group" data-bind="visible: AdvancedSearch() == true">
-                            <label class="control-label" for="inNetworkAddress"> Network address </label>
-                            <div class="controls">
-                                <input class="form-control" id="inNetworkAddress" type="text" data-bind="value: NodeSearchNetworkAddress" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="list-group">
-                            <label class="control-label" for="inCluster"> Cluster </label>
-                            <div class="controls">
-                                <!--<input class="form-control" id="inCluster" class="input typeahead" type="text" data-bind="value: NodeSearchCluster" title="Enter part of cluster name and select from the list of matches" />-->
-                                <select class="input form-control" id="inCluster" data-bind="options: NodeSearchClusterList, optionsText: 'title', optionsValue: 'code', optionsCaption: 'No cluster selected', value: NodeSearchCluster"></select>
-                            </div>
-                        </div>
-
-                        <div class="list-group" data-bind="visible: AdvancedSearch() == true">
-                            <label class="control-label" for="inMAC"> MAC </label>
-                            <div class="controls">
-                                <input class="form-control" id="inMAC" type="text" data-bind="value: NodeSearchMAC" />
-                            </div>
-                        </div>
-
-                        <div class="list-group" data-bind="visible: AdvancedSearch() == true">
-                            <label class="control-label" for="inFirmware"> Firmware </label>
-                            <div class="controls">
-                                <input class="form-control" id="inFirmware" type="text" data-bind="value: NodeSearchFirmware" />
-                            </div>
-                        </div>
-
-                        <div class="list-group" data-bind="visible: AdvancedSearch() == true">
-                            <label class="control-label" for="inBootloader"> Bootloader </label>
-                            <div class="controls">
-                                <input class="form-control" id="inBootloader" type="text" data-bind="value: NodeSearchBootloader" />
                             </div>
                         </div>
                     </div>

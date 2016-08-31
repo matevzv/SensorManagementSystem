@@ -787,23 +787,10 @@ Carvic.Model.NodesModel = function (callback) {
     self.AdvancedSearch = ko.observable(false);
     self.NodeSearchName = ko.observable("");
     self.NodeSearchId = ko.observable("");
-    self.NodeSearchScope = ko.observable("");
-    self.NodeSearchProject = ko.observable("");
-    self.NodeSearchSetup = ko.observable("");
-    self.NodeSearchBoxLabel = ko.observable("");
-    self.NodeSearchComment = ko.observable("");
     self.NodeSearchCluster = ko.observable();
     self.NodeSearchClusterList = ko.observableArray();
-
     self.NodeSearchStatus = ko.observable("");
     self.NodeSearchStatusList = ko.observableArray();
-    self.NodeSearchNetworkAddress = ko.observable("");
-    self.NodeSearchNetworkAddress2 = ko.observable("");
-    self.NodeSearchMAC = ko.observable("");
-    self.NodeSearchFirmware = ko.observable("");
-    self.NodeSearchBootloader = ko.observable("");
-
-    //self.NodeStatusesArray = Carvic.Consts.NodeStatusesArray;
     self.NodeStatuses = ko.observableArray();
     self.NodeStatusesMap = {};
 
@@ -875,11 +862,6 @@ Carvic.Model.NodesModel = function (callback) {
         var query = { page: self.CurrPage() };
         if (self.NodeSearchId() != "") { query.id = self.NodeSearchId(); }
         if (self.NodeSearchName() != "") { query.name = self.NodeSearchName(); }
-        if (self.NodeSearchScope() != "") { query.scope = self.NodeSearchScope(); }
-        if (self.NodeSearchProject() != "") { query.project = self.NodeSearchProject(); }
-        if (self.NodeSearchSetup() != "") { query.setup = self.NodeSearchSetup(); }
-        if (self.NodeSearchBoxLabel() != "") { query.box_label = self.NodeSearchBoxLabel(); }
-        if (self.NodeSearchComment() != "") { query.comment = self.NodeSearchComment(); }
 
         if (self.NodeSearchCluster() != "") {
             var s = self.NodeSearchCluster();
@@ -889,48 +871,33 @@ Carvic.Model.NodesModel = function (callback) {
                 if (val.title == s)
                 query.cluster = val.code; }
             );
-            //query.cluster = self.NodeSearchCluster();
         }
 
         if (self.NodeSearchStatus() != "") { query.status = self.NodeSearchStatus(); }
-        if (self.NodeSearchNetworkAddress() != "") { query.network_addr = self.NodeSearchNetworkAddress(); }
-        if (self.NodeSearchNetworkAddress2() != "") { query.network_addr2 = self.NodeSearchNetworkAddress2(); }
-        if (self.NodeSearchMAC() != "") { query.mac = self.NodeSearchMAC(); }
-        if (self.NodeSearchFirmware() != "") { query.firmware = self.NodeSearchFirmware(); }
-        if (self.NodeSearchBootloader() != "") { query.bootloader = self.NodeSearchBootloader(); }
 
         Carvic.Utils.Post({ action: "get_nodes2", data: query }, function (data) {
             self.RecCount(data.count);
             self.PageCount(Math.floor(data.count / data.page_size));
             self.UpdatePageButtons();
             for (var i = 0; i < data.records.length; i++) {
-                var obj = data.records[i];
-                var sensors = [];
+                let obj = data.records[i];
+                let sensors = [];
                 Carvic.Utils.Post({ action: "get_sensors_for_node2", data: obj._id}, function (sensor_data) {
                     sensor_data.forEach(function (item) {
-                        sensors.push(item.quantity + " (" + item.type + ")");
+                        sensors.push(item.quantity);
                     });
+                    self.SearchResult.push(ko.observable({
+                        ID: obj.id,
+                        Name: obj.name,
+                        Status: ko.observable(obj.status),
+                        StatusStr: ko.observable(self.NodeStatusesMap[obj.status].title),
+                        Cluster: obj.cluster,
+                        ClusterName: obj.cluster_name,
+                        LON: obj.loc_lon,
+                        LAT: obj.loc_lat,
+                        Sensors: sensors.join(", ")
+                    }));
                 });
-                if (typeof obj.sensors !== 'undefined') {
-                    obj.sensors.forEach(function (item) {
-                        sensors.push(item.quantity + " (" + item.type + ")");
-                    });
-                }
-                console.log("typeof obj.status:", (typeof obj.status));
-                if (typeof obj.status === 'undefined') obj.status = "Unknown";
-                //console.log("obj.status:", self.NodeStatusesMap[obj.status].title);
-                self.SearchResult.push(ko.observable({
-                    ID: obj.id,
-                    Name: obj.name,
-                    Status: ko.observable(obj.status),
-                    StatusStr: ko.observable(self.NodeStatusesMap[obj.status].title),
-                    Cluster: obj.cluster,
-                    ClusterName: obj.cluster_name,
-                    LON: obj.loc_lon,
-                    LAT: obj.loc_lat,
-                    //Css: (obj.status == "ok" ? "success" : "")
-                    Sensors: sensors.join(", ")
-                }));
             }
         });
     };
@@ -1022,27 +989,10 @@ Carvic.Model.SingleNodeModel = function () {
     self.NodeLON = ko.observable("");
     self.NodeLAT = ko.observable("");
     self.NodeMapUrl = ko.observable("");
-    self.NodeSN = ko.observable("");
-    self.NodeMAC = ko.observable("");
-    self.NodeNetworkAddress = ko.observable("");
-    self.NodeNetworkAddress2 = ko.observable("");
-    self.NodeFirmware = ko.observable("");
-    self.NodeBootloader = ko.observable("");
-    self.NodeSetup = ko.observable("");
-    self.NodeRole = ko.observable("device");
-    self.NodeRoleStr = ko.computed(function () {
-        return (typeof(self.NodeRolesMap[self.NodeRole()]) === "undefined") ? self.NodeRole() :  self.NodeRolesMap[self.NodeRole()].title;
-    }, this);
-    self.NodeScope = ko.observable("");
-    self.NodeProject = ko.observable("");
-    self.NodeLocation = ko.observable("");
-    //self.NodeSource = ko.observable("");
-    self.NodeUserComment = ko.observable("");
-    self.NodeBoxLabel = ko.observable("");
-    self.NodeLastScan = ko.observable();
 
     self.Sensors = ko.observableArray();
     self.Components = ko.observableArray();
+    self.NodeExtraFields = ko.observableArray();
     self.ComponentsError = ko.observable(false);
     self.NodeHistory = ko.observableArray();
     self.OriginalData = {};
@@ -1056,6 +1006,7 @@ Carvic.Model.SingleNodeModel = function () {
     self.ShowSensorChart = ko.observable(false);
     self.ShowDownloadSensorData = ko.observable(false);
     self.NodeEditComponentToAdd = ko.observable();
+    self.NodeEditFieldToAdd = ko.observable("");
 
     Chart.defaults.global.responsive = true;
     Chart.defaults.global.animation = false;
@@ -1103,29 +1054,18 @@ Carvic.Model.SingleNodeModel = function () {
         self.NodeLON(data.loc_lon);
         self.NodeLAT(data.loc_lat);
         self.NodeMapUrl("map.html?type=node&lat=" + encodeURI(data.loc_lat) + "&lon=" + encodeURI(data.loc_lon) + "&id=" + encodeURI(data.id) + "&status=" + encodeURI(data.status));
-        self.NodeSN(data.sn);
-        self.NodeMAC(data.mac);
-        self.NodeNetworkAddress(data.network_addr);
-        self.NodeNetworkAddress2(data.network_addr2);
-        self.NodeFirmware(data.firmware);
-        self.NodeBootloader(data.bootloader);
-        self.NodeSetup(data.setup);
-        self.NodeRole(data.role);
-        self.NodeScope(data.scope);
-        self.NodeProject(data.project);
-        self.NodeLocation(data.location);
-        //self.NodeSource(data.source);
-        self.NodeUserComment(data.user_comment);
-        self.NodeBoxLabel(data.box_label);
-        if (data.last_scan)
-            self.NodeLastScan(new Date(Date.parse(data.last_scan)));
-        // load list of sensors in async call
         var sensors = data.sensors;
 
         self.Components.removeAll();
         for (var c in data.components) {
             var cid = data.components[c];
             self.AddNewComponentId(cid);
+        }
+
+        self.NodeExtraFields.removeAll();
+        for (var c in data.extra_fields) {
+            var cid = data.extra_fields[c];
+            self.AddFieldId(cid);
         }
 
         Carvic.Utils.Post({ action: "get_sensors_for_node", data: { node: data.id} }, function (data) {
@@ -1196,6 +1136,39 @@ Carvic.Model.SingleNodeModel = function () {
         }
     }
 
+    self.RemoveField = function (id) {
+        self.NodeExtraFields.remove(function (item) {
+            return item.Id() == id;
+        });
+    };
+    self.AddFieldId = function (id) {
+        var obj = {
+            Id: ko.observable(Object.keys(id)),
+            Value: ko.observable(id[Object.keys(id)]),
+            OtherNodesCount: ko.observable(0),
+            RemoveThisField: function () { self.RemoveField(this.Id()); }
+        };
+        self.NodeExtraFields.push(obj);
+        return obj;
+    }
+    self.AddNewFieldId = function (id) {
+        var obj = {
+            Id: ko.observable(id),
+            Value: ko.observable(),
+            OtherNodesCount: ko.observable(0),
+            RemoveThisField: function () { self.RemoveField(this.Id()); }
+        };
+        self.NodeExtraFields.push(obj);
+        return obj;
+    }
+    self.AddNewField = function () {
+        var id = self.NodeEditFieldToAdd();
+        if (id.length > 0) {
+            var obj = self.AddNewFieldId(id);
+            self.NodeEditFieldToAdd("");
+        }
+    }
+
     self.DeleteNode = function () {
         if (confirm("Are you sure you want to delete this node? It cannot be undone.")) {
             var req = {
@@ -1216,10 +1189,6 @@ Carvic.Model.SingleNodeModel = function () {
     self.EndEditNode = function () {
 
         var errors = [];
-        Carvic.Utils.CheckIfEmpty(self.NodeFirmware(), "Firmware cannot be empty", errors);
-        Carvic.Utils.CheckIfEmpty(self.NodeNetworkAddress(), "Primary network address cannot be empty", errors);
-        Carvic.Utils.CheckIfEmpty(self.NodeNetworkAddress2(), "Alternative network address cannot be empty", errors);
-        Carvic.Utils.CheckIfEmpty(self.NodeBootloader(), "Bootloader cannot be empty", errors);
         Carvic.Utils.CheckIfEmpty(self.NodeName(), "Name cannot be empty", errors);
         if (errors.length > 0) {
             var s = "Cannot update  node:";
@@ -1244,6 +1213,13 @@ Carvic.Model.SingleNodeModel = function () {
             return;
         }
 
+        var extraFields = [];
+        self.NodeExtraFields().forEach(function (item) {
+          var field = {};
+          field[item.Id()] = item.Value();
+          extraFields.push(field);
+        });
+
         self.CurrentNodeEditing(false);
         var req = {
             action: "update_node",
@@ -1254,20 +1230,7 @@ Carvic.Model.SingleNodeModel = function () {
                 cluster: self.NodeCluster(),
                 loc_lon: self.NodeLON(),
                 loc_lat: self.NodeLAT(),
-                sn: self.NodeSN(),
-                mac: self.NodeMAC(),
-                network_addr: self.NodeNetworkAddress(),
-                network_addr2: self.NodeNetworkAddress2(),
-                firmware: self.NodeFirmware(),
-                bootloader: self.NodeBootloader(),
-                setup: self.NodeSetup(),
-                role: self.NodeRole(),
-                scope: self.NodeScope(),
-                project: self.NodeProject(),
-                location: self.NodeLocation(),
-                //source: self.NodeSource(),
-                user_comment: self.NodeUserComment(),
-                box_label: self.NodeBoxLabel(),
+                extra_fields: extraFields,
                 components: components
             }
         };
@@ -1436,24 +1399,16 @@ Carvic.Model.NewNodeModel = function () {
     self.NodeCluster = ko.observable();
     self.NodeLON = ko.observable("");
     self.NodeLAT = ko.observable("");
-    self.NodeSN = ko.observable("");
-    self.NodeMAC = ko.observable("");
-    self.NodeNetworkAddress = ko.observable("");
-    self.NodeNetworkAddress2 = ko.observable("");
-    self.NodeFirmware = ko.observable("");
-    self.NodeBootloader = ko.observable("");
-    self.NodeSetup = ko.observable("");
-    self.NodeRole = ko.observable("device");
-    self.NodeScope = ko.observable("");
-    self.NodeProject = ko.observable("");
-    self.NodeLocation = ko.observable("");
-    //self.NodeSource = ko.observable("");
-    self.NodeUserComment = ko.observable("");
-    self.NodeBoxLabel = ko.observable("");
     self.Sensors = ko.observableArray();
     self.Components = ko.observableArray();
+    self.NodeExtraFields = ko.observableArray();
     self.NodeHistory = ko.observableArray();
     self.NodeComponentToAdd = ko.observable("");
+    self.NodeFieldToAdd = ko.observable("");
+    self.TemplateName = ko.observable("");
+    self.NodeTemplates = ko.observableArray();
+    self.CheckedTemplates = ko.observableArray();
+    self.TemplateSelection = ko.observable(true);
 
     //self.NodeStatusesArray = Carvic.Consts.NodeStatusesArray;
     self.NodeStatuses = ko.observableArray();
@@ -1491,7 +1446,7 @@ Carvic.Model.NewNodeModel = function () {
                     code: item.code
                 });
                 self.NodeRolesMap[item.code] = item;
-            });;
+            });
             if(callback) callback();
         });
     }
@@ -1524,38 +1479,125 @@ Carvic.Model.NewNodeModel = function () {
         }
     }
 
+    self.RemoveField = function (id) {
+        self.NodeExtraFields.remove(function (item) {
+            return item.Id() == id;
+        });
+    };
+
+    self.AddNewFieldId = function (id) {
+        var obj = {
+            Id: ko.observable(id),
+            Value: ko.observable(),
+            AlreadyUsed: ko.observable(false),
+            RemoveThisField: function () { self.RemoveField(this.Id()); }
+        };
+        self.NodeExtraFields.push(obj);
+    }
+    self.AddNewField = function () {
+        var id = self.NodeFieldToAdd();
+        if (id.length > 0) {
+            self.AddNewFieldId(id);
+            self.NodeFieldToAdd("");
+        }
+    }
+
+    self.DeleteTemplateList = function () {
+      switch (self.CheckedTemplates().length > 0) {
+        case false:
+          alert("There are no nodes chosen to delete!");
+          break;
+        default:
+          if (confirm("You are about to delete:\n" + self.CheckedTemplates() + "\n" + "\n" + "Are you sure you want to delete these nodes?")) {
+            for (i in self.CheckedTemplates()) {
+              var req = {
+                action: "delete_template",
+                data: { name: self.CheckedTemplates()[i] }
+              };
+              Carvic.Utils.Post(req, function (data) {
+                  self.LoadNodeTemplates();
+                  console.log("Template successfully deleted.")
+              });
+            }
+            self.CheckedTemplates.removeAll();
+          }
+          break;
+      }
+    };
+
+    self.ToggleAllTemplates = function () {
+        self.CheckedTemplates.removeAll();
+        for(i = 0; i < self.NodeTemplates().length; i++) {
+            self.CheckedTemplates().push((typeof self.NodeTemplates()[i].Id() != 'string') ? JSON.stringify(self.NodeTemplates()[i].Id()) : self.NodeTemplates()[i].Id());
+        }
+        return self.CheckedTemplates();
+    };
+
+    self.SelectAllTemplates = ko.dependentObservable({
+        read: function() {
+            return self.CheckedTemplates().length === self.NodeTemplates().length;
+        },
+        write: function() {
+            self.CheckedTemplates(self.CheckedTemplates().length === self.NodeTemplates().length ? [] : self.ToggleAllTemplates());
+        },
+        owner: self
+    });
+
     self.LoadLastNode = function () {
         var req = { action: "get_last_node" };
         Carvic.Utils.Post(req, function (data) {
-
-            //self.NodeID(data.id);
             self.NodeName(data.name);
             self.NodeCluster(data.cluster);
-            //self.NodeLON();
-            //self.NodeLAT();
-            //self.NodeSN ();
-            //self.NodeMAC();
-            //self.NodeNetworkAddress();
-            //self.NodeNetworkAddress2();
-            self.NodeFirmware(data.firmware);
-            self.NodeBootloader(data.bootloader);
-            //self.NodeSetup();
-            self.NodeRole(data.role);
-            self.NodeScope(data.scope);
-            self.NodeProject(data.project);
-            self.NodeLocation(data.location);
-            //self.NodeSource();
-            //self.NodeUserComment();
-            //self.NodeBoxLabel();
         });
     }
 
+    self.LoadNodeTemplates = function () {
+        self.NodeTemplates.removeAll();
+        self.CheckedTemplates.removeAll();
+        var req = { action: "get_node_templates" };
+        Carvic.Utils.Post(req, function (data) {
+          if (data.length == 0) {
+              self.TemplateSelection(false);
+          } else {
+              self.TemplateSelection(true);
+          }
+          data.forEach(function(template) {
+            var obj = {
+                Id: ko.observable(template.name),
+                Fields: ko.observableArray(template.extra_fields),
+                SelectThisTemplate: function () { self.SelectTemplate(this.Fields()); }
+            };
+            self.NodeTemplates.push(obj);
+          });
+        });
+    }
+
+    self.SelectTemplate = function (fields) {
+        self.NodeExtraFields.removeAll();
+        fields.forEach(function (item) {
+            self.AddNewFieldId(item);
+        });
+    };
+
+    self.InsertTemplate = function () {
+      var extraFields = [];
+      self.NodeExtraFields().forEach(function (item) {
+          extraFields.push(item.Id());
+      });
+      var req = {
+          action: "add_node_template",
+          data: {
+              name: self.TemplateName(),
+              extra_fields: extraFields
+          }
+      };
+      Carvic.Utils.Post(req, function (data) {
+          //console.log(data);
+      });
+    };
+
     self.InsertNode = function () {
         var errors = [];
-        Carvic.Utils.CheckIfEmpty(self.NodeFirmware(), "Firmware cannot be empty", errors);
-        Carvic.Utils.CheckIfEmpty(self.NodeNetworkAddress(), "Primary network address cannot be empty", errors);
-        Carvic.Utils.CheckIfEmpty(self.NodeNetworkAddress2(), "Alternative network address cannot be empty", errors);
-        Carvic.Utils.CheckIfEmpty(self.NodeBootloader(), "Bootloader cannot be empty", errors);
         Carvic.Utils.CheckIfEmpty(self.NodeName(), "Name cannot be empty", errors);
         if (errors.length > 0) {
             var s = "Cannot create new node:";
@@ -1582,6 +1624,13 @@ Carvic.Model.NewNodeModel = function () {
             return;
         }
 
+        var extraFields = [];
+        self.NodeExtraFields().forEach(function (item) {
+            var field = {};
+            field[item.Id()] = item.Value();
+            extraFields.push(field);
+        });
+
         var req = {
             action: "add_node",
             data: {
@@ -1591,20 +1640,7 @@ Carvic.Model.NewNodeModel = function () {
                 cluster: self.NodeCluster(),
                 loc_lon: self.NodeLON(),
                 loc_lat: self.NodeLAT(),
-                sn: self.NodeSN(),
-                mac: self.NodeMAC(),
-                network_addr: self.NodeNetworkAddress(),
-                network_addr2: self.NodeNetworkAddress2(),
-                firmware: self.NodeFirmware(),
-                bootloader: self.NodeBootloader(),
-                setup: self.NodeSetup(),
-                role: self.NodeRole(),
-                scope: self.NodeScope(),
-                project: self.NodeProject(),
-                location: self.NodeLocation(),
-                //source: self.NodeSource(),
-                user_comment: self.NodeUserComment(),
-                box_label: self.NodeBoxLabel(),
+                extra_fields: extraFields,
                 components: components,
                 sensors: []
             }

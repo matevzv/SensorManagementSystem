@@ -15,14 +15,15 @@ SensorManagementSystem
 
 ###4. Run docker container
 Forwarding docker port 80 to your host port. Optionally using data container,
-host SSH key and domain name setup. Rundeck password should also be changed.
-Finally set your gmail account to send monitoring alerts.  
+host SSH key and domain name setup. Rundeck password should also be changed and
+ansible user set. Finally set your gmail account to send monitoring alerts.  
 
     $ docker run -p 80:80 --volumes-from datavidek \  
     --volume $SSH_AUTH_SOCK:/ssh-agent \  
     -e SSH_AUTH_SOCK=/ssh-agent \  
     -e DOMAIN=example.com \  
     -e RUNDECKP=secret \  
+    -e ANSIBLE_USER=someone \  
     -e EMAIL=example@gmail.com \  
     -e PASSWORD=secret videk
 

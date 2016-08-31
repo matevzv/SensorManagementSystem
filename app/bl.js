@@ -515,6 +515,24 @@ exports.add_node = function (req, callback) {
     });
 };
 
+exports.add_node_template = function (req, callback) {
+    db.add_node_template(req.data, function (err) {
+        if (err) return callback(err);
+        callback(err, {});
+    });
+};
+
+exports.delete_template = function (req, callback) {
+    if (!is_user_admin(req.session.user))
+        return callback(error_not_admin(req.session.user));
+    var template_name = req.data.name;
+
+    db.delete_template(template_name, function (err) {
+        if (err) return callback(err);
+        callback(err, {});
+    });
+}
+
 exports.api_add_node = function (req, callback) {
     if (req.name == null || req.cluster == null) {
         callback({ error: "Incomplete request body. Must include 'name', 'cluster'' and ... fields.", status: 400 });
@@ -537,6 +555,13 @@ exports.api_add_node = function (req, callback) {
 exports.get_last_node = function (req, callback) {
     db.get_max_node_id(function (err, data) {
         db.get_node(data, callback);
+    });
+}
+
+exports.get_node_templates = function (req, callback) {
+    db.get_node_templates(function (err, data) {
+      if (err) return callback(err);
+      callback(err, data);
     });
 }
 
@@ -594,29 +619,12 @@ exports.api_get_node = function (req, callback) {
 exports.get_nodes2 = function (req, callback) {
     var query = {};
     var where = [];
-    //if (req.data.id && req.data.id.length > 0) {
-    //    if (req.data.id[0] == "*") {
-    //        var s = "/" + req.data.id.substr(1) + "/.test(this.id)";
-    //        where.push(s);
-    //    } else {
-    //        query.id = Number(req.data.id);
-    //    }
-    //}
+
     create_regexp2(req.data, query, where, "id");
     if (query.id) query.id = Number(query.id);
-
     if (req.data.name) query.name = create_regexp(req.data.name);
-    if (req.data.scope) query.scope = create_regexp(req.data.scope);
-    if (req.data.project) query.project = create_regexp(req.data.project);
-    if (req.data.setup) query.setup = req.data.setup;
-    if (req.data.box_label) query.box_label = create_regexp(req.data.box_label);
     if (req.data.cluster) query.cluster = req.data.cluster;
     if (req.data.status) query.status = req.data.status;
-    create_regexp2(req.data, query, where, "network_addr");
-    create_regexp2(req.data, query, where, "mac");
-    if (req.data.firmware) query.firmware = req.data.firmware;
-    if (req.data.bootloader) query.bootloader = req.data.bootloader;
-    if (req.data.comment) query.user_comment = create_regexp(req.data.comment);
 
     if (where.length > 0) {
         query["$where"] = where.join(" && ");
@@ -1318,33 +1326,7 @@ exports.add_cluster = function (req, callback) {
 
         exports.new_history(h, function (err2) {
             if (err2) return callback(err2);
-
-            if (req.data.type != "zigbee") return callback(null, h);
-
-            // for zigbee cluster already define first node with network address 0
-            var zero_node = {
-                name: "Gateway node",
-                status: "unknown",
-                cluster: req.data.id,
-                loc_lon: 0,
-                loc_lat: 0,
-                sn: "",
-                mac: 0,
-                network_addr: 0,
-                network_addr2: 0,
-                firmware: "",
-                bootloader: "",
-                setup: "",
-                role: "gateway",
-                scope: "",
-                project: "",
-                location: "",
-                user_comment: "",
-                box_label: "",
-                components: [],
-                sensors: []
-            };
-            exports.add_node({ data: zero_node, session: req.session }, callback);
+            return callback(null, h);
         });
     });
 };
