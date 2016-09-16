@@ -1,7 +1,7 @@
 function paginate(num, elementsPerPage) {
     var elementsTotal = document.getElementsByClassName('history_border').length;
     var pagesTotal = Math.ceil(elementsTotal / elementsPerPage);
-    console.log("Pagination function call! no of pages = " + pagesTotal + " total elements = " + elementsTotal);
+   // console.log("Pagination function call! no of pages = " + pagesTotal + " total elements = " + elementsTotal);
 
     if (num > (pagesTotal - 1))
         return;
