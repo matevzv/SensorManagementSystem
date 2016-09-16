@@ -1197,11 +1197,6 @@ Carvic.Model.SingleNodeModel = function () {
             return;
         }
 
-        if (self.NodeNetworkAddress() == "" && self.NodeNetworkAddress2() !== "") {
-            alert("Primary network address must also be entered if alternative network address is entered.");
-            return;
-        }
-
         var components = [];
         var error_nodes = 0;
         self.Components().forEach(function (item) {
@@ -1603,11 +1598,6 @@ Carvic.Model.NewNodeModel = function () {
             var s = "Cannot create new node:";
             errors.forEach(function (item) { s += "\n- " + item });
             alert(s);
-            return;
-        }
-
-        if (self.NodeNetworkAddress() == "" && self.NodeNetworkAddress2() !== "") {
-            alert("Primary network address must also be entered if alternative network address is entered.");
             return;
         }
 
