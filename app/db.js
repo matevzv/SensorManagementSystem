@@ -705,7 +705,7 @@ function get_sensors_for_node(node_id, callback) {
         callback(null, node.sensors);
     });*/
     var query = { node: node_id };
-    db[collection_sensors].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
+    db[collection_sensors].find(query).sort({ ts: -1 }).toArray(function (err, docs) {
         if (err) return callback(err);
         callback(null, docs);
     });
@@ -713,7 +713,7 @@ function get_sensors_for_node(node_id, callback) {
 
 function get_sensors_for_node2(node_id, callback) {
     var query = { node_id: node_id };
-    db[collection_sensors].find(query).sort({ ts: -1 }).limit(30).toArray(function (err, docs) {
+    db[collection_sensors].find(query).sort({ ts: -1 }).toArray(function (err, docs) {
         if (err) return callback(err);
         callback(null, docs);
     });
