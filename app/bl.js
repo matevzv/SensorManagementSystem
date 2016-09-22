@@ -604,7 +604,10 @@ exports.api_get_nodes = function (req, callback) {
                 id: item.id,
                 name: item.name,
                 cluster_id: item.cluster_id,
-                cluster: (cluster_map[item.cluster] ? cluster_map[item.cluster].name : "")
+                cluster: (cluster_map[item.cluster] ? cluster_map[item.cluster].name : ""),
+                latitude: item.loc_lat,
+                longitude: item.loc_lon,
+                machine_id: item.machine_id
             });
         });
         callback(res);
