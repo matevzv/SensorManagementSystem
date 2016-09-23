@@ -627,6 +627,7 @@ exports.get_nodes2 = function (req, callback) {
     if (req.data.name) query.name = create_regexp(req.data.name);
     if (req.data.cluster) query.cluster = req.data.cluster;
     if (req.data.status) query.status = req.data.status;
+    if (req.data.machine_id) query.machine_id = req.data.machine_id;
 
     if (where.length > 0) {
         query["$where"] = where.join(" && ");
