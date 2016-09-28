@@ -95,11 +95,11 @@
                                 <td data-bind="text: NodeID"></td>
                             </tr>
                             <tr>
-                                <th>Name </th>
+                                <th>Name</th>
                                 <td data-bind="text: NodeName"></td>
                             </tr>
                             <tr>
-                                <th>Cluster </th>
+                                <th>Cluster</th>
                                 <td><a data-bind="attr: { href: NodeClusterUrl }"><span data-bind="text: NodeClusterName"></span></a></td>
                             </tr>
                             <tr>
@@ -110,12 +110,16 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>Latitude </th>
+                                <th>Latitude</th>
                                 <td data-bind="text: NodeLAT" id="tdLat"></td>
                             </tr>
                             <tr>
-                                <th>Longitude </th>
+                                <th>Longitude</th>
                                 <td data-bind="text: NodeLON" id="tdLon"></td>
+                            </tr>
+                            <tr>
+                                <th>Machine ID</th>
+                                <td data-bind="text: NodeMachineId"></td>
                             </tr>
                         </table>
                     </div>
@@ -318,6 +322,14 @@
                                     <div class="controls">
                                         <span data-bind="text: NodeStatusStr, visible: $root.CurrentNodeEditing() == false"></span>
                                         <select class="input form-control" id="inNodeStatus" data-bind="options: $root.NodeStatuses, optionsText: 'title', optionsValue: 'code', value: $root.NodeStatus, visible: $root.CurrentNodeEditing() == true" title="Status of this node"></select>
+                                    </div>
+                                </div>
+
+                                <div class="list-group">
+                                    <label class="control-label" for="inNodeMachineId"> <span class="badge alert-info">auto</span>  Machine ID </label>
+                                    <div class="controls">
+                                        <span data-bind="text: NodeMachineId, visible: $root.CurrentNodeEditing() == false"></span>
+                                        <input class="input form-control" id="inNodeMachineId" data-bind="value: NodeMachineId, visible: $root.CurrentNodeEditing() == true" title="Machine ID of this node"></input>
                                     </div>
                                 </div>
 

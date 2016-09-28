@@ -535,19 +535,18 @@ exports.delete_template = function (req, callback) {
 
 exports.api_add_node = function (req, callback) {
     if (req.name == null || req.cluster == null) {
-        callback({ error: "Incomplete request body. Must include 'name', 'cluster'' and ... fields.", status: 400 });
+        return callback({ error: "Incomplete request body. Must include 'name', 'cluster'' and ... fields.", status: 400 });
     }
     db.get_max_node_id(function (err, max_id) {
         if (err) return callback(err);
         var rec = req;
         rec.id = Number(max_id) + 1;
         console.log("this is the new maxId:", rec.id);
-        if (rec.status == null) rec.status = "unknown";
         db.add_node(rec, function (err2, data2) {
             if (err2) return callback(err2);
             after_node_change(rec.id);
-            callback({ message: 'Node successfully added!', status: 201 });
-            //load_node_map();
+            load_node_map();
+            callback(data2);
         });
     });
 };
@@ -605,7 +604,10 @@ exports.api_get_nodes = function (req, callback) {
                 id: item.id,
                 name: item.name,
                 cluster_id: item.cluster_id,
-                cluster: (cluster_map[item.cluster] ? cluster_map[item.cluster].name : "")
+                cluster: (cluster_map[item.cluster] ? cluster_map[item.cluster].name : ""),
+                latitude: item.loc_lat,
+                longitude: item.loc_lon,
+                machine_id: item.machine_id
             });
         });
         callback(res);
@@ -625,6 +627,7 @@ exports.get_nodes2 = function (req, callback) {
     if (req.data.name) query.name = create_regexp(req.data.name);
     if (req.data.cluster) query.cluster = req.data.cluster;
     if (req.data.status) query.status = req.data.status;
+    if (req.data.machine_id) query.machine_id = req.data.machine_id;
 
     if (where.length > 0) {
         query["$where"] = where.join(" && ");

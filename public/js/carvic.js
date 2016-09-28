@@ -787,6 +787,7 @@ Carvic.Model.NodesModel = function (callback) {
     self.AdvancedSearch = ko.observable(false);
     self.NodeSearchName = ko.observable("");
     self.NodeSearchId = ko.observable("");
+    self.NodeSearchMachineId = ko.observable("");
     self.NodeSearchCluster = ko.observable();
     self.NodeSearchClusterList = ko.observableArray();
     self.NodeSearchStatus = ko.observable("");
@@ -874,6 +875,8 @@ Carvic.Model.NodesModel = function (callback) {
         }
 
         if (self.NodeSearchStatus() != "") { query.status = self.NodeSearchStatus(); }
+        
+        if (self.NodeSearchMachineId() != "") { query.machine_id = self.NodeSearchMachineId(); }
 
         Carvic.Utils.Post({ action: "get_nodes2", data: query }, function (data) {
             self.RecCount(data.count);
@@ -895,6 +898,7 @@ Carvic.Model.NodesModel = function (callback) {
                         ClusterName: obj.cluster_name,
                         LON: obj.loc_lon,
                         LAT: obj.loc_lat,
+                        MachineId: obj.machine_id,
                         Sensors: sensors.join(", ")
                     }));
                 });
@@ -988,6 +992,7 @@ Carvic.Model.SingleNodeModel = function () {
     self.NodeClusterUrl = ko.observable();
     self.NodeLON = ko.observable("");
     self.NodeLAT = ko.observable("");
+    self.NodeMachineId = ko.observable("");
     self.NodeMapUrl = ko.observable("");
 
     self.Sensors = ko.observableArray();
@@ -1053,6 +1058,7 @@ Carvic.Model.SingleNodeModel = function () {
         self.NodeClusterUrl("cluster.html?id=" + encodeURI(data.cluster));
         self.NodeLON(data.loc_lon);
         self.NodeLAT(data.loc_lat);
+        self.NodeMachineId(data.machine_id);
         self.NodeMapUrl("map.html?type=node&lat=" + encodeURI(data.loc_lat) + "&lon=" + encodeURI(data.loc_lon) + "&id=" + encodeURI(data.id) + "&status=" + encodeURI(data.status));
         var sensors = data.sensors;
 
@@ -1197,11 +1203,6 @@ Carvic.Model.SingleNodeModel = function () {
             return;
         }
 
-        if (self.NodeNetworkAddress() == "" && self.NodeNetworkAddress2() !== "") {
-            alert("Primary network address must also be entered if alternative network address is entered.");
-            return;
-        }
-
         var components = [];
         var error_nodes = 0;
         self.Components().forEach(function (item) {
@@ -1230,6 +1231,7 @@ Carvic.Model.SingleNodeModel = function () {
                 cluster: self.NodeCluster(),
                 loc_lon: self.NodeLON(),
                 loc_lat: self.NodeLAT(),
+                machine_id: self.NodeMachineId(),
                 extra_fields: extraFields,
                 components: components
             }
@@ -1399,6 +1401,7 @@ Carvic.Model.NewNodeModel = function () {
     self.NodeCluster = ko.observable();
     self.NodeLON = ko.observable("");
     self.NodeLAT = ko.observable("");
+    self.NodeMachineId = ko.observable("");
     self.Sensors = ko.observableArray();
     self.Components = ko.observableArray();
     self.NodeExtraFields = ko.observableArray();
@@ -1606,11 +1609,6 @@ Carvic.Model.NewNodeModel = function () {
             return;
         }
 
-        if (self.NodeNetworkAddress() == "" && self.NodeNetworkAddress2() !== "") {
-            alert("Primary network address must also be entered if alternative network address is entered.");
-            return;
-        }
-
         var components = [];
         var error_nodes = 0;
         self.Components().forEach(function (item) {
@@ -1640,6 +1638,7 @@ Carvic.Model.NewNodeModel = function () {
                 cluster: self.NodeCluster(),
                 loc_lon: self.NodeLON(),
                 loc_lat: self.NodeLAT(),
+                machine_id: self.NodeMachineId(),
                 extra_fields: extraFields,
                 components: components,
                 sensors: []
@@ -2603,6 +2602,7 @@ Carvic.Model.ClusterModel = function () {
                     Status: ko.observable(obj.status),
                     LON: obj.loc_lon,
                     LAT: obj.loc_lat,
+                    MachineId: obj.machine_id,
                     Url: "node.html?id=" + encodeURI(obj.id)
                 }));
             }

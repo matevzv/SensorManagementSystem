@@ -104,6 +104,16 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-md-2">
+                        <div class="list-group">
+                            <label class="control-label" for="inNodeMachineId"> Machine ID </label>
+                            <div class="controls">
+                                <input class="form-control" id="inNodeMachineId" type="text" data-bind="value: NodeSearchMachineId" />
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="row form-horizontal max-width-form">
                     <div class="col-md-6">
@@ -136,7 +146,7 @@
                             <th>Name</th>
                             <th>Status</th>
                             <th>Cluster</th>
-                            <th>Sensors</th>
+                            <th width="30%">Sensors</th>
                         </tr>
                         <tbody data-bind="foreach: $root.SearchResult">
                         <tr style="cursor: pointer">
@@ -148,7 +158,11 @@
                                 <span data-bind="text: StatusStr, click: $root.ShowNodeDetails"></span>
                             </td>
                             <td data-bind="text: ClusterName, click: $root.ShowNodeDetails"></td>
-                            <td data-bind="text: Sensors, click: $root.ShowNodeDetails"></td>
+                            <td>
+                              <span data-bind="text: Sensors, click: $root.ShowNodeDetails, visible: Sensors.length <= 50"></span>
+                              <span data-bind="text: Sensors.slice(0, 50), click: $root.ShowNodeDetails, visible: Sensors.length > 50"></span>
+                              <span data-bind="click: $root.ShowNodeDetails, visible: Sensors.length > 50">...</span>
+                            </td>
                         </tr>
 						</tbody>
                     </table>
