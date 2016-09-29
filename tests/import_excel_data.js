@@ -161,6 +161,16 @@ data.component_types.push({
 
 /////////////////////////////////////////////////////////////////////////////////////////
 data.cluster_types.push({
+    code: "zigbee",
+    title: "ZigBee",
+    uses_gateway: true
+});
+data.cluster_types.push({
+    code: "ipv6",
+    title: "IPv6",
+    uses_gateway: false
+});
+data.cluster_types.push({
     code: "ssh",
     title: "SSH",
     uses_gateway: false
