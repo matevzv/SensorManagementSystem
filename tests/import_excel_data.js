@@ -171,6 +171,11 @@ data.cluster_types.push({
     uses_gateway: false
 });
 data.cluster_types.push({
+    code: "ssh",
+    title: "SSH",
+    uses_gateway: false
+});
+data.cluster_types.push({
     code: "none",
     title: "none",
     uses_gateway: false
