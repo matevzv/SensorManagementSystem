@@ -5,4 +5,4 @@ if [ -z "$SSH_AUTH_SOCK" ] ; then
 	ssh-add
 fi
 
-/usr/bin/docker run -p 80:80 --volumes-from datavidek --volume $SSH_AUTH_SOCK:/root/ssh-agent -e SSH_AUTH_SOCK=/root/ssh-agent -e EMAIL=example@gmail.com -e PASSWORD=secret -e DOMAIN=localhost -e RUNDECKP=secret -e ANSIBLE_USER=someuser videk
+/usr/bin/docker run -p 80:80 --volumes-from datavidek --volume /etc/localtime:/etc/localtime:ro --volume $SSH_AUTH_SOCK:/root/ssh-agent -e SSH_AUTH_SOCK=/root/ssh-agent -e EMAIL=example@gmail.com -e PASSWORD=secret -e DOMAIN=localhost -e RUNDECKP=secret -e ANSIBLE_USER=someuser videk
