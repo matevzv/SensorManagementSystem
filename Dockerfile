@@ -10,6 +10,7 @@ RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install -y apt-utils
 RUN apt-get install -y supervisor
+RUN apt-get install -y vim
 RUN apt-get install -y git
 
 # install nodejs an npm

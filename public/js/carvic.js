@@ -875,7 +875,7 @@ Carvic.Model.NodesModel = function (callback) {
         }
 
         if (self.NodeSearchStatus() != "") { query.status = self.NodeSearchStatus(); }
-        
+
         if (self.NodeSearchMachineId() != "") { query.machine_id = self.NodeSearchMachineId(); }
 
         Carvic.Utils.Post({ action: "get_nodes2", data: query }, function (data) {
@@ -1777,7 +1777,7 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
         });
     };
 
-    var socket = io.connect('http://localhost:3000');
+    var socket = io.connect('http://localhost');
     socket.on('measurements', function (data) {
       for (var i = 0; i < data.length; i++) {
         var obj = data[i];
