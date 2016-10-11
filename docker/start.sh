@@ -24,9 +24,17 @@ fi
 if [ -z "$DOMAIN" ]; then
     echo "Consider adding domain name, default: localhost!"
 else
-    sed -i s/'localhost'/"$DOMAIN"/g public/js/carvic.js
+    if [ -z "$WS" ]; then
+        sed -i s/'localhost:3000'/"$DOMAIN"/g public/js/carvic.js
+    fi
     sed -i s/'server_name localhost'/'server_name '"$DOMAIN"/g \
     /etc/nginx/conf.d/default.conf
+fi
+
+if [ -z "$WS" ]; then
+    echo "Consider adding ws address, default: same as domain name!"
+else
+    sed -i s/'localhost:3000'/"$WS"/g public/js/carvic.js
 fi
 
 if [ -z "$RUNDECKP" ]; then

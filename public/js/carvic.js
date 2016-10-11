@@ -1777,7 +1777,7 @@ Carvic.Model.NodeSensorModel = function (obj, parent) {
         });
     };
 
-    var socket = io.connect('http://localhost');
+    var socket = io.connect('localhost:3000');
     socket.on('measurements', function (data) {
       for (var i = 0; i < data.length; i++) {
         var obj = data[i];
