@@ -551,11 +551,6 @@ function api_get_node(rec, callback) {
 
 function api_update_node(rec, callback) {
     if (rec.params.node_id.match(/^[a-f0-9]{24}$/i) == null) callback( { error: "Node ID passed in must be a single String of 12 bytes or a string of 24 hex characters", status: 404 });
-    else if (rec.body.components || rec.body.extra_fields) db[collection_nodes].update( { _id: mongojs.ObjectId(rec.params.node_id) }, { $addToSet: rec.body }, function (err, res) {
-        if (err) return callback({ status: 500 });
-        else if (res.n) callback({ message: 'Node successfully updated!' });
-        else callback({ error: 'Node ID not found!', status: 404 });
-    });
     else db[collection_nodes].update( { _id: mongojs.ObjectId(rec.params.node_id) }, { $set: rec.body }, function (err, res) {
         if (err) return callback({ status: 500 });
         else if (res.n) callback({ message: 'Node successfully updated!' });
@@ -745,12 +740,13 @@ function get_all_measurements(req, callback) {
     if (req.query.from || req.query.to) {
         query.ts = {};
         if (req.query.from) {
-            query.ts.$gte = new Date(req.query.from);
+            query.ts.$gte = new Date(req.query.from).toISOString();
         }
         if (req.query.to) {
-            query.ts.$lte = new Date(req.query.to);
+            query.ts.$lte = new Date(req.query.to).toISOString();
         }
     }
+    console.log(query);
     db[collection_measurements].find(query).sort({ ts: -1 }).toArray(function (err, res) {
         if (err) return callback(err);
 		else if (res.length == 0)
