@@ -2606,13 +2606,14 @@ Carvic.Model.ClusterModel = function () {
                     Url: "node.html?id=" + encodeURI(obj.id)
                 }));
             }
+
              //it starts from the page 1
             //ten elements per page
-            paginate(0, 10);
+            paginate_nodes(0, 10);
 
             $('#page-selection-nodes').bootpag({
 
-                total: paginate(0, 10),
+                total: paginate_nodes(0, 10),
                 page: 1,
                 maxVisible: 3,
                 leaps: true,
@@ -2628,7 +2629,7 @@ Carvic.Model.ClusterModel = function () {
                 firstClass: 'first'
             }).on("page", function (event, num) {
                 //$('.history_border').html(); // or some ajax content loading...
-                paginate(num - 1, 10);
+                paginate_nodes(num - 1, 10);
 
             });
         });

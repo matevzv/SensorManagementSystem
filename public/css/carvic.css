@@ -107,6 +107,24 @@ Footer
     z-index: 0;
 }
 
+.nodes_border {
+    background-color: #fff;
+    border: 1px solid #b9b9b9;
+    border-bottom-color: #939393;
+    border-radius: 3px;
+    margin-bottom: 5px;
+    min-height: 18px;
+    padding: 6px 8px 1px;
+    position: relative;
+    -webkit-transition-property: background,margin-bottom,opacity;
+    transition-property: background,margin-bottom,opacity;
+    -webkit-transition-duration: 0.2s, 0.1s, 0.2s;
+    transition-duration: 0.2s, 0.1s, 0.2s;
+    -webkit-transition-timing-function: ease-out;
+    transition-timing-function: ease-out;
+    z-index: 0;
+}
+
 .history {
     max-width: 500px;
 }
