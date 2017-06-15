@@ -1,5 +1,5 @@
 [Unit]
-Description=Videk VPN server container
+Description=Videk VPN client
 After=vpn-server.service
 
 [Service]
