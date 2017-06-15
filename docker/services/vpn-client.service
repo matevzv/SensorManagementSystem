@@ -1,0 +1,10 @@
+[Unit]
+Description=Videk VPN server container
+After=vpn-server.service
+
+[Service]
+Restart=always
+ExecStart=/usr/sbin/openvpn /var/edison.ovpn
+
+[Install]
+WantedBy=default.target

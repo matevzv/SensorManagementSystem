@@ -1,0 +1,11 @@
+[Unit]
+Description=Videk VPN server container
+Wants=vpn-client.service
+After=videk.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker run -v ovpn-data-videk:/etc/openvpn -p 1194:1194/udp --cap-add=NET_ADMIN kylemanna/openvpn
+
+[Install]
+WantedBy=default.target

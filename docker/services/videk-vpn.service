@@ -1,0 +1,13 @@
+[Unit]
+Description=Videk container
+Wants=vpn-server.service
+After=docker.service
+
+[Service]
+Restart=always
+User=videk
+PermissionsStartOnly=true
+ExecStart=/bin/videk
+
+[Install]
+WantedBy=default.target
