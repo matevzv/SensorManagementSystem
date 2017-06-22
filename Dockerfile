@@ -80,7 +80,7 @@ RUN echo "*/10 * * * * root /root/videk-hosts/videk-ping.sh" \
 
 # install Videk master from github
 RUN cd /root && \
-git clone https://github.com/sensorlab/SensorManagementSystem.git
+git clone -b down-socket-io https://github.com/matevzv/SensorManagementSystem.git
 WORKDIR /root/SensorManagementSystem
 RUN npm install
 RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \
