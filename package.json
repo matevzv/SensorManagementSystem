@@ -31,7 +31,7 @@
     "morgan": "*",
     "cookie-parser": "*",
     "connect-mongo": "*",
-    "socket.io": "^1.0.0",
+    "socket.io": "*",
     "crypto": "*",
     "agenda": "*",
     "chai": "*",
