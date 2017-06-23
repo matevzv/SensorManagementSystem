@@ -55,4 +55,13 @@ else
     /etc/ansible/ansible.cfg
 fi
 
+if [ "$HTTPS" = "true" ]; then
+    echo "Consider using HTTPS!"
+else
+    if [ "$EMAIL" = "" ] || [ "$DOMAIN" = "" ]; then
+        echo "Email and/or Domain missing!"
+    else
+        certbot -n --agree-tos --email "$EMAIL" --domains "$DOMAIN" --nginx
+fi
+
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

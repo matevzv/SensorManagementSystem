@@ -6,12 +6,17 @@ LABEL Vendor="JSI"
 LABEL Version="1.0"
 
 # update packages and install some commons
+RUN export DEBIAN_FRONTEND=noninteractive
 RUN apt-get update --fix-missing
 RUN apt-get upgrade -y
 RUN apt-get install -y apt-utils
 RUN apt-get install -y supervisor
 RUN apt-get install -y vim
 RUN apt-get install -y git
+RUN apt-get install -y software-properties-common
+RUN add-apt-repository -y ppa:certbot/certbot
+RUN apt-get update
+RUN apt-get install -y python-certbot-nginx
 
 # install nodejs an npm
 RUN apt-get install -y nodejs
