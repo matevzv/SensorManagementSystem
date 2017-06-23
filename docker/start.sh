@@ -59,7 +59,8 @@ if [ "$HTTPS" = "true" ]; then
     if [ "$EMAIL" = "" ] || [ "$DOMAIN" = "" ]; then
         echo "Email and/or Domain missing!"
     else
-        certbot -n --agree-tos --email "$EMAIL" --domains "$DOMAIN" --nginx
+        certbot -n --agree-tos --email "$EMAIL" --domains "$DOMAIN" \
+        --redirect --nginx
     fi
 else
     echo "Consider using HTTPS!"
