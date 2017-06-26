@@ -101,7 +101,7 @@ RUN echo "    StrictHostKeyChecking no" >> /root/.ssh/config
 # volumes
 VOLUME ["/data/db", "/etc/munin", "/var/lib/munin", "/var/cache/munin/www", \
 "/etc/ansible", "/etc/rundeck", "/var/rundeck", "/var/lib/rundeck", \
-"/playbooks"]
+"/etc/letsencrypt", "/playbooks"]
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/start.sh /root/start.sh
