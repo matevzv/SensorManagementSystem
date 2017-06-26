@@ -4,16 +4,16 @@ SensorManagementSystem
 ======================
 
 ## Docker support
-###1. Build docker container yourself
+### 1. Build docker container yourself
     $ docker build -t videk .
 
-###2. Pull from Docker Hub
+### 2. Pull from Docker Hub
     $ docker pull sensorlab6/videk
 
-###3. Optionally create persistent data storage
+### 3. Optionally create persistent data storage
     $ docker create --name datavidek videk
 
-###4. Run docker container
+### 4. Run docker container
 Forwarding docker port 80 to your host port. Optionally using data container,
 host SSH key and domain name setup. If WS address is not the same as domain
 use WS and optionally use HTTPS. Rundeck password should also be changed and 
@@ -37,11 +37,11 @@ Installation was performed on Ubuntu 12.04 & Ubuntu 14.04 .
 
 SMS requires git, node.js, mongodb and npm.
 
-####1. Install git
+#### 1. Install git
     $ sudo apt-get update
     $ sudo apt-get install git
 
-####2. Install node.js
+#### 2. Install node.js
 
    We will cover two different methods of  how to install node.js. First is using a apt package manager and the second is using a PPA (personal package archive) .
 
@@ -68,7 +68,7 @@ Second method is to add PPA maintained by Chris Lea. This will give you more rec
 
 As result you should get  "Hello World" .
 
-####3. Install MongoDB
+#### 3. Install MongoDB
 
 Import the public key
 
