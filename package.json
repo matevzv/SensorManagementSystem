@@ -33,7 +33,7 @@
     "connect-mongo": "*",
     "socket.io": "*",
     "crypto": "*",
-    "agenda": "v0.9.1",
+    "agenda": "*",
     "chai": "*",
     "chai-http": "*",
     "intercept-stdout": "*"
