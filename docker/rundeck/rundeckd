@@ -1,9 +1,0 @@
-#!/bin/bash
-
-. /etc/rundeck/profile
-
-DAEMON="${JAVA_HOME:-/usr}/bin/java"
-DAEMON_ARGS="${RDECK_JVM} -cp ${BOOTSTRAP_CP} com.dtolabs.rundeck.RunServer /var/lib/rundeck ${RDECK_HTTP_PORT}"
-rundeckd="$DAEMON $DAEMON_ARGS"
-
-$rundeckd >> /var/log/rundeck/service.log
