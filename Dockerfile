@@ -86,7 +86,6 @@ RUN echo "*/10 * * * * root /root/videk-hosts/videk-ping.sh" \
 
 # install Videk CI
 RUN apt-get install -y python-flask
-RUN apt-get install -y python-requests
 RUN apt-get install -y make
 RUN cd /root && \
 git clone https://github.com/matevzv/videk-ci.git
