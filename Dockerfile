@@ -73,7 +73,7 @@ COPY docker/rundeck/profile /etc/rundeck/profile
 COPY docker/rundeck/rundeckd /root/rundeck/rundeckd
 RUN mkdir -p /playbooks
 
-# install videk cron to sync hosts
+# install Videk cron to sync hosts
 RUN apt-get install -y curl
 RUN cd /root && \
 git clone https://github.com/matevzv/videk-hosts.git
@@ -83,6 +83,13 @@ RUN echo "*/5 * * * * root /usr/bin/python /root/videk-hosts/videk-hosts.py" \
 RUN touch /etc/cron.d/videk-ping
 RUN echo "*/10 * * * * root /root/videk-hosts/videk-ping.sh" \
 >> /etc/cron.d/videk-ping
+
+# install Videk CI
+RUN apt-get install -y python-flask
+RUN apt-get install -y python-requests
+RUN apt-get install -y make
+RUN cd /root && \
+git clone https://github.com/matevzv/videk-ci.git
 
 # install Videk master from github
 RUN cd /root && \

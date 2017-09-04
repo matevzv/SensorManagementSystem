@@ -56,13 +56,24 @@ else
 fi
 
 if [ -z "$GITHUB_HOOK" ]; then
-    echo "Consider adding github webhook service IP:PORT!"
+    echo "Consider adding github webhook service!"
 else
-    NGINX_CONF="/etc/nginx/conf.d/default.conf"
-    sed -i '$ s/.$//' "$NGINX_CONF"
-    echo -e "\tlocation /pyload {" >> "$NGINX_CONF"
-    echo -e "\t\tproxy_pass http://"$GITHUB_HOOK";" >> "$NGINX_CONF"
-    echo -e "\t}\n}" >> "$NGINX_CONF"
+    if [ "$GITHUB_TOKEN" = "" ]; then
+        echo "Github token is missing!"
+    else
+        NGINX_CONF="/etc/nginx/conf.d/default.conf"
+        sed -i '$ s/.$//' "$NGINX_CONF"
+        echo -e "\tlocation /pyload {" >> "$NGINX_CONF"
+        echo -e "\t\tproxy_pass http://localhost:"$GITHUB_HOOK";" \
+        >> "$NGINX_CONF"
+        echo -e "\t}\n}" >> "$NGINX_CONF"
+        SUPERVISORD="/etc/supervisor/conf.d/supervisord.conf"
+        echo -e "\n[program:github-webhook]" >> "$SUPERVISORD"
+        echo -e "directory=/root/videk-ci" >> "$SUPERVISORD"
+        echo -e "command=python github-webhook" "$GITHUB_TOKEN" \
+        >> "$SUPERVISORD"
+        echo -e "autorestart=true" >> "$SUPERVISORD"
+    fi
 fi
 
 if [ "$HTTPS" = "true" ]; then

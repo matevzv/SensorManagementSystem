@@ -17,8 +17,8 @@ SensorManagementSystem
 Forwarding docker port 80 to your host port. Optionally using data container,
 host SSH key and domain name setup. If WS address is not the same as domain
 use WS and optionally use HTTPS. Rundeck password should also be changed and
-ansible user set. Optionally you can setup github webhook. Finally set your
-gmail account to send monitoring alerts.  
+ansible user set. Optionally you can setup github webhook port and token.
+Finally set your gmail account to send monitoring alerts.  
 
     $ docker run -p 80:80 (-p 443:443) --volumes-from datavidek \  
     --volume $SSH_AUTH_SOCK:/ssh-agent \  
@@ -27,8 +27,9 @@ gmail account to send monitoring alerts.
     -e WS=ws.example.com \  
     -e HTTPS=true \  
     -e RUNDECKP=secret \  
-    -e ANSIBLE_USER=someone \
-    -e GITHUB_HOOK="172.17.0.1:8000" \  
+    -e ANSIBLE_USER=someone \  
+    -e GITHUB_HOOK="8000" \  
+    -e GITHUB_TOKEN="secret" \  
     -e EMAIL=example@gmail.com \  
     -e PASSWORD=secret videk
 
