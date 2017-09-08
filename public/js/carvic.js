@@ -861,8 +861,8 @@ Carvic.Model.NodesModel = function (callback) {
         self.CheckedNodes.removeAll();
 
         var query = { page: self.CurrPage() };
-        if (self.NodeSearchId() != "") { query.id = self.NodeSearchId(); }
-        if (self.NodeSearchName() != "") { query.name = self.NodeSearchName(); }
+        if (self.NodeSearchId() != "") { query.id = self.NodeSearchId().trim(); }
+        if (self.NodeSearchName() != "") { query.name = self.NodeSearchName().trim(); }
 
         if (self.NodeSearchCluster() != "") {
             var s = self.NodeSearchCluster();
@@ -876,7 +876,7 @@ Carvic.Model.NodesModel = function (callback) {
 
         if (self.NodeSearchStatus() != "") { query.status = self.NodeSearchStatus(); }
 
-        if (self.NodeSearchMachineId() != "") { query.machine_id = self.NodeSearchMachineId(); }
+        if (self.NodeSearchMachineId() != "") { query.machine_id = self.NodeSearchMachineId().trim(); }
 
         Carvic.Utils.Post({ action: "get_nodes2", data: query }, function (data) {
             self.RecCount(data.count);
