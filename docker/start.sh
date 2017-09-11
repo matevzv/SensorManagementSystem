@@ -70,7 +70,7 @@ else
         SUPERVISORD="/etc/supervisor/conf.d/supervisord.conf"
         echo -e "\n[program:github-webhook]" >> "$SUPERVISORD"
         echo -e "directory=/root/videk-ci" >> "$SUPERVISORD"
-        echo -e "command=python github-webhook.py" "$GITHUB_TOKEN" \
+        echo -e "command=./github-webhook" "$GITHUB_TOKEN" \
         >> "$SUPERVISORD"
         echo -e "autorestart=true" >> "$SUPERVISORD"
     fi
