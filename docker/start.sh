@@ -73,6 +73,7 @@ else
         echo -e "command=/root/videk-ci/github-webhook" "$GITHUB_TOKEN" \
         >> "$SUPERVISORD"
         echo -e "autorestart=true" >> "$SUPERVISORD"
+        sed -i s/'port=8000'/"port=$GITHUB_HOOK"/g /root/videk-ci/github-webhook
     fi
 fi
 
