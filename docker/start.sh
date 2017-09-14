@@ -58,8 +58,8 @@ fi
 if [ -z "$GITHUB_HOOK" ]; then
     echo "Consider adding github webhook service!"
 else
-    if [ "$GITHUB_TOKEN" = "" ]; then
-        echo "Github token is missing!"
+    if [ "$GITHUB_TOKEN" = "" ] || [ "$SECRET_TOKEN" = "" ]; then
+        echo "Github and/or secret webhook token missing!"
     else
         NGINX_CONF="/etc/nginx/conf.d/default.conf"
         sed -i '$ s/.$//' "$NGINX_CONF"
