@@ -90,4 +90,4 @@ else
     echo "Consider using HTTPS!"
 fi
 
-exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+exec /usr/bin/supervisord
