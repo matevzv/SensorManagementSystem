@@ -864,12 +864,8 @@ Carvic.Model.NodesModel = function (callback) {
         for (var i = 0; i < self.SearchResult().length; i++) {
             var node = self.SearchResult()[i]();
             var status = node.Status();
-            var desc = JSON.stringify(node.Extra);
-            if (typeof desc === 'undefined') {
-                desc = "none";
-            } else {
-                desc = desc.split(",").join(",<br/>");
-            }
+            var desc = "<b>" + node.Name + "</b>"
+            desc = desc + "<br/><br/>" + JSON.stringify(node.Extra).split(",").join(",<br/>");
             if (status == "active") {
                 var icon = "https://maps.google.com/mapfiles/ms/icons/green-dot.png";
             } else if (status == "inactive") {
