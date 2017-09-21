@@ -785,6 +785,7 @@ Carvic.Model.NodesModel = function (callback) {
     self.SearchResult = ko.observableArray();
     self.CheckedNodes = ko.observableArray();
     self.AdvancedSearch = ko.observable(false);
+    self.MyMap = ko.observable(false);
     self.NodeSearchName = ko.observable("");
     self.NodeSearchId = ko.observable("");
     self.NodeSearchMachineId = ko.observable("");
@@ -847,7 +848,54 @@ Carvic.Model.NodesModel = function (callback) {
         self.AdvancedSearch(true);
     };
 
+    self.DoShowMyMap = function () {
+        self.MyMap(true);
+        if (self.SearchResult().length > 0) {
+            self.InitMap();
+        }
+    };
+
+    self.InitMap = function () {
+        var map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 19,
+            center: new google.maps.LatLng(46.042376, 14.488229)
+        });
+
+        for (var i = 0; i < self.SearchResult().length; i++) {
+            var node = self.SearchResult()[i]();
+            var status = node.Status();
+            var desc = JSON.stringify(node.Extra);
+            if (typeof desc === 'undefined') {
+                desc = "none";
+            }
+            desc = desc.split(",").join(",<br/>")
+            if (status == "active") {
+                var icon = "https://maps.google.com/mapfiles/ms/icons/green-dot.png";
+            } else if (status == "inactive") {
+               var icon = "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png";
+            } else {
+                var icon = "https://maps.google.com/mapfiles/ms/icons/red-dot.png";
+            }
+            var infowindow = new google.maps.InfoWindow({
+                content: desc
+            });
+            var marker = new google.maps.Marker({
+            position: {lat: node.LAT, lng: node.LON},
+            icon: icon,
+            map: map,
+            title: node.Name
+          });
+          google.maps.event.addListener(marker,'click', (function(marker,desc,infowindow) {
+              return function() {
+                  infowindow.setContent(desc);
+                  infowindow.open(map,marker);
+              };
+          })(marker,desc,infowindow));
+        }
+    }
+
     self.Search = function () {
+        self.MyMap(false);
         self.SearchInner(true);
     }
 
@@ -882,6 +930,7 @@ Carvic.Model.NodesModel = function (callback) {
             self.RecCount(data.count);
             self.PageCount(Math.floor(data.count / data.page_size));
             self.UpdatePageButtons();
+
             for (var i = 0; i < data.records.length; i++) {
                 let obj = data.records[i];
                 let sensors = [];
@@ -899,6 +948,7 @@ Carvic.Model.NodesModel = function (callback) {
                         LON: obj.loc_lon,
                         LAT: obj.loc_lat,
                         MachineId: obj.machine_id,
+                        Extra: obj.extra_fields,
                         Sensors: sensors.join(", ")
                     }));
                 });
@@ -1229,8 +1279,8 @@ Carvic.Model.SingleNodeModel = function () {
                 name: self.NodeName(),
                 status: self.NodeStatus(),
                 cluster: self.NodeCluster(),
-                loc_lon: self.NodeLON(),
-                loc_lat: self.NodeLAT(),
+                loc_lon: parseFloat(self.NodeLON()),
+                loc_lat: parseFloat(self.NodeLAT()),
                 machine_id: self.NodeMachineId(),
                 extra_fields: extraFields,
                 components: components

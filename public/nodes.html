@@ -16,6 +16,7 @@
         <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
         <script type="text/javascript" src="js/carvic.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAf-LZEPaQHGQ7Ykd7QKm19d2KC0Lc0HT8"></script>
         <script>
             $(document).ready(function () {
                 Carvic.InitNodeList(function(){
@@ -120,11 +121,17 @@
                             <button id="btnSearch" class="btn btn-default btn-primary" data-bind="click: $root.Search"><i class="glyphicon glyphicon-search"></i> Search </button>
                             <button class="btn btn-default" data-bind="click: $root.DoAdvancedSearch, visible: AdvancedSearch() == false"><i class="glyphicon glyphicon-search"></i> More options... </button>
                             <button class="btn btn-default" data-bind="click: $root.AdvancedSearch(false), visible: AdvancedSearch() == true"><i class="glyphicon glyphicon-search"></i> Less options... </button>
+                            <button style="float: right;" class="btn btn-default" data-bind="click: $root.DoShowMyMap(), visible: MyMap() == false"><i class="glyphicon glyphicon-map-marker"></i> Show map </button>
+                            <button style="float: right;" class="btn btn-default" data-bind="click: $root.MyMap(false), visible: MyMap() == true"><i class="glyphicon glyphicon-map-marker"></i> Hide map </button>
                     </div>
                 </div>
             </div>
 
-            <div class="row" style="padding-bottom: 10px;">
+            <div class="well" style="top:0;padding:0;" data-bind="visible: MyMap() == true">
+              <div id="map" style="height:65vh;"></div>
+            </div>
+
+            <div class="row" style="padding-bottom: 10px;" data-bind="visible: MyMap() == false">
                 <div class="col-md-12 text-light">
                     <button class="btn btn-default" data-bind="click: $root.DecPage, enable: $root.DecPageEnabled"><i class="glyphicon glyphicon-arrow-left"></i>  </button>
                     Current page: <span data-bind="text: CurrPage() + 1 "></span> of <span data-bind="text: PageCount() + 1 "></span>
@@ -137,7 +144,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" data-bind="visible: MyMap() == false">
                 <div class="col-md-12">
                     <table class="table table-hover">
                         <tr>
