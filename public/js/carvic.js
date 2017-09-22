@@ -869,7 +869,7 @@ Carvic.Model.NodesModel = function (callback) {
             if (status == "active") {
                 var icon = "img/green-dot.png";
             } else if (status == "inactive") {
-               var icon = "img/yellow-dot.png";
+                var icon = "img/yellow-dot.png";
             } else {
                 var icon = "img/red-dot.png";
             }
