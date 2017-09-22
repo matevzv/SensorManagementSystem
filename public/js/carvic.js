@@ -867,11 +867,11 @@ Carvic.Model.NodesModel = function (callback) {
             var desc = "<b>" + node.Name + "</b>"
             desc = desc + "<br/><br/>" + JSON.stringify(node.Extra).split(",").join(",<br/>");
             if (status == "active") {
-                var icon = "https://maps.google.com/mapfiles/ms/icons/green-dot.png";
+                var icon = "img/green-dot.png";
             } else if (status == "inactive") {
-               var icon = "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png";
+               var icon = "img/yellow-dot.png";
             } else {
-                var icon = "https://maps.google.com/mapfiles/ms/icons/red-dot.png";
+                var icon = "img/red-dot.png";
             }
             var infowindow = new google.maps.InfoWindow({
                 content: desc
