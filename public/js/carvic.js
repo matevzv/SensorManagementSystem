@@ -864,8 +864,8 @@ Carvic.Model.NodesModel = function (callback) {
         for (var i = 0; i < self.SearchResult().length; i++) {
             var node = self.SearchResult()[i]();
             var status = node.Status();
-            var desc = "<b>" + node.Name + "</b>"
-            desc = desc + "<br/><br/>" + JSON.stringify(node.Extra).split(",").join(",<br/>");
+            var desc = '<h4><a href="node.html?id=' + encodeURI(node.ID) + '">' + node.Name + "</a></h4>"
+            desc = desc + "<p>" + JSON.stringify(node.Extra).split(",").join(",<br/>") + "</p>";
             if (status == "active") {
                 var icon = "img/green-dot.png";
             } else if (status == "inactive") {
