@@ -67,8 +67,8 @@ RUN apt-get install -y default-jdk
 RUN apt-get install -y uuid-runtime
 RUN wget dl.bintray.com/rundeck/rundeck-deb/rundeck-2.9.3-1-GA.deb -P /tmp
 RUN dpkg -i /tmp/rundeck-2.9.3-1-GA.deb
-RUN wget https://github.com/Batix/rundeck-ansible-plugin/releases/download/2.2.0/\
-ansible-plugin-2.2.0.jar -P /var/lib/rundeck/libext
+RUN wget https://github.com/Batix/rundeck-ansible-plugin/releases/\
+download/2.2.1/ansible-plugin-2.2.1.jar -P /var/lib/rundeck/libext
 COPY docker/rundeck/rundeck-config.properties \
 /etc/rundeck/rundeck-config.properties
 COPY docker/rundeck/profile /etc/rundeck/profile
