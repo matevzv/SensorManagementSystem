@@ -85,6 +85,8 @@ if [ "$HTTPS" = "true" ]; then
         certbot -n --agree-tos --email "$EMAIL" --domains "$DOMAIN" \
         --redirect --keep-until-expiring --nginx
         service nginx stop
+        NGINX_CONF="/etc/nginx/conf.d/default.conf"
+        sed -i s/"ssl;"/"ssl http2;"/g "$NGINX_CONF"
     fi
 else
     echo "Consider using HTTPS!"
