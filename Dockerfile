@@ -108,10 +108,20 @@ RUN touch /root/.ssh/config
 RUN echo "Host *" >> /root/.ssh/config
 RUN echo "    StrictHostKeyChecking no" >> /root/.ssh/config
 
+# install Jenkins
+RUN wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | \
+apt-key add -
+RUN sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > \
+/etc/apt/sources.list.d/jenkins.list'
+RUN apt-get update && apt-get install -y \
+  jenkins \
+&& rm -rf /var/lib/apt/lists/*
+ENV JENKINS_HOME /var/lib/jenkins
+
 # volumes
 VOLUME ["/data/db", "/etc/munin", "/var/lib/munin", "/var/cache/munin/www", \
 "/etc/ansible", "/etc/rundeck", "/var/rundeck", "/var/lib/rundeck", \
-"/etc/letsencrypt", "/playbooks"]
+"/etc/letsencrypt", "/playbooks", "/var/lib/jenkins"]
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/start.sh /root/start.sh
