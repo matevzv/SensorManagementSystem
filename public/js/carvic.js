@@ -39,6 +39,7 @@ Carvic.Utils = {
 
     AddAdminLinks: function () {
         $("#navRight").append('<li><a href="rundeck.html"><i class="glyphicon glyphicon-wrench"></i></i> Manage</a></li>');
+        $("#navRight").append('<li><a href="jenkins.html"><i class="glyphicon glyphicon-refresh"></i></i> CI</a></li>');
         $("#navRight").append('<li><a href="users.html"><i class="glyphicon glyphicon-user"></i> Users</a></li>');
     },
 
