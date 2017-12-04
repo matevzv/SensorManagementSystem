@@ -73,7 +73,6 @@ COPY docker/rundeck/rundeck-config.properties \
 /etc/rundeck/rundeck-config.properties
 COPY docker/rundeck/profile /etc/rundeck/profile
 COPY docker/rundeck/rundeckd /root/rundeck/rundeckd
-RUN mkdir -p /playbooks
 
 # install Videk cron to sync hosts
 RUN apt-get install -y curl
@@ -93,6 +92,16 @@ RUN apt-get install -y python3-flask
 RUN cd /root && \
 git clone https://github.com/matevzv/videk-ci.git
 
+# install Jenkins
+RUN wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | \
+apt-key add -
+RUN sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > \
+/etc/apt/sources.list.d/jenkins.list'
+RUN apt-get update && apt-get install -y \
+  jenkins \
+&& rm -rf /var/lib/apt/lists/*
+ENV JENKINS_HOME /var/lib/jenkins
+
 # install Videk master from github
 RUN cd /root && \
 git clone https://github.com/sensorlab/SensorManagementSystem.git
@@ -108,20 +117,10 @@ RUN touch /root/.ssh/config
 RUN echo "Host *" >> /root/.ssh/config
 RUN echo "    StrictHostKeyChecking no" >> /root/.ssh/config
 
-# install Jenkins
-RUN wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | \
-apt-key add -
-RUN sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > \
-/etc/apt/sources.list.d/jenkins.list'
-RUN apt-get update && apt-get install -y \
-  jenkins \
-&& rm -rf /var/lib/apt/lists/*
-ENV JENKINS_HOME /var/lib/jenkins
-
 # volumes
 VOLUME ["/data/db", "/etc/munin", "/var/lib/munin", "/var/cache/munin/www", \
 "/etc/ansible", "/etc/rundeck", "/var/rundeck", "/var/lib/rundeck", \
-"/etc/letsencrypt", "/playbooks", "/var/lib/jenkins"]
+"/etc/letsencrypt", "/var/lib/jenkins"]
 
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/start.sh /root/start.sh
