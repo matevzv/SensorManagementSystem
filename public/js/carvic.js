@@ -924,6 +924,10 @@ Carvic.Model.NodesModel = function (callback) {
 
         if (self.NodeSearchMachineId() != "") { query.machine_id = self.NodeSearchMachineId().trim(); }
 
+        self.sortFunction = function(a, b) {
+            return a().ID > b().ID ? 1 : -1;
+        };
+
         Carvic.Utils.Post({ action: "get_nodes2", data: query }, function (data) {
             self.RecCount(data.count);
             self.PageCount(Math.floor(data.count / data.page_size));
