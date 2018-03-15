@@ -25,16 +25,6 @@ describe('test basic operation', function() {
         });
       }
     });
-
-    srv.stderr.on('data', function (data) {
-      chai.expect(data.toString()).to.not.contain('Error');
-      done();
-    });
-
-    srv.on('exit', function (code) {
-      chai.expect(code).to.equal(0);
-      done();
-    });
   });
 });
 
