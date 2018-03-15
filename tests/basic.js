@@ -19,7 +19,7 @@ describe('test basic operation', function() {
             chai.expect(err).to.be.null;
             chai.expect(res).to.have.status(200);
             chai.expect(res).to.be.html;
-            chai.expect(res.text).to.be.equal(login_file);
+            chai.expect(res.text).to.include(login_file)
             srv.kill();
             done();
         });
