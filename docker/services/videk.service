@@ -1,13 +1,15 @@
 [Unit]
 Description=Videk container
-Requires=docker.service
+Wants=vpn-server.service
 After=docker.service
 
 [Service]
+RestartSec=10
+TimeoutStartSec=infinity
 Restart=always
 User=videk
 PermissionsStartOnly=true
-ExecStartPre=/sbin/iptables -t nat -A PREROUTING -i lo -p tcp --dport 8080 -j REDIRECT --to-port 80
+ExecStartPre=-/usr/bin/docker pull sensorlab6/videk
 ExecStart=/bin/videk
 
 [Install]
