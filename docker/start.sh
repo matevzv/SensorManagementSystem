@@ -77,6 +77,16 @@ else
     fi
 fi
 
+if [ "$GRAFANA" = "true" ]; then
+    NGINX_CONF="/etc/nginx/conf.d/default.conf"
+    sed -i '$ s/.$//' "$NGINX_CONF"
+    echo -e "\tlocation /grafana/ {" >> "$NGINX_CONF"
+    echo -e "\t\tproxy_pass http://grafana:3000/;" >> "$NGINX_CONF"
+    echo -e "\t}\n}" >> "$NGINX_CONF"
+else
+    echo "Consider adding grafana service!"
+fi
+
 if [ "$HTTPS" = "true" ]; then
     if [ "$EMAIL" = "" ] || [ "$DOMAIN" = "" ]; then
         echo "Email and/or domain missing!"
