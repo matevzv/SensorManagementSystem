@@ -83,7 +83,7 @@ else
     NGINX_CONF="/etc/nginx/conf.d/default.conf"
     sed -i '$ s/.$//' "$NGINX_CONF"
     echo -e "\tlocation /grafana/ {" >> "$NGINX_CONF"
-    echo -e "\t\tproxy_pass http://"$GRAFANA"/;" >> "$NGINX_CONF"
+    echo -e "\t\tproxy_pass http://$GRAFANA/;" >> "$NGINX_CONF"
     echo -e "\t}\n}" >> "$NGINX_CONF"
 fi
 
