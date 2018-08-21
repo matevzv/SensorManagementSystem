@@ -2,4 +2,4 @@
 
 . /etc/rundeck/profile
 
-nohup /bin/bash -c "$rundeckd" &>>/var/log/rundeck/service.log
+`$rundeckd`
