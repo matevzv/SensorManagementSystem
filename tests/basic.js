@@ -5,7 +5,7 @@ chai.use(chaiHttp);
 
 describe('test basic operation', function() {
   it('should run server and load login page', function(done) {
-    this.timeout(60000);
+    this.timeout(120000);
     var spawn = require('child_process').spawn;
     var srv = spawn('node', ['app.js']);
 
@@ -21,7 +21,7 @@ describe('test basic operation', function() {
             chai.expect(res).to.be.html;
             chai.expect(res.text).to.be.equal(login_file);
             srv.kill();
-            done();
+            setTimeout(done, 60000);
         });
       }
     });
