@@ -1,6 +1,6 @@
 FROM ubuntu:bionic
-MAINTAINER Matevz Vucnik <matevz.vucnik@ijs.si>
 
+LABEL Maintainer="Matevz Vucnik <matevz.vucnik@ijs.si>"
 LABEL Description="This image is used to bootstrap Videk with all dependences"
 LABEL Vendor="JSI"
 LABEL Version="2.0"
