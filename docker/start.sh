@@ -40,11 +40,9 @@ fi
 if [ -z "$RUNDECKP" ]; then
     echo "Consider changing the default rundeck password!"
 else
-    JAVA="${JAVA_HOME:-/usr}/bin/java"
-    PASS=`$JAVA -cp /var/lib/rundeck/bootstrap/jetty-all-9.0.7.v20131107.jar \
-    org.eclipse.jetty.util.security.Password admin $RUNDECKP 2>&1`
-    MD5=`echo "$PASS" | grep "^MD5:"`
-    sed -i s/'^admin:.*'/'admin:'"$MD5"',user,admin'/g \
+    PASS="$(/root/rundeck/rundeckpass admin $RUNDECKP)"
+    MD5="$(echo "$PASS" | grep -o "MD5:[0-9a-f]\{32\}")"
+    sed -i s/'^admin:admin.*'/'admin: '"$MD5"',user,admin'/g \
     /etc/rundeck/realm.properties
 fi
 
@@ -100,4 +98,4 @@ else
     echo "Consider using HTTPS!"
 fi
 
-exec /usr/bin/supervisord
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

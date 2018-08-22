@@ -58,6 +58,7 @@ RUN apt-get install -y ansible
 COPY docker/ansible/hosts /etc/ansible/hosts
 
 # install rundeck
+RUN apt-get install -y expect
 RUN apt-get install -y openjdk-8-jre-headless
 RUN apt-get install -y uuid-runtime
 RUN wget -O /tmp/rundeck.deb https://dl.bintray.com/rundeck/rundeck-deb/\
@@ -69,6 +70,7 @@ COPY docker/rundeck/rundeck-config.properties \
 /etc/rundeck/rundeck-config.properties
 COPY docker/rundeck/profile /etc/rundeck/profile
 COPY docker/rundeck/rundeckd /root/rundeck/rundeckd
+COPY docker/rundeck/rundeckpass /root/rundeck/rundeckpass
 
 # install Videk cron to sync hosts
 RUN apt-get install -y curl
