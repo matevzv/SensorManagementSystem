@@ -14,4 +14,4 @@ install:
 services:
 - mongodb
 
-script: mocha tests/basic.js
+script: mocha tests/basic.js --exit
