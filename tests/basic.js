@@ -4,13 +4,6 @@ var chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
 describe('test basic operation', function() {
-  this.timeout(60000);
-
-  before(function(done) {
-    var spawn = require('child_process').spawn;
-    var srv = spawn('node', ['app.js']);
-    setTimeout(done, 10000);
-  })
 
   it('should run server and load login page', function(done) {
     var fs = require('fs');
