@@ -32,7 +32,7 @@
     "cookie-parser": "*",
     "connect-mongo": "*",
     "socket.io": "*",
-    "agenda": "*",
+    "agenda": "^1.0.0",
     "chai": "*",
     "chai-http": "*",
     "intercept-stdout": "*"
