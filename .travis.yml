@@ -8,6 +8,7 @@ node_js:
 
 install:
 - npm install chai
+- npm install chai-http
 - npm install -g mocha
 
 services:
