@@ -20,7 +20,6 @@ describe('test basic operation', function() {
             chai.expect(res).to.have.status(200);
             chai.expect(res).to.be.html;
             chai.expect(res.text).to.be.equal(login_file);
-            srv.kill();
             setTimeout(done);
         });
       }
