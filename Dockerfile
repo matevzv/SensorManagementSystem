@@ -102,7 +102,7 @@ ENV JENKINS_HOME /var/lib/jenkins
 
 # install Videk master from github
 RUN cd /root && \
-git clone https://github.com/sensorlab/SensorManagementSystem.git
+git clone --depth 1 --branch bionic-update https://github.com/matevzv/SensorManagementSystem.git
 WORKDIR /root/SensorManagementSystem
 RUN npm install
 RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \

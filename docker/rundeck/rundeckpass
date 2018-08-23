@@ -5,10 +5,13 @@ set pass [lindex $argv 1]
 
 cd /var/lib/rundeck/bootstrap
 
-spawn bash -c "java -jar rundeck-*.war --encryptpwd Jetty"
+spawn bash -c "java -jar rundeck-*.war --encryptpwd Jetty 2>&1"
 
 expect "Username (Optional, but necessary for Crypt encoding):"
 send "$user\n"
 expect "*Value To Encrypt (The text you want to encrypt):"
 send "$pass\n"
-interact
+
+expect eof
+
+puts $expect_out(buffer)
