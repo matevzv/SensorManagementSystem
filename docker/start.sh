@@ -41,9 +41,7 @@ if [ -z "$RUNDECKP" ]; then
     echo "Consider changing the default rundeck password!"
 else
     PASS="$(/root/rundeck/rundeckpass admin $RUNDECKP)"
-    echo "$PASS"
     MD5="$(echo "$PASS" | grep -o -m 1 "MD5:[0-9a-f]\{32\}")"
-    echo "$MD5"
     sed -i s/'^admin:.*'/'admin: '"$MD5"',user,admin'/g \
     /etc/rundeck/realm.properties
 fi
