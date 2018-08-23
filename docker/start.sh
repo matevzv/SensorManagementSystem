@@ -42,7 +42,7 @@ if [ -z "$RUNDECKP" ]; then
 else
     PASS="$(/root/rundeck/rundeckpass admin $RUNDECKP)"
     MD5="$(echo "$PASS" | grep -o "MD5:[0-9a-f]\{32\}")"
-    sed -i s/'^admin:admin.*'/'admin: '"$MD5"',user,admin'/g \
+    sed -i s/'^admin:.*'/'admin: '"$MD5"',user,admin'/g \
     /etc/rundeck/realm.properties
 fi
 
@@ -98,4 +98,4 @@ else
     echo "Consider using HTTPS!"
 fi
 
-exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+exec /usr/bin/supervisord
