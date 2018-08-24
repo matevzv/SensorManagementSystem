@@ -12,6 +12,7 @@ RUN apt-get update --fix-missing
 RUN apt-get upgrade -y
 RUN apt-get install -y apt-utils
 RUN apt-get install -y supervisor
+RUN apt-get install -y rsync
 RUN apt-get install -y vim
 RUN apt-get install -y git
 RUN apt-get install -y software-properties-common
