@@ -63,7 +63,7 @@ RUN apt-get install -y expect
 RUN apt-get install -y uuid-runtime
 RUN apt-get install -y openjdk-8-jre-headless
 RUN wget -O /tmp/rundeck.deb https://dl.bintray.com/rundeck/rundeck-deb/\
-rundeck_3.0.3.20180824-1.201808241856_all.deb
+rundeck_3.0.2.20180817-1.201808172107_all.deb
 RUN dpkg -i /tmp/rundeck.deb
 RUN wget https://github.com/Batix/rundeck-ansible-plugin/releases/download/\
 2.5.0/ansible-plugin-2.5.0.jar -P /var/lib/rundeck/libext
