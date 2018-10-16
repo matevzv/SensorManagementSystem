@@ -63,7 +63,7 @@ RUN apt-get install -y expect
 RUN apt-get install -y uuid-runtime
 RUN apt-get install -y openjdk-8-jre-headless
 RUN wget -O /tmp/rundeck.deb https://dl.bintray.com/rundeck/rundeck-deb/\
-rundeck_3.0.6.20180917-1.201809180437_all.deb
+rundeck_3.0.7.20181008-1.201810082317_all.deb
 RUN dpkg -i /tmp/rundeck.deb
 RUN wget https://github.com/Batix/rundeck-ansible-plugin/releases/download/\
 2.5.0/ansible-plugin-2.5.0.jar -P /var/lib/rundeck/libext
@@ -100,6 +100,13 @@ RUN apt-get update && apt-get install -y \
   jenkins \
 && rm -rf /var/lib/apt/lists/*
 ENV JENKINS_HOME /var/lib/jenkins
+
+# install Mosquitto mqtt broker
+RUN apt-get update && apt-get install -y \
+  mosquitto \
+  mosquitto-clients \
+&& rm -rf /var/lib/apt/lists/*
+COPY docker/mosquitto/mosquitto.conf /etc/mosquitto/mosquitto.conf
 
 # install Videk master from github
 RUN cd /root && \

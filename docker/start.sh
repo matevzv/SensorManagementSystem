@@ -75,6 +75,28 @@ else
     fi
 fi
 
+if [ -z "$MQTTP" ]; then
+    echo "Consider adding mosquitto mqtt broker!"
+else
+    NGINX_CONF="/etc/nginx/conf.d/default.conf"
+    sed -i '$ s/.$//' "$NGINX_CONF"
+    echo -e "\tlocation /mqtt {" >> "$NGINX_CONF"
+    echo -e "\t\tproxy_pass http://localhost:1884;" \
+    >> "$NGINX_CONF"
+    echo -e "\t\tproxy_http_version 1.1;" >> "$NGINX_CONF"
+    echo -e "\t\tproxy_set_header Upgrade \$http_upgrade;" >> "$NGINX_CONF"
+    echo -e "\t\tproxy_set_header Connection \"upgrade\";" >> "$NGINX_CONF"
+    echo -e "\t}\n}" >> "$NGINX_CONF"
+    SUPERVISORD="/etc/supervisor/conf.d/supervisord.conf"
+    echo -e "\n[program:mosquitto]" >> "$SUPERVISORD"
+    echo -e "directory=/root/videk-ci" >> "$SUPERVISORD"
+    echo -e "command=/usr/sbin/mosquitto -c /etc/mosquitto/mosquitto.conf" \
+    >> "$SUPERVISORD"
+    echo -e "autorestart=true" >> "$SUPERVISORD"
+    echo -e "videk:$MQTTP" >> /etc/mosquitto/auth
+    mosquitto_passwd -U /etc/mosquitto/auth
+fi
+
 if [ -z "$GRAFANA" ]; then
     echo "Consider adding grafana service!"
 else
