@@ -102,7 +102,7 @@ RUN apt-get update && apt-get install -y \
 ENV JENKINS_HOME /var/lib/jenkins
 
 # install Mosquitto mqtt broker
-RUN apt-get update && apt-get install -y \
+RUN apt-add-repository ppa:mosquitto-dev/mosquitto-ppa && apt-get install -y \
   mosquitto \
   mosquitto-clients \
 && rm -rf /var/lib/apt/lists/*

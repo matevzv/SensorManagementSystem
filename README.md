@@ -36,6 +36,16 @@ account to send monitoring alerts.
     -e EMAIL=example@gmail.com \  
     -e PASSWORD=secret videk
 
+#### Aditional features
+
+External Grafana service:
+
+    $ GRAFANA=172.17.0.1:3000
+
+Mosquitto MQTT broker password:
+
+    $ MQTTP=secret 
+
 ## Installation in Linux
 Installation was performed on Ubuntu 12.04 & Ubuntu 14.04 .
 
