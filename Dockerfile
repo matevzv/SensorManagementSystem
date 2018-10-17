@@ -106,7 +106,7 @@ RUN apt-get update && apt-get install -y \
   mosquitto \
   mosquitto-clients \
 && rm -rf /var/lib/apt/lists/*
-COPY docker/mosquitto/mosquitto.conf /etc/mosquitto/mosquitto.conf
+COPY docker/mosquitto/videk.conf /etc/mosquitto/conf.d
 
 # install Videk master from github
 RUN cd /root && \
