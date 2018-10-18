@@ -38,13 +38,13 @@ account to send monitoring alerts.
 
 #### Aditional features
 
+Mosquitto MQTT broker password:
+
+    $ MQTTP=secret
+
 External Grafana service:
 
     $ GRAFANA=172.17.0.1:3000
-
-Mosquitto MQTT broker password:
-
-    $ MQTTP=secret 
 
 ## Installation in Linux
 Installation was performed on Ubuntu 12.04 & Ubuntu 14.04 .
