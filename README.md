@@ -20,7 +20,7 @@ use WS and optionally use HTTPS. Rundeck password should also be changed and
 ansible user set. Optionally you can setup github webhook port and tokens.
 GITHUB_TOKEN is used to push build results to github release and SECRET_TOKEN
 is secret which is shared with each webhook request. Finally set your gmail
-account to send monitoring alerts.  
+account to send monitoring alerts.
 
     $ docker run -p 80:80 (-p 443:443) --volumes-from datavidek \  
     --volume $SSH_AUTH_SOCK:/ssh-agent \  
