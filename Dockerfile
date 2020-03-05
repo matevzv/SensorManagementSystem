@@ -110,7 +110,7 @@ COPY docker/mosquitto/videk.conf /etc/mosquitto/conf.d
 
 # install Videk master from github
 RUN cd /root && \
-git clone --depth 1 --branch bionic-update https://github.com/matevzv/SensorManagementSystem.git
+git clone https://github.com/sensorlab/SensorManagementSystem.git
 WORKDIR /root/SensorManagementSystem
 RUN npm install
 RUN /usr/bin/mongod --fork --logpath /var/log/mongodb.log --dbpath \
