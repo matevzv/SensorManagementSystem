@@ -15,10 +15,9 @@ RUN apt-get install -y supervisor
 RUN apt-get install -y rsync
 RUN apt-get install -y vim
 RUN apt-get install -y git
+RUN apt-get install -y wget
 RUN apt-get install -y software-properties-common
-RUN add-apt-repository -y ppa:certbot/certbot
-RUN apt-get update
-RUN apt-get install -y python-certbot-nginx
+RUN apt-get install -y python3-certbot-nginx
 
 # install nodejs an npm
 RUN apt-get install -y nodejs
@@ -92,7 +91,7 @@ RUN cd /root && \
 git clone https://github.com/matevzv/videk-ci.git
 
 # install Jenkins
-RUN wget -q -O - https://pkg.jenkins.io/debian/jenkins-ci.org.key | \
+RUN wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | \
 apt-key add -
 RUN sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > \
 /etc/apt/sources.list.d/jenkins.list'
