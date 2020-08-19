@@ -16,6 +16,7 @@ RUN apt-get install -y rsync
 RUN apt-get install -y vim
 RUN apt-get install -y git
 RUN apt-get install -y wget
+RUN apt-get install -y cron
 RUN apt-get install -y software-properties-common
 RUN apt-get install -y python3-certbot-nginx
 
