@@ -1,4 +1,4 @@
-FROM ubuntu:bionic
+FROM ubuntu:focal
 
 LABEL Maintainer="Matevz Vucnik <matevz.vucnik@ijs.si>"
 LABEL Description="This image is used to bootstrap Videk with all dependences"
