@@ -61,10 +61,6 @@ elif [ -z "$JAVA_CMD" ] ; then
   JAVA_CMD=java
 fi
 
-# build classpath without lone : that includes .
-for jar in $(find $RDECK_INSTALL/cli -name '*.jar') ; do
-  CLI_CP=${CLI_CP:+$CLI_CP:}$jar
-done
 for war in $(find $RDECK_INSTALL/bootstrap -name '*.war') ; do
   EXECUTABLE_WAR=$war
 done
@@ -77,11 +73,14 @@ RDECK_JVM="-Drundeck.jaaslogin=$JAAS_LOGIN \
            -Dserver.datastore.path=$RDECK_SERVER_DATA/rundeck \
            -Drundeck.server.serverDir=$RDECK_INSTALL \
            -Drdeck.projects=$RDECK_PROJECTS \
+           -Dlog4j.configurationFile=$RDECK_SERVER_CONFIG/log4j2.properties \
+           -Dlogging.config=file:$RDECK_SERVER_CONFIG/log4j2.properties \
            -Drdeck.runlogs=$RUNDECK_LOGDIR \
+           -Drundeck.server.logDir=$RUNDECK_LOGDIR \
            -Drundeck.config.location=$RDECK_CONFIG_FILE \
            -Djava.io.tmpdir=$RUNDECK_TEMPDIR \
            -Drundeck.server.workDir=$RUNDECK_WORKDIR \
-           -Dserver.web.context=/rundeck \
+           -Dserver.servlet.context-path=/rundeck \
            -Dserver.http.port=$RDECK_HTTP_PORT \
            -Drdeck.base=$RDECK_BASE"
 #
@@ -92,8 +91,7 @@ RDECK_JVM="$RDECK_JVM $RDECK_JVM_SETTINGS"
 # SSL Configuration - Uncomment the following to enable.  Check SSL.properties for details.
 #
 if [ -n "$RUNDECK_WITH_SSL" ] ; then
-  RDECK_SSL_OPTS="${RDECK_SSL_OPTS:- -Djavax.net.ssl.trustStore=$RDECK_TRUSTSTORE_FILE -Djavax.net.ssl.trustStoreType=$RDECK_TRUSTSTORE_TYPE -Djava.protocol.handler.pkgs=com.sun.net.ssl.internal.www.protocol}"
-  RDECK_JVM="$RDECK_JVM -Drundeck.ssl.config=$RDECK_SERVER_CONFIG/ssl/ssl.properties -Dserver.https.port=${RDECK_HTTPS_PORT} ${RDECK_SSL_OPTS}"
+  RDECK_JVM="$RDECK_JVM -Drundeck.ssl.config=$RDECK_SERVER_CONFIG/ssl/ssl.properties -Dserver.https.port=${RDECK_HTTPS_PORT}"
 fi
 
 unset JRE_HOME
