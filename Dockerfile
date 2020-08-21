@@ -66,7 +66,7 @@ RUN wget -O /tmp/rundeck.deb https://dl.bintray.com/rundeck/rundeck-deb/\
 rundeck_3.0.13.20190123-1.201901240147_all.deb
 RUN dpkg -i /tmp/rundeck.deb
 RUN wget https://github.com/Batix/rundeck-ansible-plugin/releases/download/\
-2.5.0/ansible-plugin-2.5.0.jar -P /var/lib/rundeck/libext
+3.1.1/ansible-plugin-3.1.1.jar -P /var/lib/rundeck/libext
 COPY docker/rundeck/rundeck-config.properties \
 /etc/rundeck/rundeck-config.properties
 COPY docker/rundeck/profile /etc/rundeck/profile
