@@ -117,7 +117,10 @@ if [ "$HTTPS" = "true" ]; then
         --redirect --keep-until-expiring --nginx
         service nginx stop
 
-        sed -i s/'http'/'https'/g /etc/rundeck/rundeck-config.properties
+        if ! grep -q 'https' /etc/rundeck/rundeck-config.properties; then
+            sed -i s/'http'/'https'/g /etc/rundeck/rundeck-config.properties
+        fi
+
     fi
 else
     echo "Consider using HTTPS!"
