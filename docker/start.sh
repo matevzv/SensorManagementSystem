@@ -29,6 +29,7 @@ else
     fi
     sed -i s/'server_name localhost'/'server_name '"$DOMAIN"/g \
     /etc/nginx/conf.d/default.conf
+    sed -i s/'localhost:4440'/"$DOMAIN"/g /etc/rundeck/rundeck-config.properties
 fi
 
 if [ -z "$WS" ]; then
@@ -115,6 +116,8 @@ if [ "$HTTPS" = "true" ]; then
         certbot -n --agree-tos --email "$EMAIL" --domains "$DOMAIN" \
         --redirect --keep-until-expiring --nginx
         service nginx stop
+
+        sed -i s/'http'/'https'/g /etc/rundeck/rundeck-config.properties
     fi
 else
     echo "Consider using HTTPS!"
