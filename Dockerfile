@@ -65,8 +65,6 @@ RUN apt-get install -y openjdk-8-jdk
 RUN wget -O /tmp/rundeck.deb https://dl.bintray.com/rundeck/rundeck-deb/\
 rundeck_3.3.2.20200817-1_all.deb
 RUN dpkg -i /tmp/rundeck.deb
-RUN wget https://github.com/Batix/rundeck-ansible-plugin/releases/download/\
-3.1.1/ansible-plugin-3.1.1.jar -P /var/lib/rundeck/libext
 COPY docker/rundeck/rundeck-config.properties \
 /etc/rundeck/rundeck-config.properties
 COPY docker/rundeck/profile /etc/rundeck/profile
