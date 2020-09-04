@@ -36,7 +36,7 @@ RUN rm /etc/nginx/sites-enabled/default
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # install munin
-RUN apt install -y munin
+RUN apt-get install -y munin
 RUN sed -e '/background 1/ s/^#*/# /' -i /etc/munin/munin-node.conf
 RUN sed -i 's/^\(setsid \).*/\10/' /etc/munin/munin-node.conf
 RUN mkdir -p /var/run/munin
