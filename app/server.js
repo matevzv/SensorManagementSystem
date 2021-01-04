@@ -62,7 +62,7 @@ function log_url(req, res, next) {
 };
 
 function preprocess_api_calls(req, res, next) {
-  if (req.url.indexOf("/api") == 0) {
+  if (req.url.toLowerCase().indexOf("/api") == 0) {
     // rest-like url parser
     var tmp_url = req.url;
     req.body = xutil.parse_rest_request(tmp_url);
